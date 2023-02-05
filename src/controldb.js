@@ -7002,6 +7002,16 @@
     };
 
     /**
+     * Checks if a document exists in the collection. 
+     * @param {object} query - query object used to perform search with
+     * @returns {boolean} True if document exists, false if not.
+     * @memberof Collection
+     */
+    Collection.prototype.exists = function (query) {
+      return !!this.find(query)[0];
+    };
+
+    /**
      * toJSON() - Override of toJSON to avoid circular references
      *
      */

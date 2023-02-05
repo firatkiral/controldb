@@ -1,4 +1,10 @@
-# ControlDB
+# ControlDB (Fork of [LokiJS](https://github.com/techfort/LokiJS))
+
+This is a fork of [LokiJS](https://github.com/techfort/LokiJS). The goal is to make the API more consistent and easier to use. 
+
+## Changes
+Adapts chainable methods to the Collection class itself and adds some other new methods. Changes some default behavior.
+
 
 The super fast in-memory javascript document oriented database.
 
