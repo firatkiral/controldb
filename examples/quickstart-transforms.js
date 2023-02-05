@@ -115,26 +115,26 @@ function runProgramLogic() {
   console.log("");
   
   // lets get all female users in the users collection
-  let result = users.chain("females").data();
+  let result = users.chain("females").docs();
   console.log("females:");
   console.log(result);
   console.log("");
 
   // let's use this within a chain
-  result = users.chain().find({age: { $between: [300,700] } }).transform("females").data();
+  result = users.find({age: { $between: [300,700] } }).transform("females").docs();
   console.log("females between 300-700 (empty initially) : ");
   console.log(result);
   console.log("");
 
   // if the 'females' transform filtered the results better, we might re-word this query as :
-  result = users.chain("females").find({age: { $between: [300,700] } }).data();
+  result = users.chain("females").find({age: { $between: [300,700] } }).docs();
   console.log("females between 300-700 (empty initially) : ");
   console.log(result);
   console.log("");
   
   
   // now let's use the transform as an extract for our dynamic view
-  result = ov500.branchResultset("females").data();
+  result = ov500.branchResultset("females").docs();
   console.log("over 500 females : ");
   console.log(result);
   console.log("");
@@ -149,18 +149,17 @@ function runProgramLogic() {
   // optional parameter hash object.
   
   // call our parameterized transform as a dynamic view extract
-  result = ov500.branchResultset("paged", { pageStart: start, pageSize: pageSize }).data();
+  result = ov500.branchResultset("paged", { pageStart: start, pageSize: pageSize }).docs();
   console.log("1st through 5th users over 500 : ");
   console.log(result);
   console.log("");
 
   // mix multiple transforms into a basic query chain...
   result = users
-    .chain()
     .find({ age: { $gt: 200 } })
     .transform("females")
     .transform("paged", { pageStart: start, pageSize: pageSize })
-    .data();
+    .docs();
     
   console.log("first page (1-5) of females over 200");
   console.log(result);

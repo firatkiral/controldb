@@ -99,7 +99,7 @@ mimir.age = 998;
 users.update(mimir);
 
 // remove a document by id
-users.remove(mimir.$control);
+users.remove(mimir.$ctrl);
 
 // remove a document by instance 
 var heimdallr = users.findOne({name: "heimdallr" });

@@ -7,7 +7,7 @@
  */
 
 const controldb = require('../src/controldb.js');
-const lfsa = require('../src/control-fs-structured-adapter.js');
+const lfsa = require('../src/controldb-fs-structured-adapter.js');
 
 var db = new controldb('quickstart3.db', {
   adapter: new lfsa(),

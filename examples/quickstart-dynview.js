@@ -112,14 +112,14 @@ function runProgramLogic() {
 
   users.insert(newUser);
 
-  let result = ov500.data();
+  let result = ov500.docs();
   console.log("'over 500' dynamic view results : ");
   console.log(result);
   console.log("");
 
   // now let's take our 'generic' bulk filtering dynamic view and further query its 'current' results
   // to find only the gender 'm' users in the dynamic view results.
-  result = ov500.branchResultset().find({gender: 'm'}).data();
+  result = ov500.branchResultset().find({gender: 'm'}).docs();
   console.log("over 500 males : ");
   console.log(result);
   console.log("");

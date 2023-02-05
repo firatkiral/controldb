@@ -79,7 +79,7 @@ users
   .find({ age: 29 })
   .remove();
   
-// get all documents but strip $control and meta properties from results
+// get all documents but strip $ctrl and meta properties from results
 result = users.docs({removeMeta: true});
 console.log("result 6");
 console.log(result);
