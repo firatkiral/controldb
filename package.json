@@ -22,7 +22,7 @@
     "indexeddb"
   ],
   "scripts": {
-    "jsdoc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json"
+    "jsdoc": "./node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "author": "Firat Kiral",
   "contributors": [],
