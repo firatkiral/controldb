@@ -1,19 +1,8 @@
-# ControlDB (Fork of [LokiJS](https://github.com/techfort/LokiJS))
-
-This is a fork of [LokiJS](https://github.com/techfort/LokiJS). The goal is to make the API more consistent and easier to use. 
-
-## Changes
-Adapts chainable methods to the Collection class itself and adds some other new methods. Changes some default behavior.
-
+# ControlDB
 
 The super fast in-memory javascript document oriented database.
 
-Enable offline-syncing to your SQL/NoSQL database servers with [SyncProxy](https://www.syncproxy.com) !! Code-free real time syncing, ideal for mobile, electron and web apps.
-
-[![Join the chat at https://gitter.im/techfort/ControlDB](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/techfort/ControlDB?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-![alt CI-badge](https://travis-ci.org/techfort/ControlDB.svg?branch=master)
-[![npm version](https://badge.fury.io/js/controldb.svg)](http://badge.fury.io/js/controldb)
-[![alt packagequality](http://npm.packagequality.com/shield/controldb.svg)](http://packagequality.com/#?package=controldb)
+This is a fork of [LokiJS](https://github.com/techfort/LokiJS). The goal is to make the API more consistent and easier to use. Adapts chainable methods to the Collection class itself and adds some other new methods. Changes some default behaviors.
 
 ## Overview
 
