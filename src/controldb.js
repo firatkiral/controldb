@@ -766,17 +766,17 @@
 
 
     /**
-     * ControlEventEmitter is a minimalist version of EventEmitter. It enables any
+     * ControlDBEventEmitter is a minimalist version of EventEmitter. It enables any
      * constructor that inherits EventEmitter to emit events and trigger
      * listeners that have been added to the event through the on(event, callback) method
      *
-     * @constructor ControlEventEmitter
+     * @constructor ControlDBEventEmitter
      */
     function ControlDBEventEmitter() { }
 
     /**
      * @prop {hashmap} events - a hashmap, with each property being an array of callbacks
-     * @memberof ControlEventEmitter
+     * @memberof ControlDBEventEmitter
      */
     ControlDBEventEmitter.prototype.events = {};
 
@@ -784,7 +784,7 @@
      * @prop {boolean} asyncListeners - boolean determines whether or not the callbacks associated with each event
      * should happen in an async fashion or not
      * Default is false, which means events are synchronous
-     * @memberof ControlEventEmitter
+     * @memberof ControlDBEventEmitter
      */
     ControlDBEventEmitter.prototype.asyncListeners = false;
 
@@ -793,7 +793,7 @@
      * @param {string|string[]} eventName - the name(s) of the event(s) to listen to
      * @param {function} listener - callback function of listener to attach
      * @returns {int} the index of the callback in the array of listeners for a particular event
-     * @memberof ControlEventEmitter
+     * @memberof ControlDBEventEmitter
      */
     ControlDBEventEmitter.prototype.on = function (eventName, listener) {
       var event;
@@ -820,7 +820,7 @@
      * provided signatures match (i.e. if passing emit(event, arg0, arg1) the listener should take two parameters)
      * @param {string} eventName - the name of the event
      * @param {object=} data - optional object passed with the event
-     * @memberof ControlEventEmitter
+     * @memberof ControlDBEventEmitter
      */
     ControlDBEventEmitter.prototype.emit = function (eventName) {
       var self = this;
@@ -844,12 +844,12 @@
     };
 
     /**
-     * Alias of ControlEventEmitter.prototype.on
+     * Alias of ControlDBEventEmitter.prototype.on
      * addListener(eventName, listener) - adds a listener to the queue of callbacks associated to an event
      * @param {string|string[]} eventName - the name(s) of the event(s) to listen to
      * @param {function} listener - callback function of listener to attach
      * @returns {int} the index of the callback in the array of listeners for a particular event
-     * @memberof ControlEventEmitter
+     * @memberof ControlDBEventEmitter
      */
     ControlDBEventEmitter.prototype.addListener = ControlDBEventEmitter.prototype.on;
 
@@ -857,7 +857,7 @@
      * removeListener() - removes the listener at position 'index' from the event 'eventName'
      * @param {string|string[]} eventName - the name(s) of the event(s) which the listener is attached to
      * @param {function} listener - the listener callback function to remove from emitter
-     * @memberof ControlEventEmitter
+     * @memberof ControlDBEventEmitter
      */
     ControlDBEventEmitter.prototype.removeListener = function (eventName, listener) {
       var self = this;
@@ -877,8 +877,8 @@
     };
 
     /**
-     * Control: The main database class
-     * @constructor Control
+     * ControlDB: The main database class
+     * @constructor ControlDB
      * @implements ControlDBEventEmitter
      * @param {string} filename - name of the file to be saved to
      * @param {object=} options - (Optional) config options object
@@ -1015,7 +1015,7 @@
      * @param {string} options.serializationMethod - ['normal', 'pretty', 'destructured']
      * @param {string} options.destructureDelimiter - string delimiter used for destructured serialization
      * @param {boolean} initialConfig - (internal) true is passed when control ctor is invoking
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.configureOptions = function (options, initialConfig) {
       var defaultPersistence = {
@@ -1112,11 +1112,11 @@
     };
 
     /**
-     * Copies 'this' database into a new Control instance. Object references are shared to make lightweight.
+     * Copies 'this' database into a new ControlDB instance. Object references are shared to make lightweight.
      *
      * @param {object} options - apply or override collection level settings
      * @param {bool} options.removeNonSerializable - nulls properties not safe for serialization.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.copy = function (options) {
       // in case running in an environment without accurate environment detection, pass 'NA'
@@ -1160,7 +1160,7 @@
      * @param {int=} options.ttl - age of document (in ms.) before document is considered aged/stale.
      * @param {int=} options.ttlInterval - time interval for clearing out 'aged' documents; not set by default.
      * @returns {Collection} a reference to the collection which was just added
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.addCollection = function (name, options) {
       var i,
@@ -1205,7 +1205,7 @@
      * Retrieves reference to a collection by name.
      * @param {string} collectionName - name of collection to look up
      * @returns {Collection} Reference to collection in database by that name, or null if not found
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.getCollection = function (collectionName) {
       var i,
@@ -1227,7 +1227,7 @@
      * @param {string} oldName - name of collection to rename
      * @param {string} newName - new name of collection
      * @returns {Collection} reference to the newly renamed collection
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.renameCollection = function (oldName, newName) {
       var c = this.getCollection(oldName);
@@ -1242,7 +1242,7 @@
     /**
      * Returns a list of collections in the database.
      * @returns {object[]} array of objects containing 'name', 'type', and 'count' properties.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.listCollections = function () {
 
@@ -1262,7 +1262,7 @@
     /**
      * Removes a collection from the database.
      * @param {string} collectionName - name of collection to remove
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.removeCollection = function (collectionName) {
       var i,
@@ -1312,7 +1312,7 @@
      * Serialize database to a string which can be loaded via {@link ControlDB#loadJSON}
      *
      * @returns {string} Stringified representation of the control database.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.serialize = function (options) {
       options = options || {};
@@ -1334,8 +1334,8 @@
 
     /**
      * Database level destructured JSON serialization routine to allow alternate serialization methods.
-     * Internally, Control supports destructuring via control "serializationMethod' option and
-     * the optional ControlPartitioningAdapter class. It is also available if you wish to do
+     * Internally, ControlDB supports destructuring via control "serializationMethod' option and
+     * the optional ControlDBPartitioningAdapter class. It is also available if you wish to do
      * your own structured persistence or data exchange.
      *
      * @param {object=} options - output format options for use externally to control
@@ -1345,7 +1345,7 @@
      * @param {string=} options.delimiter - override default delimiter
      *
      * @returns {string|array} A custom, restructured aggregation of independent serializations.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.serializeDestructured = function (options) {
       var idx, sidx, result, resultlen;
@@ -1446,7 +1446,7 @@
       }
       else {
         // D : one big Delimited string { partitioned: false, delimited : true }
-        // This is the method Control will use internally if 'destructured'.
+        // This is the method ControlDB will use internally if 'destructured'.
         // Little memory overhead improvements but does not require multiple asynchronous adapter call scheduling
         if (options.delimited) {
           // indicate no more collections
@@ -1478,7 +1478,7 @@
      * @param {int} options.collectionIndex -  specify which collection to serialize data for
      *
      * @returns {string|array} A custom, restructured aggregation of independent serializations for a single collection.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.serializeCollection = function (options) {
       var doccount,
@@ -1518,8 +1518,8 @@
 
     /**
      * Database level destructured JSON deserialization routine to minimize memory overhead.
-     * Internally, Control supports destructuring via control "serializationMethod' option and
-     * the optional ControlPartitioningAdapter class. It is also available if you wish to do
+     * Internally, ControlDB supports destructuring via control "serializationMethod' option and
+     * the optional ControlDBPartitioningAdapter class. It is also available if you wish to do
      * your own structured persistence or data exchange.
      *
      * @param {string|array} destructuredSource - destructured json or array to deserialize from
@@ -1530,7 +1530,7 @@
      * @param {string=} options.delimiter - override default delimiter
      *
      * @returns {object|array} An object representation of the deserialized database, not yet applied to 'this' db or document array
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.deserializeDestructured = function (destructuredSource, options) {
       var workarray = [];
@@ -1636,7 +1636,7 @@
      * @param {string=} options.delimiter - if delimited, this is delimiter to use (if other than default)
      *
      * @returns {array} an array of documents to attach to collection.data.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.deserializeCollection = function (destructuredSource, options) {
       var workarray = [];
@@ -1678,7 +1678,7 @@
      * @param {string} serializedDb - a serialized control database string
      * @param {object=} options - apply or override collection level settings
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.loadJSON = function (serializedDb, options) {
       var dbObject;
@@ -1704,7 +1704,7 @@
      * @param {object} dbObject - a serialized control database string
      * @param {object=} options - apply or override collection level settings
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.loadJSONObject = function (dbObject, options) {
       var i = 0,
@@ -1868,7 +1868,7 @@
      * Does not actually destroy the db.
      *
      * @param {function=} callback - (Optional) if supplied will be registered with close event before emitting.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.close = function (callback) {
       // for autosave scenarios, we will let close perform final save (if dirty)
@@ -1904,7 +1904,7 @@
      * @param {array=} optional array of collection names. No arg means all collections are processed.
      * @returns {array} array of changes
      * @see private method createChange() in Collection
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.generateChangesNotification = function (arrayOfCollectionNames) {
       function getCollName(coll) {
@@ -1924,7 +1924,7 @@
     /**
      * (Changes API) - stringify changes for network transmission
      * @returns {string} string representation of the changes
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.serializeChanges = function (collectionNamesArray) {
       return JSON.stringify(this.generateChangesNotification(collectionNamesArray));
@@ -1932,7 +1932,7 @@
 
     /**
      * (Changes API) : clears all the changes in all collections.
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.clearChanges = function () {
       this.collections.forEach(function (coll) {
@@ -1959,7 +1959,7 @@
      * @param {object=} options - memory adapter options
      * @param {boolean} [options.asyncResponses=false] - whether callbacks are invoked asynchronously
      * @param {int} [options.asyncTimeout=50] - timeout in ms to queue callbacks
-     * @constructor ControlMemoryAdapter
+     * @constructor ControlDBMemoryAdapter
      */
     function ControlDBMemoryAdapter(options) {
       this.hashStore = {};
@@ -1976,11 +1976,11 @@
 
     /**
      * Loads a serialized database from its in-memory store.
-     * (Control persistence adapter interface function)
+     * (ControlDB persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - adapter callback to return load result to caller
-     * @memberof ControlMemoryAdapter
+     * @memberof ControlDBMemoryAdapter
      */
     ControlDBMemoryAdapter.prototype.loadDatabase = function (dbname, callback) {
       var self = this;
@@ -2009,11 +2009,11 @@
 
     /**
      * Saves a serialized database to its in-memory store.
-     * (Control persistence adapter interface function)
+     * (ControlDB persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - adapter callback to return load result to caller
-     * @memberof ControlMemoryAdapter
+     * @memberof ControlDBMemoryAdapter
      */
     ControlDBMemoryAdapter.prototype.saveDatabase = function (dbname, dbstring, callback) {
       var self = this;
@@ -2050,7 +2050,7 @@
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - function to call when done
-     * @memberof ControlMemoryAdapter
+     * @memberof ControlDBMemoryAdapter
      */
     ControlDBMemoryAdapter.prototype.deleteDatabase = function (dbname, callback) {
       if (this.hashStore.hasOwnProperty(dbname)) {
@@ -2077,7 +2077,7 @@
      * @param {bool} options.paging - (default: false) set to true to enable paging collection data.
      * @param {int} options.pageSize - (default : 25MB) you can use this to limit size of strings passed to inner adapter.
      * @param {string} options.delimiter - allows you to override the default delimeter
-     * @constructor ControlPartitioningAdapter
+     * @constructor ControlDBPartitioningAdapter
      */
     function ControlDBPartitioningAdapter(adapter, options) {
       this.mode = "reference";
@@ -2090,14 +2090,14 @@
       // verify user passed an appropriate adapter
       if (adapter) {
         if (adapter.mode === "reference") {
-          throw new Error("ControlPartitioningAdapter cannot be instantiated with a reference mode adapter");
+          throw new Error("ControlDBPartitioningAdapter cannot be instantiated with a reference mode adapter");
         }
         else {
           this.adapter = adapter;
         }
       }
       else {
-        throw new Error("ControlPartitioningAdapter requires a (non-reference mode) adapter on construction");
+        throw new Error("ControlDBPartitioningAdapter requires a (non-reference mode) adapter on construction");
       }
 
       // set collection paging defaults
@@ -2117,11 +2117,11 @@
 
     /**
      * Loads a database which was partitioned into several key/value saves.
-     * (Control persistence adapter interface function)
+     * (ControlDB persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - adapter callback to return load result to caller
-     * @memberof ControlPartitioningAdapter
+     * @memberof ControlDBPartitioningAdapter
      */
     ControlDBPartitioningAdapter.prototype.loadDatabase = function (dbname, callback) {
       var self = this;
@@ -2139,7 +2139,7 @@
         }
 
         if (typeof result !== "string") {
-          callback(new Error("ControlPartitioningAdapter received an unexpected response from inner adapter loadDatabase()"));
+          callback(new Error("ControlDBPartitioningAdapter received an unexpected response from inner adapter loadDatabase()"));
         }
 
         // I will want to use control destructuring helper methods so i will inflate into typed instance
@@ -2250,13 +2250,13 @@
 
     /**
      * Saves a database by partioning into separate key/value saves.
-     * (Control 'reference mode' persistence adapter interface function)
+     * (ControlDB 'reference mode' persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {object} dbref - reference to database which we will partition and save.
      * @param {function} callback - adapter callback to return load result to caller
      *
-     * @memberof ControlPartitioningAdapter
+     * @memberof ControlDBPartitioningAdapter
      */
     ControlDBPartitioningAdapter.prototype.exportDatabase = function (dbname, dbref, callback) {
       var self = this;
@@ -2398,7 +2398,7 @@
 
     /**
      * A control persistence adapter which persists using node fs module
-     * @constructor ControlFsAdapter
+     * @constructor ControlDBFsAdapter
      */
     function ControlDBFsAdapter() {
       try {
@@ -2412,7 +2412,7 @@
      * loadDatabase() - Load data from file, will throw an error if the file does not exist
      * @param {string} dbname - the filename of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof ControlFsAdapter
+     * @memberof ControlDBFsAdapter
      */
     ControlDBFsAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
       var self = this;
@@ -2440,7 +2440,7 @@
      * might want to expand this to avoid dataloss on partial save
      * @param {string} dbname - the filename of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof ControlFsAdapter
+     * @memberof ControlDBFsAdapter
      */
     ControlDBFsAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
       var self = this;
@@ -2459,7 +2459,7 @@
      * file can't be deleted
      * @param {string} dbname - the filename of the database to delete
      * @param {function} callback - the callback to handle the result
-     * @memberof ControlFsAdapter
+     * @memberof ControlDBFsAdapter
      */
     ControlDBFsAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
       this.fs.unlink(dbname, function deleteDatabaseCallback(err) {
@@ -2474,7 +2474,7 @@
 
     /**
      * A control persistence adapter which persists to web browser's local storage object
-     * @constructor ControlLocalStorageAdapter
+     * @constructor ControlDBLocalStorageAdapter
      */
     function ControlDBLocalStorageAdapter() { }
 
@@ -2482,7 +2482,7 @@
      * loadDatabase() - Load data from localstorage
      * @param {string} dbname - the name of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof ControlLocalStorageAdapter
+     * @memberof ControlDBLocalStorageAdapter
      */
     ControlDBLocalStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
       if (localStorageAvailable()) {
@@ -2497,7 +2497,7 @@
      * might want to expand this to avoid dataloss on partial save
      * @param {string} dbname - the filename of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof ControlLocalStorageAdapter
+     * @memberof ControlDBLocalStorageAdapter
      */
     ControlDBLocalStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
       if (localStorageAvailable()) {
@@ -2513,7 +2513,7 @@
      * can't be deleted
      * @param {string} dbname - the filename of the database to delete
      * @param {function} callback - the callback to handle the result
-     * @memberof ControlLocalStorageAdapter
+     * @memberof ControlDBLocalStorageAdapter
      */
     ControlDBLocalStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
       if (localStorageAvailable()) {
@@ -2532,7 +2532,7 @@
      * @param {boolean} options.recursiveWait - (default: true) if after queue is drained, another save was kicked off, wait for it
      * @param {bool} options.recursiveWaitLimit - (default: false) limit our recursive waiting to a duration
      * @param {int} options.recursiveWaitLimitDelay - (default: 2000) cutoff in ms to stop recursively re-draining
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.throttledSaveDrain = function (callback, options) {
       var self = this;
@@ -2666,7 +2666,7 @@
      * @param {bool} options.recursiveWaitLimit - (default: false) limit our recursive waiting to a duration
      * @param {int} options.recursiveWaitLimitDelay - (default: 2000) cutoff in ms to stop recursively re-draining
      * @param {function=} callback - (Optional) user supplied async callback / error handler
-     * @memberof Control
+     * @memberof ControlDB
      * @example
      * db.loadDatabase({}, function(err) {
      *   if (err) {
@@ -2801,7 +2801,7 @@
      * If you are configured with autosave, you do not need to call this method yourself.
      *
      * @param {function=} callback - (Optional) user supplied async callback / error handler
-     * @memberof Control
+     * @memberof ControlDB
      * @example
      * db.saveDatabase(function(err) {
      *   if (err) {
@@ -2857,7 +2857,7 @@
      *    persistence method to use, or environment detection (if configuration was not provided).
      *
      * @param {function=} callback - (Optional) user supplied async callback / error handler
-     * @memberof Control
+     * @memberof ControlDB
      */
     ControlDB.prototype.deleteDatabase = function (options, callback) {
       var cFun = callback || function (err, data) {
@@ -5856,7 +5856,7 @@
      * });
      *
      * // alternatively, insert array of documents
-     * users.insert([{ name: 'Thor', age: 35}, { name: 'Control', age: 30}]);
+     * users.insert([{ name: 'Thor', age: 35}, { name: 'ControlDB', age: 30}]);
      */
     Collection.prototype.insert = function (doc, overrideAdaptiveIndices) {
       if (!Array.isArray(doc)) {
