@@ -1,19 +1,19 @@
-var loki = require('../src/lokijs.js');
+var control = require('../src/controldb.js');
 
 /* 
-  loki-continuum - a stripped down port of  c#.net program to test capabilities of loki and javascript.  
+  control-continuum - a stripped down port of  c#.net program to test capabilities of control and javascript.  
   Standalone node example, run with :
-  "node lokiContinuum"
+  "node controlContinuum"
   
   Demonstrates:
   - Autosave/Autoload
-  - using detached loki collections for volatile only use
+  - using detached control collections for volatile only use
   - using collection protos to manage 'classed' objects
   - Collection Transforms
   - dot notation
 */
 
-var LokiContinuum = (function() {
+var ControlContinuum = (function() {
 
 var singletonContinuum = null;
 
@@ -70,14 +70,14 @@ function AddDate(unixDate, offset, offsetType) {
 /**
  *
  * Projector - this class is the top level interface to Continuum,
- *     facilitating access to Actors and Funds and a loki database in which is stores them.
+ *     facilitating access to Actors and Funds and a control database in which is stores them.
  *
  */
 
 function Projector(universeName, dbOptions) {
   // in the absence of establishing db references in funds and actors,
   // nulling that out in toJSON override and providing a custom 
-  // inflater to lokijs, i will just force singleton pattern for now
+  // inflater to controldb, i will just force singleton pattern for now
   singletonContinuum = this;
 
 	this.universeName = universeName;
@@ -97,9 +97,9 @@ function Projector(universeName, dbOptions) {
   dbOptions.actors = { proto: Actor };
   dbOptions.funds = { proto: Fund };
 
-	this.db = new loki(universeName, dbOptions); 
+	this.db = new control(universeName, dbOptions); 
 	this.vol = null;
-	this.activities = new loki.Collection("activities");
+	this.activities = new control.Collection("activities");
   
   // Add a parameterized transform to our disconnected collection to determine set of activities affecting a given fundId (sorted by activityDate ascending)
 
@@ -253,7 +253,7 @@ function Fund(options) {
 }
 
 // can't use serializereplacer as this is nested serialization and replacer
-// is controlled at top level of serialization (loki db),
+// is controlled at top level of serialization (control db),
 // which knows nothing of our Fund class structure).
 Fund.prototype.toJSON = function() 
 {
@@ -270,8 +270,8 @@ Fund.prototype.toJSON = function()
     historicalBalances : this.historicalBalances
   })
     
-  // need loki id to be same as well as meta
-  clone.$loki = this.$loki;
+  // need control id to be same as well as meta
+  clone.$control = this.$control;
   clone.meta = this.meta;
     
   return clone;
@@ -487,14 +487,14 @@ Actor.prototype.executeActivity = function(activity)
     // We will use Actor TriggerAmount as Monthly Payment
 
     // Only Posting Portion of Monthly payment added to Principle (Equity)
-    activity.renderedBalancePrimary = fpr.postVolatile(principlePaid, activity.activityDate, this.name + " (Principle)", this.$loki);
+    activity.renderedBalancePrimary = fpr.postVolatile(principlePaid, activity.activityDate, this.name + " (Principle)", this.$control);
 
     // Usually you will need feeder account but benchmark loans might not want to have one
     if (fsr != null)
     {
       // split the pull from feeder fund into principle and interest for later analysis
-      fsr.postVolatile(-(this.triggerAmount - principlePaid), activity.activityDate, this.name + " (Overhead)", this.$loki);
-      activity.renderedBalanceSecondary = fsr.postVolatile(-principlePaid, activity.activityDate, this.name + " (Principle)", this.$loki);
+      fsr.postVolatile(-(this.triggerAmount - principlePaid), activity.activityDate, this.name + " (Overhead)", this.$control);
+      activity.renderedBalanceSecondary = fsr.postVolatile(-principlePaid, activity.activityDate, this.name + " (Principle)", this.$control);
     }
 
     return;
@@ -510,20 +510,20 @@ Actor.prototype.executeActivity = function(activity)
       var calculatedRate = this.periodicityUnits / 12.0 * this.compoundInterestRate / 100.0;
       var interestAccrued = fpr.interimBalance.amount * calculatedRate;
 
-      activity.renderedBalancePrimary = fpr.postVolatile(interestAccrued, activity.activityDate, this.name, this.$loki);
+      activity.renderedBalancePrimary = fpr.postVolatile(interestAccrued, activity.activityDate, this.name, this.$control);
     }
 
     return;
   }
 
   // all other actors post only trigger amounts
-  activity.renderedBalancePrimary = fpr.postVolatile(this.triggerAmount, activity.activityDate, this.name, this.$loki);
+  activity.renderedBalancePrimary = fpr.postVolatile(this.triggerAmount, activity.activityDate, this.name, this.$control);
 
   // if feeder fund specifies, remove trigger amount from that
   if (this.fundSecondary != null) 
   {
     fsr = singletonContinuum.db.getCollection("funds").get(this.fundSecondary);
-    activity.renderedBalanceSecondary = fsr.postVolatile(this.triggerAmount * -1, activity.activityDate, this.name, this.$loki);
+    activity.renderedBalanceSecondary = fsr.postVolatile(this.triggerAmount * -1, activity.activityDate, this.name, this.$control);
   }
 }
 
@@ -611,7 +611,7 @@ function addTestData() {
   // set up actors
   var actorSavingsPlan = continuum.addActor({
     name: 'saving plan', 
-    fundPrimary: fundSavings.$loki, 
+    fundPrimary: fundSavings.$control, 
     periodicity: continuum.enums.ActorPeriodicity.Monthly, 
     periodicityUnits: 1, 
     triggerDateInitial: (new Date()).getTime(), 
@@ -620,7 +620,7 @@ function addTestData() {
 
   var actorSavingsAccrual = continuum.addActor({
     name: 'savings accrue',
-    fundPrimary: fundSavings.$loki,
+    fundPrimary: fundSavings.$control,
     periodicity: continuum.enums.ActorPeriodicity.Monthly,
     periodicityUnits: 1,
     triggerDateInitial: (new Date()).getTime(),
@@ -630,7 +630,7 @@ function addTestData() {
 
   var actorPaycheck = continuum.addActor({
     name: 'paycheck', 
-    fundPrimary: fundChecking.$loki, 
+    fundPrimary: fundChecking.$control, 
     periodicity: continuum.enums.ActorPeriodicity.Weekly, 
     periodicityUnits: 1, 
     triggerDateInitial: (new Date()).getTime(), 
@@ -639,8 +639,8 @@ function addTestData() {
 
   var actorMortgagePayment = continuum.addActor({
     name: 'mortgage payment', 
-    fundPrimary: fundMortgage.$loki, 	// apply payment to
-    fundSecondary: fundChecking.$loki, // feeder fund
+    fundPrimary: fundMortgage.$control, 	// apply payment to
+    fundSecondary: fundChecking.$control, // feeder fund
     periodicity: continuum.enums.ActorPeriodicity.Monthly, 
     periodicityUnits: 1, 
     triggerDateInitial: (new Date()).getTime(), 
@@ -652,8 +652,8 @@ function addTestData() {
 
   var actorCarPayment = continuum.addActor({
     name: 'auto loan', 
-    fundPrimary: fundAutoLoan.$loki, 
-    fundSecondary: fundChecking.$loki, // feeder fund is checking
+    fundPrimary: fundAutoLoan.$control, 
+    fundSecondary: fundChecking.$control, // feeder fund is checking
     periodicity: continuum.enums.ActorPeriodicity.Monthly, 
     periodicityUnits: 1, 
     triggerDateInitial: (new Date()).getTime(),
@@ -731,7 +731,7 @@ function dbLoaderCallback()
     continuum.db.getCollection("funds").update(checkingFund);
     console.log("");
     console.log("activities for checking: ");
-    logActivities(continuum.activitiesByFund(checkingFund.$loki));
+    logActivities(continuum.activitiesByFund(checkingFund.$control));
     console.log("");
     console.log("due to autosave timer, you may need to ctrl-c to quit");
     console.log("wait 5 seconds before quitting to increase checking by 10 on next run");
@@ -753,7 +753,7 @@ function logActivities(activities) {
   });
 }
 
-var continuum = new LokiContinuum("LokiContinuum.db", {
+var continuum = new ControlContinuum("ControlContinuum.db", {
         autoload: true,
         autoloadCallback : dbLoaderCallback,
         autosave: true, 

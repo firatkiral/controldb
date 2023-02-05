@@ -1,12 +1,12 @@
-# LokiJS
+# ControlDB
 
-[LokiJS.org web site](http://lokijs.org) | 
-[LokiJS GitHub page](https://github.com/techfort/LokiJS) | 
-[Sandbox / Playground](https://rawgit.com/techfort/LokiJS/master/examples/sandbox/LokiSandbox.htm)
+[ControlDB.org web site](http://controldb.org) | 
+[ControlDB GitHub page](https://github.com/techfort/ControlDB) | 
+[Sandbox / Playground](https://rawgit.com/techfort/ControlDB/master/examples/sandbox/ControlSandbox.htm)
 
 ## Documentation Overview
 
-This is an early effort to provide a more accurate and up-to-date version of LokiJS documentation by using jsdoc.  Since modifications arise from various contributors, this should allow distributed effort toward 
+This is an early effort to provide a more accurate and up-to-date version of ControlDB documentation by using jsdoc.  Since modifications arise from various contributors, this should allow distributed effort toward 
 maintaining this documentation.  
 
 ## Getting Started
@@ -14,7 +14,7 @@ maintaining this documentation.
 Creating a database :
 
 ```javascript
-var db = new loki('example.db');
+var db = new control('example.db');
 ```
 
 Add a collection :
@@ -33,7 +33,7 @@ users.insert({
 });
 
 // alternatively, insert array of documents
-users.insert([{ name: 'Thor', age: 35}, { name: 'Loki', age: 30}]);
+users.insert([{ name: 'Thor', age: 35}, { name: 'Control', age: 30}]);
 ```
 
 Simple find query :

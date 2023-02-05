@@ -1,9 +1,3 @@
-/**
- * LokiJS
- * @author Joe Minichino <joe.minichino@gmail.com>
- *
- * A lightweight document oriented javascript database
- */
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD
@@ -13,7 +7,7 @@
     module.exports = factory();
   } else {
     // Browser globals
-    root.loki = factory();
+    root.control = factory();
   }
 }(this, function () {
 
@@ -149,7 +143,7 @@
     };
 
     // wrapping in object to expose to default export for potential user override.
-    // warning: overriding these methods will override behavior for all loki db instances in memory.
+    // warning: overriding these methods will override behavior for all control db instances in memory.
     // warning: if you use binary indices these comparators should be the same for all inserts/updates/removes.
     var Comparators = {
       aeq: aeqHelper,
@@ -157,7 +151,7 @@
       gt: gtHelper
     };
 
-    /** Helper function for determining 'loki' abstract equality which is a little more abstract than ==
+    /** Helper function for determining 'control' abstract equality which is a little more abstract than ==
      *     aeqHelper(5, '5') === true
      *     aeqHelper(5.0, '5') === true
      *     aeqHelper(new Date("1/1/2011"), new Date("1/1/2011")) === true
@@ -452,13 +446,13 @@
     function doQueryOp(val, op, record) {
       for (var p in op) {
         if (hasOwnProperty.call(op, p)) {
-          return LokiOps[p](val, op[p], record);
+          return ControlOps[p](val, op[p], record);
         }
       }
       return false;
     }
 
-    var LokiOps = {
+    var ControlOps = {
       // comparison operators
       // a is the value in the collection
       // b is the query value
@@ -480,12 +474,12 @@
 
         return a !== b;
       },
-      // date equality / loki abstract equality test
+      // date equality / control abstract equality test
       $dteq: function (a, b) {
         return Comparators.aeq(a, b);
       },
 
-      // loki comparisons: return identical unindexed results as indexed comparisons
+      // control comparisons: return identical unindexed results as indexed comparisons
       $gt: function (a, b) {
         return Comparators.gt(a, b, false);
       },
@@ -567,7 +561,7 @@
       },
 
       $containsNone: function (a, b) {
-        return !LokiOps.$containsAny(a, b);
+        return !ControlOps.$containsAny(a, b);
       },
 
       $containsAny: function (a, b) {
@@ -677,8 +671,8 @@
     // ops that can be used with { $$op: 'column-name' } syntax
     var valueLevelOps = ['$eq', '$aeq', '$ne', '$dteq', '$gt', '$gte', '$lt', '$lte', '$jgt', '$jgte', '$jlt', '$jlte', '$type'];
     valueLevelOps.forEach(function (op) {
-      var fun = LokiOps[op];
-      LokiOps['$' + op] = function (a, spec, record) {
+      var fun = ControlOps[op];
+      ControlOps['$' + op] = function (a, spec, record) {
         if (typeof spec === 'string') {
           return fun(a, record[spec]);
         } else if (typeof spec === 'function') {
@@ -691,9 +685,9 @@
 
     // if an op is registered in this object, our 'calculateRange' can use it with our binary indices.
     // if the op is registered to a function, we will run that function/op as a 2nd pass filter on results.
-    // those 2nd pass filter functions should be similar to LokiOps functions, accepting 2 vals to compare.
+    // those 2nd pass filter functions should be similar to ControlOps functions, accepting 2 vals to compare.
     var indexedOps = {
-      $eq: LokiOps.$eq,
+      $eq: ControlOps.$eq,
       $aeq: true,
       $dteq: true,
       $gt: true,
@@ -772,36 +766,36 @@
 
 
     /**
-     * LokiEventEmitter is a minimalist version of EventEmitter. It enables any
+     * ControlEventEmitter is a minimalist version of EventEmitter. It enables any
      * constructor that inherits EventEmitter to emit events and trigger
      * listeners that have been added to the event through the on(event, callback) method
      *
-     * @constructor LokiEventEmitter
+     * @constructor ControlEventEmitter
      */
-    function LokiEventEmitter() { }
+    function ControlEventEmitter() { }
 
     /**
      * @prop {hashmap} events - a hashmap, with each property being an array of callbacks
-     * @memberof LokiEventEmitter
+     * @memberof ControlEventEmitter
      */
-    LokiEventEmitter.prototype.events = {};
+    ControlEventEmitter.prototype.events = {};
 
     /**
      * @prop {boolean} asyncListeners - boolean determines whether or not the callbacks associated with each event
      * should happen in an async fashion or not
      * Default is false, which means events are synchronous
-     * @memberof LokiEventEmitter
+     * @memberof ControlEventEmitter
      */
-    LokiEventEmitter.prototype.asyncListeners = false;
+    ControlEventEmitter.prototype.asyncListeners = false;
 
     /**
      * on(eventName, listener) - adds a listener to the queue of callbacks associated to an event
      * @param {string|string[]} eventName - the name(s) of the event(s) to listen to
      * @param {function} listener - callback function of listener to attach
      * @returns {int} the index of the callback in the array of listeners for a particular event
-     * @memberof LokiEventEmitter
+     * @memberof ControlEventEmitter
      */
-    LokiEventEmitter.prototype.on = function (eventName, listener) {
+    ControlEventEmitter.prototype.on = function (eventName, listener) {
       var event;
       var self = this;
 
@@ -826,9 +820,9 @@
      * provided signatures match (i.e. if passing emit(event, arg0, arg1) the listener should take two parameters)
      * @param {string} eventName - the name of the event
      * @param {object=} data - optional object passed with the event
-     * @memberof LokiEventEmitter
+     * @memberof ControlEventEmitter
      */
-    LokiEventEmitter.prototype.emit = function (eventName) {
+    ControlEventEmitter.prototype.emit = function (eventName) {
       var self = this;
       var selfArgs;
       if (eventName && this.events[eventName]) {
@@ -850,22 +844,22 @@
     };
 
     /**
-     * Alias of LokiEventEmitter.prototype.on
+     * Alias of ControlEventEmitter.prototype.on
      * addListener(eventName, listener) - adds a listener to the queue of callbacks associated to an event
      * @param {string|string[]} eventName - the name(s) of the event(s) to listen to
      * @param {function} listener - callback function of listener to attach
      * @returns {int} the index of the callback in the array of listeners for a particular event
-     * @memberof LokiEventEmitter
+     * @memberof ControlEventEmitter
      */
-    LokiEventEmitter.prototype.addListener = LokiEventEmitter.prototype.on;
+    ControlEventEmitter.prototype.addListener = ControlEventEmitter.prototype.on;
 
     /**
      * removeListener() - removes the listener at position 'index' from the event 'eventName'
      * @param {string|string[]} eventName - the name(s) of the event(s) which the listener is attached to
      * @param {function} listener - the listener callback function to remove from emitter
-     * @memberof LokiEventEmitter
+     * @memberof ControlEventEmitter
      */
-    LokiEventEmitter.prototype.removeListener = function (eventName, listener) {
+    ControlEventEmitter.prototype.removeListener = function (eventName, listener) {
       var self = this;
 
       if (Array.isArray(eventName)) {
@@ -883,25 +877,25 @@
     };
 
     /**
-     * Loki: The main database class
-     * @constructor Loki
-     * @implements LokiEventEmitter
+     * Control: The main database class
+     * @constructor Control
+     * @implements ControlEventEmitter
      * @param {string} filename - name of the file to be saved to
      * @param {object=} options - (Optional) config options object
      * @param {string} options.env - override environment detection as 'NODEJS', 'BROWSER', 'CORDOVA'
      * @param {boolean} [options.verbose=false] - enable console output
      * @param {boolean} [options.autosave=false] - enables autosave
      * @param {int} [options.autosaveInterval=5000] - time interval (in milliseconds) between saves (if dirty)
-     * @param {boolean} [options.autoload=false] - enables autoload on loki instantiation
+     * @param {boolean} [options.autoload=false] - enables autoload on control instantiation
      * @param {function} options.autoloadCallback - user callback called after database load
-     * @param {adapter} options.adapter - an instance of a loki persistence adapter
+     * @param {adapter} options.adapter - an instance of a control persistence adapter
      * @param {string} [options.serializationMethod='normal'] - ['normal', 'pretty', 'destructured']
      * @param {string} options.destructureDelimiter - string delimiter used for destructured serialization
      * @param {boolean} [options.throttledSaves=true] - debounces multiple calls to to saveDatabase reducing number of disk I/O operations
                                                 and guaranteeing proper serialization of the calls.
      */
-    function Loki(filename, options) {
-      this.filename = filename || 'loki.db';
+    function Control(filename, options) {
+      this.filename = filename || 'control.db';
       this.collections = [];
 
       // persist version of code which created the database to the database.
@@ -918,9 +912,9 @@
 
       this.options = {};
 
-      // currently keeping persistenceMethod and persistenceAdapter as loki level properties that
+      // currently keeping persistenceMethod and persistenceAdapter as control level properties that
       // will not or cannot be deserialized.  You are required to configure persistence every time
-      // you instantiate a loki object (or use default environment detection) in order to load the database anyways.
+      // you instantiate a control object (or use default environment detection) in order to load the database anyways.
 
       // persistenceMethod could be 'fs', 'localStorage', or 'adapter'
       // this is optional option param, otherwise environment detection will be used
@@ -991,16 +985,16 @@
     }
 
     // db class is an EventEmitter
-    Loki.prototype = new LokiEventEmitter();
-    Loki.prototype.constructor = Loki;
+    Control.prototype = new ControlEventEmitter();
+    Control.prototype.constructor = Control;
 
     // experimental support for browserify's abstract syntax scan to pick up dependency of indexed adapter.
-    // Hopefully, once this hits npm a browserify require of lokijs should scan the main file and detect this indexed adapter reference.
-    Loki.prototype.getIndexedAdapter = function () {
+    // Hopefully, once this hits npm a browserify require of controldb should scan the main file and detect this indexed adapter reference.
+    Control.prototype.getIndexedAdapter = function () {
       var adapter;
 
       if (typeof require === 'function') {
-        adapter = require("./loki-indexed-adapter.js");
+        adapter = require("./control-indexed-adapter.js");
       }
 
       return adapter;
@@ -1010,20 +1004,20 @@
     /**
      * Allows reconfiguring database options
      *
-     * @param {object} options - configuration options to apply to loki db object
+     * @param {object} options - configuration options to apply to control db object
      * @param {string} options.env - override environment detection as 'NODEJS', 'BROWSER', 'CORDOVA'
      * @param {boolean} options.verbose - enable console output (default is 'false')
      * @param {boolean} options.autosave - enables autosave
      * @param {int} options.autosaveInterval - time interval (in milliseconds) between saves (if dirty)
-     * @param {boolean} options.autoload - enables autoload on loki instantiation
+     * @param {boolean} options.autoload - enables autoload on control instantiation
      * @param {function} options.autoloadCallback - user callback called after database load
-     * @param {adapter} options.adapter - an instance of a loki persistence adapter
+     * @param {adapter} options.adapter - an instance of a control persistence adapter
      * @param {string} options.serializationMethod - ['normal', 'pretty', 'destructured']
      * @param {string} options.destructureDelimiter - string delimiter used for destructured serialization
-     * @param {boolean} initialConfig - (internal) true is passed when loki ctor is invoking
-     * @memberof Loki
+     * @param {boolean} initialConfig - (internal) true is passed when control ctor is invoking
+     * @memberof Control
      */
-    Loki.prototype.configureOptions = function (options, initialConfig) {
+    Control.prototype.configureOptions = function (options, initialConfig) {
       var defaultPersistence = {
         'NODEJS': 'fs',
         'BROWSER': 'localStorage',
@@ -1031,9 +1025,9 @@
         'MEMORY': 'memory'
       },
         persistenceMethods = {
-          'fs': LokiFsAdapter,
-          'localStorage': LokiLocalStorageAdapter,
-          'memory': LokiMemoryAdapter
+          'fs': ControlFsAdapter,
+          'localStorage': ControlLocalStorageAdapter,
+          'memory': ControlMemoryAdapter
         };
 
       this.options = {};
@@ -1067,7 +1061,7 @@
         }
 
 
-        // if they want to load database on loki instantiation, now is a good time to load... after adapter set and before possible autosave initiation
+        // if they want to load database on control instantiation, now is a good time to load... after adapter set and before possible autosave initiation
         if (options.autoload && initialConfig) {
           // for autoload, let the constructor complete before firing callback
           var self = this;
@@ -1118,15 +1112,15 @@
     };
 
     /**
-     * Copies 'this' database into a new Loki instance. Object references are shared to make lightweight.
+     * Copies 'this' database into a new Control instance. Object references are shared to make lightweight.
      *
      * @param {object} options - apply or override collection level settings
      * @param {bool} options.removeNonSerializable - nulls properties not safe for serialization.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.copy = function (options) {
+    Control.prototype.copy = function (options) {
       // in case running in an environment without accurate environment detection, pass 'NA'
-      var databaseCopy = new Loki(this.filename, { env: "NA" });
+      var databaseCopy = new Control(this.filename, { env: "NA" });
       var clen, idx;
 
       options = options || {};
@@ -1166,9 +1160,9 @@
      * @param {int=} options.ttl - age of document (in ms.) before document is considered aged/stale.
      * @param {int=} options.ttlInterval - time interval for clearing out 'aged' documents; not set by default.
      * @returns {Collection} a reference to the collection which was just added
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.addCollection = function (name, options) {
+    Control.prototype.addCollection = function (name, options) {
       var i,
         len = this.collections.length;
 
@@ -1195,12 +1189,12 @@
       this.collections.push(collection);
 
       if (this.verbose)
-        collection.lokiConsoleWrapper = console;
+        collection.controlConsoleWrapper = console;
 
       return collection;
     };
 
-    Loki.prototype.loadCollection = function (collection) {
+    Control.prototype.loadCollection = function (collection) {
       if (!collection.name) {
         throw new Error('Collection must have a name property to be loaded');
       }
@@ -1211,9 +1205,9 @@
      * Retrieves reference to a collection by name.
      * @param {string} collectionName - name of collection to look up
      * @returns {Collection} Reference to collection in database by that name, or null if not found
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.getCollection = function (collectionName) {
+    Control.prototype.getCollection = function (collectionName) {
       var i,
         len = this.collections.length;
 
@@ -1229,13 +1223,13 @@
     };
 
     /**
-     * Renames an existing loki collection
+     * Renames an existing control collection
      * @param {string} oldName - name of collection to rename
      * @param {string} newName - new name of collection
      * @returns {Collection} reference to the newly renamed collection
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.renameCollection = function (oldName, newName) {
+    Control.prototype.renameCollection = function (oldName, newName) {
       var c = this.getCollection(oldName);
 
       if (c) {
@@ -1248,9 +1242,9 @@
     /**
      * Returns a list of collections in the database.
      * @returns {object[]} array of objects containing 'name', 'type', and 'count' properties.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.listCollections = function () {
+    Control.prototype.listCollections = function () {
 
       var i = this.collections.length,
         colls = [];
@@ -1268,9 +1262,9 @@
     /**
      * Removes a collection from the database.
      * @param {string} collectionName - name of collection to remove
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.removeCollection = function (collectionName) {
+    Control.prototype.removeCollection = function (collectionName) {
       var i,
         len = this.collections.length;
 
@@ -1289,7 +1283,7 @@
       }
     };
 
-    Loki.prototype.getName = function () {
+    Control.prototype.getName = function () {
       return this.name;
     };
 
@@ -1297,7 +1291,7 @@
      * serializeReplacer - used to prevent certain properties from being serialized
      *
      */
-    Loki.prototype.serializeReplacer = function (key, value) {
+    Control.prototype.serializeReplacer = function (key, value) {
       switch (key) {
         case 'autosaveHandle':
         case 'persistenceAdapter':
@@ -1307,7 +1301,7 @@
         case 'throttledSavePending':
         case 'throttledCallbacks':
           return undefined;
-        case 'lokiConsoleWrapper':
+        case 'controlConsoleWrapper':
           return null;
         default:
           return value;
@@ -1315,12 +1309,12 @@
     };
 
     /**
-     * Serialize database to a string which can be loaded via {@link Loki#loadJSON}
+     * Serialize database to a string which can be loaded via {@link Control#loadJSON}
      *
-     * @returns {string} Stringified representation of the loki database.
-     * @memberof Loki
+     * @returns {string} Stringified representation of the control database.
+     * @memberof Control
      */
-    Loki.prototype.serialize = function (options) {
+    Control.prototype.serialize = function (options) {
       options = options || {};
 
       if (!options.hasOwnProperty("serializationMethod")) {
@@ -1336,24 +1330,24 @@
     };
 
     // alias of serialize
-    Loki.prototype.toJson = Loki.prototype.serialize;
+    Control.prototype.toJson = Control.prototype.serialize;
 
     /**
      * Database level destructured JSON serialization routine to allow alternate serialization methods.
-     * Internally, Loki supports destructuring via loki "serializationMethod' option and
-     * the optional LokiPartitioningAdapter class. It is also available if you wish to do
+     * Internally, Control supports destructuring via control "serializationMethod' option and
+     * the optional ControlPartitioningAdapter class. It is also available if you wish to do
      * your own structured persistence or data exchange.
      *
-     * @param {object=} options - output format options for use externally to loki
+     * @param {object=} options - output format options for use externally to control
      * @param {bool=} options.partitioned - (default: false) whether db and each collection are separate
      * @param {int=} options.partition - can be used to only output an individual collection or db (-1)
      * @param {bool=} options.delimited - (default: true) whether subitems are delimited or subarrays
      * @param {string=} options.delimiter - override default delimiter
      *
      * @returns {string|array} A custom, restructured aggregation of independent serializations.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.serializeDestructured = function (options) {
+    Control.prototype.serializeDestructured = function (options) {
       var idx, sidx, result, resultlen;
       var reconstruct = [];
       var dbcopy;
@@ -1382,7 +1376,7 @@
       }
 
       // not just an individual collection, so we will need to serialize db container via shallow copy
-      dbcopy = new Loki(this.filename);
+      dbcopy = new Control(this.filename);
       dbcopy.loadJSONObject(this);
 
       for (idx = 0; idx < dbcopy.collections.length; idx++) {
@@ -1452,7 +1446,7 @@
       }
       else {
         // D : one big Delimited string { partitioned: false, delimited : true }
-        // This is the method Loki will use internally if 'destructured'.
+        // This is the method Control will use internally if 'destructured'.
         // Little memory overhead improvements but does not require multiple asynchronous adapter call scheduling
         if (options.delimited) {
           // indicate no more collections
@@ -1484,9 +1478,9 @@
      * @param {int} options.collectionIndex -  specify which collection to serialize data for
      *
      * @returns {string|array} A custom, restructured aggregation of independent serializations for a single collection.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.serializeCollection = function (options) {
+    Control.prototype.serializeCollection = function (options) {
       var doccount,
         docidx,
         resultlines = [];
@@ -1524,8 +1518,8 @@
 
     /**
      * Database level destructured JSON deserialization routine to minimize memory overhead.
-     * Internally, Loki supports destructuring via loki "serializationMethod' option and
-     * the optional LokiPartitioningAdapter class. It is also available if you wish to do
+     * Internally, Control supports destructuring via control "serializationMethod' option and
+     * the optional ControlPartitioningAdapter class. It is also available if you wish to do
      * your own structured persistence or data exchange.
      *
      * @param {string|array} destructuredSource - destructured json or array to deserialize from
@@ -1536,9 +1530,9 @@
      * @param {string=} options.delimiter - override default delimiter
      *
      * @returns {object|array} An object representation of the deserialized database, not yet applied to 'this' db or document array
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.deserializeDestructured = function (destructuredSource, options) {
+    Control.prototype.deserializeDestructured = function (destructuredSource, options) {
       var workarray = [];
       var len, cdb;
       var idx, collIndex = 0, collCount, lineIndex = 1, done = false;
@@ -1642,9 +1636,9 @@
      * @param {string=} options.delimiter - if delimited, this is delimiter to use (if other than default)
      *
      * @returns {array} an array of documents to attach to collection.data.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.deserializeCollection = function (destructuredSource, options) {
+    Control.prototype.deserializeCollection = function (destructuredSource, options) {
       var workarray = [];
       var idx, len;
 
@@ -1679,14 +1673,14 @@
     };
 
     /**
-     * Inflates a loki database from a serialized JSON string
+     * Inflates a control database from a serialized JSON string
      *
-     * @param {string} serializedDb - a serialized loki database string
+     * @param {string} serializedDb - a serialized control database string
      * @param {object=} options - apply or override collection level settings
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.loadJSON = function (serializedDb, options) {
+    Control.prototype.loadJSON = function (serializedDb, options) {
       var dbObject;
       if (serializedDb.length === 0) {
         dbObject = {};
@@ -1705,14 +1699,14 @@
     };
 
     /**
-     * Inflates a loki database from a JS object
+     * Inflates a control database from a JS object
      *
-     * @param {object} dbObject - a serialized loki database string
+     * @param {object} dbObject - a serialized control database string
      * @param {object=} options - apply or override collection level settings
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.loadJSONObject = function (dbObject, options) {
+    Control.prototype.loadJSONObject = function (dbObject, options) {
       var i = 0,
         len = dbObject.collections ? dbObject.collections.length : 0,
         coll,
@@ -1874,9 +1868,9 @@
      * Does not actually destroy the db.
      *
      * @param {function=} callback - (Optional) if supplied will be registered with close event before emitting.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.close = function (callback) {
+    Control.prototype.close = function (callback) {
       // for autosave scenarios, we will let close perform final save (if dirty)
       // For web use, you might call from window.onbeforeunload to shutdown database, saving pending changes
       if (this.autosave) {
@@ -1910,9 +1904,9 @@
      * @param {array=} optional array of collection names. No arg means all collections are processed.
      * @returns {array} array of changes
      * @see private method createChange() in Collection
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.generateChangesNotification = function (arrayOfCollectionNames) {
+    Control.prototype.generateChangesNotification = function (arrayOfCollectionNames) {
       function getCollName(coll) {
         return coll.name;
       }
@@ -1930,17 +1924,17 @@
     /**
      * (Changes API) - stringify changes for network transmission
      * @returns {string} string representation of the changes
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.serializeChanges = function (collectionNamesArray) {
+    Control.prototype.serializeChanges = function (collectionNamesArray) {
       return JSON.stringify(this.generateChangesNotification(collectionNamesArray));
     };
 
     /**
      * (Changes API) : clears all the changes in all collections.
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.clearChanges = function () {
+    Control.prototype.clearChanges = function () {
       this.collections.forEach(function (coll) {
         if (coll.flushChanges) {
           coll.flushChanges();
@@ -1965,9 +1959,9 @@
      * @param {object=} options - memory adapter options
      * @param {boolean} [options.asyncResponses=false] - whether callbacks are invoked asynchronously
      * @param {int} [options.asyncTimeout=50] - timeout in ms to queue callbacks
-     * @constructor LokiMemoryAdapter
+     * @constructor ControlMemoryAdapter
      */
-    function LokiMemoryAdapter(options) {
+    function ControlMemoryAdapter(options) {
       this.hashStore = {};
       this.options = options || {};
 
@@ -1982,13 +1976,13 @@
 
     /**
      * Loads a serialized database from its in-memory store.
-     * (Loki persistence adapter interface function)
+     * (Control persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - adapter callback to return load result to caller
-     * @memberof LokiMemoryAdapter
+     * @memberof ControlMemoryAdapter
      */
-    LokiMemoryAdapter.prototype.loadDatabase = function (dbname, callback) {
+    ControlMemoryAdapter.prototype.loadDatabase = function (dbname, callback) {
       var self = this;
 
       if (this.options.asyncResponses) {
@@ -2015,13 +2009,13 @@
 
     /**
      * Saves a serialized database to its in-memory store.
-     * (Loki persistence adapter interface function)
+     * (Control persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - adapter callback to return load result to caller
-     * @memberof LokiMemoryAdapter
+     * @memberof ControlMemoryAdapter
      */
-    LokiMemoryAdapter.prototype.saveDatabase = function (dbname, dbstring, callback) {
+    ControlMemoryAdapter.prototype.saveDatabase = function (dbname, dbstring, callback) {
       var self = this;
       var saveCount;
 
@@ -2056,9 +2050,9 @@
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - function to call when done
-     * @memberof LokiMemoryAdapter
+     * @memberof ControlMemoryAdapter
      */
-    LokiMemoryAdapter.prototype.deleteDatabase = function (dbname, callback) {
+    ControlMemoryAdapter.prototype.deleteDatabase = function (dbname, callback) {
       if (this.hashStore.hasOwnProperty(dbname)) {
         delete this.hashStore[dbname];
       }
@@ -2078,14 +2072,14 @@
      * single indexeddb row.  If a single document update causes the collection to be flagged as dirty, all
      * of that collection's pages will be written on next save.
      *
-     * @param {object} adapter - reference to a 'non-reference' mode loki adapter instance.
+     * @param {object} adapter - reference to a 'non-reference' mode control adapter instance.
      * @param {object=} options - configuration options for partitioning and paging
      * @param {bool} options.paging - (default: false) set to true to enable paging collection data.
      * @param {int} options.pageSize - (default : 25MB) you can use this to limit size of strings passed to inner adapter.
      * @param {string} options.delimiter - allows you to override the default delimeter
-     * @constructor LokiPartitioningAdapter
+     * @constructor ControlPartitioningAdapter
      */
-    function LokiPartitioningAdapter(adapter, options) {
+    function ControlPartitioningAdapter(adapter, options) {
       this.mode = "reference";
       this.adapter = null;
       this.options = options || {};
@@ -2096,14 +2090,14 @@
       // verify user passed an appropriate adapter
       if (adapter) {
         if (adapter.mode === "reference") {
-          throw new Error("LokiPartitioningAdapter cannot be instantiated with a reference mode adapter");
+          throw new Error("ControlPartitioningAdapter cannot be instantiated with a reference mode adapter");
         }
         else {
           this.adapter = adapter;
         }
       }
       else {
-        throw new Error("LokiPartitioningAdapter requires a (non-reference mode) adapter on construction");
+        throw new Error("ControlPartitioningAdapter requires a (non-reference mode) adapter on construction");
       }
 
       // set collection paging defaults
@@ -2123,16 +2117,16 @@
 
     /**
      * Loads a database which was partitioned into several key/value saves.
-     * (Loki persistence adapter interface function)
+     * (Control persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {function} callback - adapter callback to return load result to caller
-     * @memberof LokiPartitioningAdapter
+     * @memberof ControlPartitioningAdapter
      */
-    LokiPartitioningAdapter.prototype.loadDatabase = function (dbname, callback) {
+    ControlPartitioningAdapter.prototype.loadDatabase = function (dbname, callback) {
       var self = this;
       this.dbname = dbname;
-      this.dbref = new Loki(dbname);
+      this.dbref = new Control(dbname);
 
       // load the db container (without data)
       this.adapter.loadDatabase(dbname, function (result) {
@@ -2145,10 +2139,10 @@
         }
 
         if (typeof result !== "string") {
-          callback(new Error("LokiPartitioningAdapter received an unexpected response from inner adapter loadDatabase()"));
+          callback(new Error("ControlPartitioningAdapter received an unexpected response from inner adapter loadDatabase()"));
         }
 
-        // I will want to use loki destructuring helper methods so i will inflate into typed instance
+        // I will want to use control destructuring helper methods so i will inflate into typed instance
         var db = JSON.parse(result);
         self.dbref.loadJSONObject(db);
         db = null;
@@ -2177,7 +2171,7 @@
      * @param {int} partition - ordinal collection position to load next
      * @param {function} callback - adapter callback to return load result to caller
      */
-    LokiPartitioningAdapter.prototype.loadNextPartition = function (partition, callback) {
+    ControlPartitioningAdapter.prototype.loadNextPartition = function (partition, callback) {
       var keyname = this.dbname + "." + partition;
       var self = this;
 
@@ -2205,7 +2199,7 @@
      *
      * @param {function} callback - adapter callback to return load result to caller
      */
-    LokiPartitioningAdapter.prototype.loadNextPage = function (callback) {
+    ControlPartitioningAdapter.prototype.loadNextPage = function (callback) {
       // calculate name for next saved page in sequence
       var keyname = this.dbname + "." + this.pageIterator.collection + "." + this.pageIterator.pageIndex;
       var self = this;
@@ -2256,15 +2250,15 @@
 
     /**
      * Saves a database by partioning into separate key/value saves.
-     * (Loki 'reference mode' persistence adapter interface function)
+     * (Control 'reference mode' persistence adapter interface function)
      *
      * @param {string} dbname - name of the database (filename/keyname)
      * @param {object} dbref - reference to database which we will partition and save.
      * @param {function} callback - adapter callback to return load result to caller
      *
-     * @memberof LokiPartitioningAdapter
+     * @memberof ControlPartitioningAdapter
      */
-    LokiPartitioningAdapter.prototype.exportDatabase = function (dbname, dbref, callback) {
+    ControlPartitioningAdapter.prototype.exportDatabase = function (dbname, dbref, callback) {
       var self = this;
       var idx, clen = dbref.collections.length;
 
@@ -2289,7 +2283,7 @@
      *
      * @param {function} callback - adapter callback to return load result to caller
      */
-    LokiPartitioningAdapter.prototype.saveNextPartition = function (callback) {
+    ControlPartitioningAdapter.prototype.saveNextPartition = function (callback) {
       var self = this;
       var partition = this.dirtyPartitions.shift();
       var keyname = this.dbname + ((partition === -1) ? "" : ("." + partition));
@@ -2341,7 +2335,7 @@
      *
      * @param {function} callback - adapter callback to return load result to caller
      */
-    LokiPartitioningAdapter.prototype.saveNextPage = function (callback) {
+    ControlPartitioningAdapter.prototype.saveNextPage = function (callback) {
       var self = this;
       var coll = this.dbref.collections[this.pageIterator.collection];
       var keyname = this.dbname + "." + this.pageIterator.collection + "." + this.pageIterator.pageIndex;
@@ -2403,10 +2397,10 @@
     };
 
     /**
-     * A loki persistence adapter which persists using node fs module
-     * @constructor LokiFsAdapter
+     * A control persistence adapter which persists using node fs module
+     * @constructor ControlFsAdapter
      */
-    function LokiFsAdapter() {
+    function ControlFsAdapter() {
       try {
         this.fs = require('fs');
       } catch (e) {
@@ -2418,9 +2412,9 @@
      * loadDatabase() - Load data from file, will throw an error if the file does not exist
      * @param {string} dbname - the filename of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof LokiFsAdapter
+     * @memberof ControlFsAdapter
      */
-    LokiFsAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
+    ControlFsAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
       var self = this;
 
       this.fs.stat(dbname, function (err, stats) {
@@ -2446,9 +2440,9 @@
      * might want to expand this to avoid dataloss on partial save
      * @param {string} dbname - the filename of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof LokiFsAdapter
+     * @memberof ControlFsAdapter
      */
-    LokiFsAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
+    ControlFsAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
       var self = this;
       var tmpdbname = dbname + '~';
       this.fs.writeFile(tmpdbname, dbstring, function writeFileCallback(err) {
@@ -2465,9 +2459,9 @@
      * file can't be deleted
      * @param {string} dbname - the filename of the database to delete
      * @param {function} callback - the callback to handle the result
-     * @memberof LokiFsAdapter
+     * @memberof ControlFsAdapter
      */
-    LokiFsAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
+    ControlFsAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
       this.fs.unlink(dbname, function deleteDatabaseCallback(err) {
         if (err) {
           callback(new Error(err));
@@ -2479,18 +2473,18 @@
 
 
     /**
-     * A loki persistence adapter which persists to web browser's local storage object
-     * @constructor LokiLocalStorageAdapter
+     * A control persistence adapter which persists to web browser's local storage object
+     * @constructor ControlLocalStorageAdapter
      */
-    function LokiLocalStorageAdapter() { }
+    function ControlLocalStorageAdapter() { }
 
     /**
      * loadDatabase() - Load data from localstorage
      * @param {string} dbname - the name of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof LokiLocalStorageAdapter
+     * @memberof ControlLocalStorageAdapter
      */
-    LokiLocalStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
+    ControlLocalStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
       if (localStorageAvailable()) {
         callback(localStorage.getItem(dbname));
       } else {
@@ -2503,9 +2497,9 @@
      * might want to expand this to avoid dataloss on partial save
      * @param {string} dbname - the filename of the database to load
      * @param {function} callback - the callback to handle the result
-     * @memberof LokiLocalStorageAdapter
+     * @memberof ControlLocalStorageAdapter
      */
-    LokiLocalStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
+    ControlLocalStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
       if (localStorageAvailable()) {
         localStorage.setItem(dbname, dbstring);
         callback(null);
@@ -2519,9 +2513,9 @@
      * can't be deleted
      * @param {string} dbname - the filename of the database to delete
      * @param {function} callback - the callback to handle the result
-     * @memberof LokiLocalStorageAdapter
+     * @memberof ControlLocalStorageAdapter
      */
-    LokiLocalStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
+    ControlLocalStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
       if (localStorageAvailable()) {
         localStorage.removeItem(dbname);
         callback(null);
@@ -2538,9 +2532,9 @@
      * @param {boolean} options.recursiveWait - (default: true) if after queue is drained, another save was kicked off, wait for it
      * @param {bool} options.recursiveWaitLimit - (default: false) limit our recursive waiting to a duration
      * @param {int} options.recursiveWaitLimitDelay - (default: 2000) cutoff in ms to stop recursively re-draining
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.throttledSaveDrain = function (callback, options) {
+    Control.prototype.throttledSaveDrain = function (callback, options) {
       var self = this;
       var now = (new Date()).getTime();
 
@@ -2604,7 +2598,7 @@
      * @param {object} options - not currently used (remove or allow overrides?)
      * @param {function=} callback - (Optional) user supplied async callback / error handler
      */
-    Loki.prototype.loadDatabaseInternal = function (options, callback) {
+    Control.prototype.loadDatabaseInternal = function (options, callback) {
       var cFun = callback || function (err, data) {
         if (err) {
           throw err;
@@ -2661,7 +2655,7 @@
 
     /**
      * Handles manually loading from file system, local storage, or adapter (such as indexeddb)
-     *    This method utilizes loki configuration options (if provided) to determine which
+     *    This method utilizes control configuration options (if provided) to determine which
      *    persistence method to use, or environment detection (if configuration was not provided).
      *    To avoid contention with any throttledSaves, we will drain the save queue first.
      *
@@ -2672,7 +2666,7 @@
      * @param {bool} options.recursiveWaitLimit - (default: false) limit our recursive waiting to a duration
      * @param {int} options.recursiveWaitLimitDelay - (default: 2000) cutoff in ms to stop recursively re-draining
      * @param {function=} callback - (Optional) user supplied async callback / error handler
-     * @memberof Loki
+     * @memberof Control
      * @example
      * db.loadDatabase({}, function(err) {
      *   if (err) {
@@ -2683,7 +2677,7 @@
      *   }
      * });
      */
-    Loki.prototype.loadDatabase = function (options, callback) {
+    Control.prototype.loadDatabase = function (options, callback) {
       var self = this;
 
       // if throttling disabled, just call internal
@@ -2725,7 +2719,7 @@
     /**
      * Internal save logic, decoupled from save throttling logic
      */
-    Loki.prototype.saveDatabaseInternal = function (callback) {
+    Control.prototype.saveDatabaseInternal = function (callback) {
       var cFun = callback || function (err) {
         if (err) {
           throw err;
@@ -2743,18 +2737,18 @@
       // run incremental, reference, or normal mode adapters, depending on what's available
       if (this.persistenceAdapter.mode === "incremental") {
         var cachedDirty;
-        // ignore autosave until we copy loki (only then we can clear dirty flags,
+        // ignore autosave until we copy control (only then we can clear dirty flags,
         // but if we don't do it now, autosave will be triggered a lot unnecessarily)
         this.ignoreAutosave = true;
         this.persistenceAdapter.saveDatabase(
           this.filename,
-          function getLokiCopy() {
+          function getControlCopy() {
             self.ignoreAutosave = false;
             if (cachedDirty) {
-              cFun(new Error('adapter error - getLokiCopy called more than once'));
+              cFun(new Error('adapter error - getControlCopy called more than once'));
               return;
             }
-            var lokiCopy = self.copy({ removeNonSerializable: true });
+            var controlCopy = self.copy({ removeNonSerializable: true });
 
             // remember and clear dirty ids -- we must do it before the save so that if
             // and update occurs between here and callback, it will get saved later
@@ -2765,7 +2759,7 @@
               col.dirty = false;
               col.dirtyIds = [];
             });
-            return lokiCopy;
+            return controlCopy;
           },
           function exportDatabaseCallback(err) {
             self.ignoreAutosave = false;
@@ -2801,13 +2795,13 @@
 
     /**
      * Handles manually saving to file system, local storage, or adapter (such as indexeddb)
-     *    This method utilizes loki configuration options (if provided) to determine which
+     *    This method utilizes control configuration options (if provided) to determine which
      *    persistence method to use, or environment detection (if configuration was not provided).
      *
      * If you are configured with autosave, you do not need to call this method yourself.
      *
      * @param {function=} callback - (Optional) user supplied async callback / error handler
-     * @memberof Loki
+     * @memberof Control
      * @example
      * db.saveDatabase(function(err) {
      *   if (err) {
@@ -2818,7 +2812,7 @@
      *   }
      * });
      */
-    Loki.prototype.saveDatabase = function (callback) {
+    Control.prototype.saveDatabase = function (callback) {
       if (!this.throttledSaves) {
         this.saveDatabaseInternal(callback);
         return;
@@ -2854,18 +2848,18 @@
     };
 
     // alias
-    Loki.prototype.save = Loki.prototype.saveDatabase;
+    Control.prototype.save = Control.prototype.saveDatabase;
 
     /**
      * Handles deleting a database from file system, local
      *    storage, or adapter (indexeddb)
-     *    This method utilizes loki configuration options (if provided) to determine which
+     *    This method utilizes control configuration options (if provided) to determine which
      *    persistence method to use, or environment detection (if configuration was not provided).
      *
      * @param {function=} callback - (Optional) user supplied async callback / error handler
-     * @memberof Loki
+     * @memberof Control
      */
-    Loki.prototype.deleteDatabase = function (options, callback) {
+    Control.prototype.deleteDatabase = function (options, callback) {
       var cFun = callback || function (err, data) {
         if (err) {
           throw err;
@@ -2893,7 +2887,7 @@
      *
      * @returns {boolean} - true if database has changed since last autosave, false if not.
      */
-    Loki.prototype.autosaveDirty = function () {
+    Control.prototype.autosaveDirty = function () {
       for (var idx = 0; idx < this.collections.length; idx++) {
         if (this.collections[idx].dirty) {
           return true;
@@ -2908,7 +2902,7 @@
      *    Called from saveDatabase() after db is saved.
      *
      */
-    Loki.prototype.autosaveClearFlags = function () {
+    Control.prototype.autosaveClearFlags = function () {
       for (var idx = 0; idx < this.collections.length; idx++) {
         this.collections[idx].dirty = false;
       }
@@ -2920,7 +2914,7 @@
      * @param {object} options - not currently used (remove or allow overrides?)
      * @param {function=} callback - (Optional) user supplied async callback
      */
-    Loki.prototype.autosaveEnable = function (options, callback) {
+    Control.prototype.autosaveEnable = function (options, callback) {
       this.autosave = true;
 
       var delay = 5000,
@@ -2933,7 +2927,7 @@
       this.autosaveHandle = setInterval(function autosaveHandleInterval() {
         // use of dirty flag will need to be hierarchical since mods are done at collection level with no visibility of 'db'
         // so next step will be to implement collection level dirty flags set on insert/update/remove
-        // along with loki level isdirty() function which iterates all collections to see if any are dirty
+        // along with control level isdirty() function which iterates all collections to see if any are dirty
 
         if (self.autosaveDirty() && !self.ignoreAutosave) {
           self.saveDatabase(callback);
@@ -2945,13 +2939,12 @@
      * autosaveDisable - stop the autosave interval timer.
      *
      */
-    Loki.prototype.autosaveDisable = function () {
+    Control.prototype.autosaveDisable = function () {
       if (typeof (this.autosaveHandle) !== 'undefined' && this.autosaveHandle !== null) {
         clearInterval(this.autosaveHandle);
         this.autosaveHandle = null;
       }
     };
-
 
     /**
      * Resultset class allowing chainable queries.  Intended to be instanced internally.
@@ -3260,7 +3253,7 @@
           eff = dc / frl;
 
           // when javascript sort fallback is enabled, you generally need more than ~17% of total docs in resultset
-          // before array intersect is determined to be the faster algorithm, otherwise leave at 10% for loki sort.
+          // before array intersect is determined to be the faster algorithm, otherwise leave at 10% for control sort.
           if (options.useJavascriptSorting) {
             targetEff = 6;
           }
@@ -3300,7 +3293,7 @@
         });
       }
 
-      // otherwise use loki sort which will return same results if column is indexed or not
+      // otherwise use control sort which will return same results if column is indexed or not
       var wrappedComparer =
         (function (prop, desc, data) {
           var val1, val2, arr;
@@ -3582,7 +3575,7 @@
       }
 
       // the comparison function
-      var fun = LokiOps[operator];
+      var fun = ControlOps[operator];
 
       // "shortcut" for collection data
       var t = this.collection.data;
@@ -3708,7 +3701,6 @@
       return this;
     };
 
-
     /**
      * where() - Used for filtering via a javascript filter function.
      *
@@ -3785,14 +3777,14 @@
      *        the collection is not configured for clone object.
      * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
      *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
-     * @param {bool} options.removeMeta - Will force clones and strip $loki and meta properties from documents
+     * @param {bool} options.removeMeta - Will force clones and strip $control and meta properties from documents
      *
      * @returns {array} Array of documents in the resultset
      * @memberof Resultset
      * @example
      * var resutls = users.chain().find({ age: 34 }).data();
      */
-    Resultset.prototype.data = function (options) {
+    Resultset.prototype.docs = function (options) {
       var result = [],
         data = this.collection.data,
         obj,
@@ -3825,7 +3817,7 @@
             for (i = 0; i < len; i++) {
               obj = clone(data[i], method);
               if (options.removeMeta) {
-                delete obj.$loki;
+                delete obj.$control;
                 delete obj.meta;
               }
               result.push(obj);
@@ -3850,7 +3842,7 @@
         for (i = 0; i < len; i++) {
           obj = clone(data[fr[i]], method);
           if (options.removeMeta) {
-            delete obj.$loki;
+            delete obj.$control;
             delete obj.meta;
           }
           result.push(obj);
@@ -3937,7 +3929,7 @@
      * @returns {value} The output of your reduceFunction
      * @memberof Resultset
      * @example
-     * var db = new loki("order.db");
+     * var db = new control("order.db");
      * var orders = db.addCollection("orders");
      * orders.insert([{ qty: 4, unitCost: 100.00 }, { qty: 10, unitCost: 999.99 }, { qty: 2, unitCost: 49.99 }]);
      *
@@ -3952,7 +3944,7 @@
      */
     Resultset.prototype.mapReduce = function (mapFunction, reduceFunction) {
       try {
-        return reduceFunction(this.data().map(mapFunction));
+        return reduceFunction(this.docs().map(mapFunction));
       } catch (err) {
         throw err;
       }
@@ -3972,7 +3964,7 @@
      * @returns {Resultset} A resultset with data in the format [{left: leftObj, right: rightObj}]
      * @memberof Resultset
      * @example
-     * var db = new loki('sandbox.db');
+     * var db = new control('sandbox.db');
      *
      * var products = db.addCollection('products');
      * var orders = db.addCollection('orders');
@@ -3990,7 +3982,7 @@
      *
      * var mapfun = function(left, right) {
      *   return {
-     *     orderId: left.$loki,
+     *     orderId: left.$control,
      *     orderDate: new Date(left.orderDate) + '',
      *     customerId: left.customerId,
      *     qty: left.qty,
@@ -4019,14 +4011,14 @@
         joinMap = {};
 
       //get the left data
-      leftData = this.data(dataOptions);
+      leftData = this.docs(dataOptions);
       leftDataLength = leftData.length;
 
       //get the right data
       if (joinData instanceof Collection) {
         rightData = joinData.chain().data(dataOptions);
       } else if (joinData instanceof Resultset) {
-        rightData = joinData.data(dataOptions);
+        rightData = joinData.docs(dataOptions);
       } else if (Array.isArray(joinData)) {
         rightData = joinData;
       } else {
@@ -4076,14 +4068,14 @@
      * @example
      * var orders.chain().find({ productId: 32 }).map(function(obj) {
      *   return {
-     *     orderId: $loki,
+     *     orderId: $control,
      *     productId: productId,
      *     quantity: qty
      *   };
      * });
      */
     Resultset.prototype.map = function (mapFun, dataOptions) {
-      var data = this.data(dataOptions).map(mapFun);
+      var data = this.docs(dataOptions).map(mapFun);
       //return return a new resultset with no filters
       this.collection = new Collection('mappedData');
       this.collection.insert(data);
@@ -4105,7 +4097,7 @@
      * var results = mydv.data();
      *
      * @constructor DynamicView
-     * @implements LokiEventEmitter
+     * @implements ControlEventEmitter
      * @param {Collection} collection - A reference to the collection to work against
      * @param {string} name - The name of this dynamic view
      * @param {object=} options - (Optional) Pass in object with 'persistent' and/or 'sortPriority' options.
@@ -4164,7 +4156,7 @@
       };
     }
 
-    DynamicView.prototype = new LokiEventEmitter();
+    DynamicView.prototype = new ControlEventEmitter();
     DynamicView.prototype.constructor = DynamicView;
 
     /**
@@ -4253,7 +4245,7 @@
      * @returns {Resultset} A copy of the internal resultset for branched queries.
      * @memberof DynamicView
      * @example
-     * var db = new loki('test');
+     * var db = new control('test');
      * var coll = db.addCollection('mydocs');
      * var dv = coll.addDynamicView('myview');
      * var tx = [
@@ -4456,7 +4448,7 @@
       if (this.options.persistent) {
         // for now just rebuild the persistent dynamic view data in this worst case scenario
         // (a persistent view utilizing transactions which get rolled back), we already know the filter so not too bad.
-        this.resultdata = this.resultset.data();
+        this.resultdata = this.resultset.docs();
 
         this.emit('rebuild', this);
       }
@@ -4648,7 +4640,7 @@
       // recurring resultset data resolutions should know internally its already up to date.
       // for persistent data this will not update resultdata nor fire rebuild event.
       if (this.resultsdirty) {
-        this.resultdata = this.resultset.data();
+        this.resultdata = this.resultset.docs();
       }
 
       return this.resultset.count();
@@ -4662,7 +4654,7 @@
      *        the collection is not configured for clone object.
      * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
      *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
-     * @param {bool} options.removeMeta - Will force clones and strip $loki and meta properties from documents
+     * @param {bool} options.removeMeta - Will force clones and strip $control and meta properties from documents
      * @returns {array} An array of documents representing the current DynamicView contents.
      * @memberof DynamicView
      */
@@ -4673,7 +4665,7 @@
           suppressRebuildEvent: true
         });
       }
-      return (this.options.persistent) ? (this.resultdata) : (this.resultset.data(options));
+      return (this.options.persistent) ? (this.resultdata) : (this.resultset.docs(options));
     };
 
     /**
@@ -4746,7 +4738,7 @@
 
       if (this.options.persistent) {
         // persistent view, rebuild local resultdata array
-        this.resultdata = this.resultset.data();
+        this.resultdata = this.resultset.docs();
         this.resultsdirty = false;
       }
 
@@ -4766,7 +4758,7 @@
       // if no filter applied yet, the result 'set' should remain 'everything'
       if (!this.resultset.filterInitialized) {
         if (this.options.persistent) {
-          this.resultdata = this.resultset.data();
+          this.resultdata = this.resultset.docs();
         }
         // need to re-sort to sort new document
         if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
@@ -4874,7 +4866,7 @@
       // if no filter applied yet, the result 'set' should remain 'everything'
       if (!this.resultset.filterInitialized) {
         if (this.options.persistent) {
-          this.resultdata = this.resultset.data();
+          this.resultdata = this.resultset.docs();
         }
         // in case changes to data altered a sort column
         if (this.sortFunction || this.sortCriteria || this.sortCriteriaSimple) {
@@ -4951,7 +4943,7 @@
     /**
      * Collection class that handles documents of same type
      * @constructor Collection
-     * @implements LokiEventEmitter
+     * @implements ControlEventEmitter
      * @param {string} name - collection name
      * @param {(array|object)=} options - (optional) array of property names to be indicized OR a configuration object
      * @param {array=} [options.unique=[]] - array of property names to define unique constraints for
@@ -4969,7 +4961,7 @@
      * @param {string} [options.cloneMethod='parse-stringify'] - 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
      * @param {int=} options.ttl - age of document (in ms.) before document is considered aged/stale.
      * @param {int=} options.ttlInterval - time interval for clearing out 'aged' documents; not set by default.
-     * @see {@link Loki#addCollection} for normal creation of collections
+     * @see {@link Control#addCollection} for normal creation of collections
      */
     function Collection(name, options) {
       // the name of the collection
@@ -4977,7 +4969,7 @@
       this.name = name;
       // the data held by the collection
       this.data = [];
-      this.idIndex = null; // position->$loki index (built lazily)
+      this.idIndex = null; // position->$control index (built lazily)
       this.binaryIndices = {}; // user defined indexes
       this.constraints = {
         unique: {},
@@ -5034,7 +5026,7 @@
       this.transactional = options.hasOwnProperty('transactional') ? options.transactional : false;
 
       // options to clone objects when inserting them
-      this.cloneObjects = options.hasOwnProperty('clone') ? options.clone : false;
+      this.cloneObjects = options.hasOwnProperty('clone') ? options.clone : true;
 
       // default clone method (if enabled) is parse-stringify
       this.cloneMethod = options.hasOwnProperty('cloneMethod') ? options.cloneMethod : "parse-stringify";
@@ -5092,7 +5084,7 @@
       // changes are tracked by collection and aggregated by the db
       this.changes = [];
 
-      // lightweight changes tracking (loki IDs only) for optimized db saving
+      // lightweight changes tracking (control IDs only) for optimized db saving
       this.dirtyIds = [];
 
       // initialize optional user-supplied indices array ['age', 'lname', 'zip']
@@ -5127,7 +5119,7 @@
         });
 
         changedObjects.forEach(function (object) {
-          if (!hasOwnProperty.call(object, '$loki'))
+          if (!hasOwnProperty.call(object, '$control'))
             return self.removeAutoUpdateObserver(object);
           try {
             self.update(object);
@@ -5156,7 +5148,7 @@
           for (var i = 0; i < propertyNames.length; i++) {
             var propertyName = propertyNames[i];
             if (newObject.hasOwnProperty(propertyName)) {
-              if (!oldObject.hasOwnProperty(propertyName) || self.uniqueNames.indexOf(propertyName) >= 0 || propertyName == '$loki' || propertyName == 'meta') {
+              if (!oldObject.hasOwnProperty(propertyName) || self.uniqueNames.indexOf(propertyName) >= 0 || propertyName == '$control' || propertyName == 'meta') {
                 delta[propertyName] = newObject[propertyName];
               }
               else {
@@ -5199,17 +5191,17 @@
       });
 
       this.on('warning', function (warning) {
-        self.lokiConsoleWrapper.warn(warning);
+        self.controlConsoleWrapper.warn(warning);
       });
       // for de-serialization purposes
       flushChanges();
     }
 
-    Collection.prototype = new LokiEventEmitter();
+    Collection.prototype = new ControlEventEmitter();
     Collection.prototype.contructor = Collection;
 
     /*
-      * For ChangeAPI default to clone entire object, for delta changes create object with only differences (+ $loki and meta)
+      * For ChangeAPI default to clone entire object, for delta changes create object with only differences (+ $control and meta)
       */
     Collection.prototype.createChange = function (name, op, obj, old) {
       this.changes.push({
@@ -5283,7 +5275,7 @@
       return obj;
     };
 
-    Collection.prototype.lokiConsoleWrapper = {
+    Collection.prototype.controlConsoleWrapper = {
       log: function () { },
       warn: function () { },
       error: function () { },
@@ -5608,11 +5600,11 @@
       else {
         if (options.randomSampling) {
           // validate first and last
-          if (!LokiOps.$lte(Utils.getIn(this.data[biv[0]], property, usingDotNotation),
+          if (!ControlOps.$lte(Utils.getIn(this.data[biv[0]], property, usingDotNotation),
             Utils.getIn(this.data[biv[1]], property, usingDotNotation))) {
             valid = false;
           }
-          if (!LokiOps.$lte(Utils.getIn(this.data[biv[len - 2]], property, usingDotNotation),
+          if (!ControlOps.$lte(Utils.getIn(this.data[biv[len - 2]], property, usingDotNotation),
             Utils.getIn(this.data[biv[len - 1]], property, usingDotNotation))) {
             valid = false;
           }
@@ -5628,7 +5620,7 @@
             for (idx = 0; idx < iter - 1; idx++) {
               // calculate random position
               pos = Math.floor(Math.random() * (len - 1));
-              if (!LokiOps.$lte(Utils.getIn(this.data[biv[pos]], property, usingDotNotation),
+              if (!ControlOps.$lte(Utils.getIn(this.data[biv[pos]], property, usingDotNotation),
                 Utils.getIn(this.data[biv[pos + 1]], property, usingDotNotation))) {
                 valid = false;
                 break;
@@ -5639,7 +5631,7 @@
         else {
           // validate that the binary index is sequenced properly
           for (idx = 0; idx < len - 1; idx++) {
-            if (!LokiOps.$lte(Utils.getIn(this.data[biv[idx]], property, usingDotNotation),
+            if (!ControlOps.$lte(Utils.getIn(this.data[biv[idx]], property, usingDotNotation),
               Utils.getIn(this.data[biv[idx + 1]], property, usingDotNotation))) {
               valid = false;
               break;
@@ -5757,7 +5749,7 @@
       var len = data.length;
       var index = new Array(len);
       for (i; i < len; i++) {
-        index[i] = data[i].$loki;
+        index[i] = data[i].$control;
       }
       this.idIndex = index;
     };
@@ -5864,7 +5856,7 @@
      * });
      *
      * // alternatively, insert array of documents
-     * users.insert([{ name: 'Thor', age: 35}, { name: 'Loki', age: 30}]);
+     * users.insert([{ name: 'Thor', age: 35}, { name: 'Control', age: 30}]);
      */
     Collection.prototype.insert = function (doc, overrideAdaptiveIndices) {
       if (!Array.isArray(doc)) {
@@ -5948,7 +5940,7 @@
       }
 
       // both 'pre-insert' and 'insert' events are passed internal data reference even when cloning
-      // insert needs internal reference because that is where loki itself listens to add meta
+      // insert needs internal reference because that is where control itself listens to add meta
       if (!bulkInsert) {
         this.emit('pre-insert', obj);
       }
@@ -6056,12 +6048,12 @@
       }
 
       // verify object is a properly formed document
-      if (!hasOwnProperty.call(doc, '$loki')) {
+      if (!hasOwnProperty.call(doc, '$control')) {
         throw new Error('Trying to update unsynced document. Please save the document first by using insert() or addMany()');
       }
       try {
         this.startTransaction();
-        var arr = this.get(doc.$loki, true),
+        var arr = this.get(doc.$control, true),
           oldInternal,   // ref to existing obj
           newInternal, // ref to new internal obj
           position,
@@ -6108,11 +6100,11 @@
           this.flagBinaryIndexesDirty();
         }
 
-        this.idIndex[position] = newInternal.$loki;
+        this.idIndex[position] = newInternal.$control;
         //this.flagBinaryIndexesDirty();
 
         if (this.isIncremental) {
-          this.dirtyIds.push(newInternal.$loki);
+          this.dirtyIds.push(newInternal.$control);
         }
 
         this.commit();
@@ -6143,7 +6135,7 @@
         return returnObj;
       } catch (err) {
         this.rollback();
-        this.lokiConsoleWrapper.error(err.message);
+        this.controlConsoleWrapper.error(err.message);
         this.emit('error', err);
         throw (err); // re-throw error so user does not think it succeeded
       }
@@ -6160,7 +6152,7 @@
       // if object you are adding already has id column it is either already in the collection
       // or the object is carrying its own 'id' property.  If it also has a meta property,
       // then this is already in collection so throw error, otherwise rename to originalId and continue adding.
-      if (typeof (obj.$loki) !== 'undefined') {
+      if (typeof (obj.$control) !== 'undefined') {
         throw new Error('Document is already in collection, please use update()');
       }
 
@@ -6172,11 +6164,11 @@
         this.maxId++;
 
         if (isNaN(this.maxId)) {
-          this.maxId = (this.data[this.data.length - 1].$loki + 1);
+          this.maxId = (this.data[this.data.length - 1].$control + 1);
         }
 
         var newId = this.maxId;
-        obj.$loki = newId;
+        obj.$control = newId;
 
         if (!this.disableMeta) {
           obj.meta.version = 0;
@@ -6223,7 +6215,7 @@
         return (this.cloneObjects) ? (clone(obj, this.cloneMethod)) : (obj);
       } catch (err) {
         this.rollback();
-        this.lokiConsoleWrapper.error(err.message);
+        this.controlConsoleWrapper.error(err.message);
         this.emit('error', err);
         throw (err); // re-throw error so user does not think it succeeded
       }
@@ -6248,7 +6240,7 @@
 
       } catch (err) {
         this.rollback();
-        this.lokiConsoleWrapper.error(err.message);
+        this.controlConsoleWrapper.error(err.message);
       }
     };
 
@@ -6289,7 +6281,7 @@
         this.startTransaction();
 
         // create hashobject for positional removal inclusion tests...
-        // all keys defined in this hashobject represent $loki ids of the documents to remove.
+        // all keys defined in this hashobject represent $control ids of the documents to remove.
         this.ensureId();
         for (idx = 0; idx < len; idx++) {
           xo[this.idIndex[positions[idx]]] = true;
@@ -6336,7 +6328,7 @@
 
         // emit 'delete' events only of listeners are attached.
         // since data not removed yet, in future we can emit single delete event with array...
-        // for now that might be breaking change to put in potential 1.6 or LokiDB (lokijs2) version
+        // for now that might be breaking change to put in potential 1.6 or ControlDB (controldb2) version
         if (!this.disableChangesApi || this.events.delete.length > 1) {
           for (idx = 0; idx < len; idx++) {
             this.emit('delete', this.data[positions[idx]]);
@@ -6346,7 +6338,7 @@
         // remove from data[] :
         // filter collection data for items not in inclusion hashobject
         this.data = this.data.filter(function (obj) {
-          return !xo[obj.$loki];
+          return !xo[obj.$control];
         });
 
         if (this.isIncremental) {
@@ -6377,7 +6369,7 @@
         if (adaptiveOverride) {
           this.adaptiveBinaryIndices = true;
         }
-        this.lokiConsoleWrapper.error(err.message);
+        this.controlConsoleWrapper.error(err.message);
         this.emit('error', err);
         return null;
       }
@@ -6385,7 +6377,7 @@
 
     /**
      *  Internal method called by remove()
-     * @param {object[]|number[]} batch - array of documents or $loki ids to remove
+     * @param {object[]|number[]} batch - array of documents or $control ids to remove
      */
     Collection.prototype.removeBatch = function (batch) {
       var len = batch.length,
@@ -6394,15 +6386,15 @@
       var xlt = {};
       var posx = [];
 
-      // create lookup hashobject to translate $loki id to position
+      // create lookup hashobject to translate $control id to position
       for (idx = 0; idx < dlen; idx++) {
-        xlt[this.data[idx].$loki] = idx;
+        xlt[this.data[idx].$control] = idx;
       }
 
       // iterate the batch
       for (idx = 0; idx < len; idx++) {
         if (typeof (batch[idx]) === 'object') {
-          posx.push(xlt[batch[idx].$loki]);
+          posx.push(xlt[batch[idx].$control]);
         }
         else {
           posx.push(xlt[batch[idx]]);
@@ -6432,13 +6424,13 @@
         return;
       }
 
-      if (!hasOwnProperty.call(doc, '$loki')) {
+      if (!hasOwnProperty.call(doc, '$control')) {
         throw new Error('Object is not a document stored in the collection');
       }
 
       try {
         this.startTransaction();
-        var arr = this.get(doc.$loki, true),
+        var arr = this.get(doc.$control, true),
           // obj = arr[0],
           position = arr[1];
         var self = this;
@@ -6474,7 +6466,7 @@
         this.idIndex.splice(position, 1);
 
         if (this.isIncremental) {
-          this.dirtyIds.push(doc.$loki);
+          this.dirtyIds.push(doc.$control);
         }
 
         this.commit();
@@ -6484,7 +6476,7 @@
         if (!this.disableFreeze) {
           doc = unFreeze(doc);
         }
-        delete doc.$loki;
+        delete doc.$control;
         delete doc.meta;
         if (!this.disableFreeze) {
           freeze(doc);
@@ -6493,7 +6485,7 @@
 
       } catch (err) {
         this.rollback();
-        this.lokiConsoleWrapper.error(err.message);
+        this.controlConsoleWrapper.error(err.message);
         this.emit('error', err);
         return null;
       }
@@ -6505,7 +6497,7 @@
 
     /**
      * Get by Id - faster than other methods because of the searching algorithm
-     * @param {int} id - $loki id of document you want to retrieve
+     * @param {int} id - $control id of document you want to retrieve
      * @param {boolean} returnPosition - if 'true' we will return [object, position]
      * @returns {(object|array|null)} Object reference if document was found, null if not,
      *     or an array if 'returnPosition' was passed.
@@ -7010,6 +7002,250 @@
     };
 
     /**
+     * toJSON() - Override of toJSON to avoid circular references
+     *
+     */
+    Collection.prototype.toJSON = function () {
+      return this.chain().toJSON();
+    };
+
+    /**
+     * Allows you to limit the number of documents passed to next chain operation.
+     *    A resultset copy() is made to avoid altering original resultset.
+     *
+     * @param {int} qty - The number of documents to return.
+     * @returns {Resultset} Returns a copy of the resultset, limited by qty, for subsequent chain ops.
+     * @memberof Resultset
+     * // find the two oldest users
+     * var result = users.chain().simplesort("age", true).limit(2).data();
+     */
+    Collection.prototype.limit = function (qty) {
+      return this.chain().limit(qty);
+    };
+
+    /**
+     * Used for skipping 'pos' number of documents in the resultset.
+     *
+     * @param {int} pos - Number of documents to skip; all preceding documents are filtered out.
+     * @returns {Resultset} Returns a copy of the resultset, containing docs starting at 'pos' for subsequent chain ops.
+     * @memberof Resultset
+     * // find everyone but the two oldest users
+     * var result = users.chain().simplesort("age", true).offset(2).data();
+     */
+    Collection.prototype.offset = function (pos) {
+      return this.chain().offset(pos);
+    };
+
+    /**
+     * copy() - To support reuse of resultset in branched query situations.
+     *
+     * @returns {Resultset} Returns a copy of the resultset (set) but the underlying document references will be the same.
+     * @memberof Resultset
+     */
+    Collection.prototype.copy = function () {
+      return this.chain().copy();
+    };
+
+    /**
+     * transform() - executes a named collection transform or raw array of transform steps against the resultset.
+     *
+     * @param transform {(string|array)} - name of collection transform or raw transform array
+     * @param parameters {object=} - (Optional) object property hash of parameters, if the transform requires them.
+     * @returns {Resultset} either (this) resultset or a clone of of this resultset (depending on steps)
+     * @memberof Resultset
+     * @example
+     * users.addTransform('CountryFilter', [
+     *   {
+     *     type: 'find',
+     *     value: {
+     *       'country': { $eq: '[%lktxp]Country' }
+     *     }
+     *   },
+     *   {
+     *     type: 'simplesort',
+     *     property: 'age',
+     *     options: { desc: false}
+     *   }
+     * ]);
+     * var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data();
+     */
+    Collection.prototype.transform = function (transform, parameters) {
+      return this.chain().transform(transform, parameters);
+    };
+
+    /**
+     * User supplied compare function is provided two documents to compare. (chainable)
+     * @example
+     *    rslt.sort(function(obj1, obj2) {
+     *      if (obj1.name === obj2.name) return 0;
+     *      if (obj1.name > obj2.name) return 1;
+     *      if (obj1.name < obj2.name) return -1;
+     *    });
+     *
+     * @param {function} comparefun - A javascript compare function used for sorting.
+     * @returns {Resultset} Reference to this resultset, sorted, for future chain operations.
+     * @memberof Resultset
+     */
+    Collection.prototype.sort = function (comparefun) {
+      return this.chain().sort(comparefun);
+    };
+
+    /**
+     * Simpler, loose evaluation for user to sort based on a property name. (chainable).
+     *    Sorting based on the same lt/gt helper functions used for binary indices.
+     *
+     * @param {string} propname - name of property to sort by.
+     * @param {object|bool=} options - boolean to specify if isdescending, or options object
+     * @param {boolean} [options.desc=false] - whether to sort descending
+     * @param {boolean} [options.disableIndexIntersect=false] - whether we should explicity not use array intersection.
+     * @param {boolean} [options.forceIndexIntersect=false] - force array intersection (if binary index exists).
+     * @param {boolean} [options.useJavascriptSorting=false] - whether results are sorted via basic javascript sort.
+     * @returns {Resultset} Reference to this resultset, sorted, for future chain operations.
+     * @memberof Resultset
+     * @example
+     * var results = users.chain().simplesort('age').data();
+     */
+    Collection.prototype.simplesort = function (propname, options) {
+      return this.chain().simplesort(propname, options);
+    };
+
+    /**
+     * Allows sorting a resultset based on multiple columns.
+     * @example
+     * // to sort by age and then name (both ascending)
+     * rs.compoundsort(['age', 'name']);
+     * // to sort by age (ascending) and then by name (descending)
+     * rs.compoundsort(['age', ['name', true]]);
+     *
+     * @param {array} properties - array of property names or subarray of [propertyname, isdesc] used evaluate sort order
+     * @returns {Resultset} Reference to this resultset, sorted, for future chain operations.
+     * @memberof Resultset
+     */
+    Collection.prototype.compoundsort = function (properties) {
+      return this.chain().compoundsort(properties);
+    };
+
+    /**
+     * findOr() - oversee the operation of OR'ed query expressions.
+     *    OR'ed expression evaluation runs each expression individually against the full collection,
+     *    and finally does a set OR on each expression's results.
+     *    Each evaluation can utilize a binary index to prevent multiple linear array scans.
+     *
+     * @param {array} expressionArray - array of expressions
+     * @returns {Resultset} this resultset for further chain ops.
+     */
+    Collection.prototype.findOr = function (expressionArray) {
+      return this.chain().findOr(expressionArray);
+    };
+
+    /**
+     * findAnd() - oversee the operation of AND'ed query expressions.
+     *    AND'ed expression evaluation runs each expression progressively against the full collection,
+     *    internally utilizing existing chained resultset functionality.
+     *    Only the first filter can utilize a binary index.
+     *
+     * @param {array} expressionArray - array of expressions
+     * @returns {Resultset} this resultset for further chain ops.
+     */
+    Collection.prototype.findAnd = function (expressionArray) {
+      return this.chain().findAnd(expressionArray);
+    };
+
+    /**
+     * Used for querying via a mongo-style query object.
+     *
+     * @param {object} query - A mongo-style query object used for filtering current results.
+     * @param {boolean=} firstOnly - (Optional) Used by collection.findOne()
+     * @returns {Resultset} this resultset for further chain ops.
+     * @memberof Resultset
+     * @example
+     * var over30 = users.chain().find({ age: { $gte: 30 } }).data();
+     */
+    Collection.prototype.find = function (query, firstOnly) {
+      return this.chain().find(query, firstOnly);
+    };
+
+     /**
+     * Query the collection by supplying a javascript filter function.
+     * @example
+     * var results = coll.where(function(obj) {
+     *   return obj.legs === 8;
+     * });
+     *
+     * @param {function} fun - filter function to run against all collection docs
+     * @returns {array} all documents which pass your filter function
+     * @memberof Collection
+     */
+    Collection.prototype.where = function (fun) {
+      return this.chain().where(fun);
+    };
+
+    /**
+     * Terminates the chain and returns array of filtered documents
+     *
+     * @param {object=} options - allows specifying 'forceClones' and 'forceCloneMethod' options.
+     * @param {boolean} options.forceClones - Allows forcing the return of cloned objects even when
+     *        the collection is not configured for clone object.
+     * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
+     *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
+     * @param {bool} options.removeMeta - Will force clones and strip $control and meta properties from documents
+     *
+     * @returns {array} Array of documents in the resultset
+     * @memberof Resultset
+     * @example
+     * var resutls = users.chain().find({ age: 34 }).data();
+     */
+    Collection.prototype.docs = function (options) {
+      return this.chain().docs(options);
+    };
+
+    /**
+     * Removes all document objects which are currently in resultset from collection (as well as resultset)
+     *
+     * @returns {Resultset} this (empty) resultset for further chain ops.
+     * @memberof Resultset
+     * @example
+     * // remove users inactive since 1/1/2001
+     * users.chain().find({ lastActive: { $lte: new Date("1/1/2001").getTime() } }).remove();
+     */
+    Collection.prototype.remove = function () {
+      return this.chain().remove();
+    };
+
+    /**
+     * Map Reduce operation
+     *
+     * @param {function} mapFunction - function to use as map function
+     * @param {function} reduceFunction - function to use as reduce function
+     * @returns {data} The result of your mapReduce operation
+     * @memberof Collection
+     */
+    Collection.prototype.mapReduce = function (mapFunction, reduceFunction) {
+      return this.chain().mapReduce(mapFunction, reduceFunction);
+    };
+
+    /**
+     * Applies a map function into a new collection for further chaining.
+     * @param {function} mapFun - javascript map function
+     * @param {object=} dataOptions - options to data() before input to your map function
+     * @param {bool} dataOptions.removeMeta - allows removing meta before calling mapFun
+     * @param {boolean} dataOptions.forceClones - forcing the return of cloned objects to your map object
+     * @param {string} dataOptions.forceCloneMethod - Allows overriding the default or collection specified cloning method.
+     * @memberof Resultset
+     * @example
+     * var orders.chain().find({ productId: 32 }).map(function(obj) {
+     *   return {
+     *     orderId: $control,
+     *     productId: productId,
+     *     quantity: qty
+     *   };
+     * });
+     */
+    Collection.prototype.map = function (mapFun, dataOptions) {
+      return this.chain().map(mapFun, dataOptions);
+    };
+
+    /**
      * Retrieve doc by Unique index
      * @param {string} field - name of uniquely indexed property to use when doing lookup
      * @param {value} value - unique value to search for
@@ -7043,7 +7279,7 @@
       query = query || {};
 
       // Instantiate Resultset and exec find op passing firstOnly = true param
-      var result = this.chain().find(query, true).data();
+      var result = this.chain().find(query, true).docs();
 
       if (Array.isArray(result) && result.length === 0) {
         return null;
@@ -7073,18 +7309,6 @@
       }
 
       return rs.transform(transform, parameters);
-    };
-
-    /**
-     * Find method, api is similar to mongodb.
-     * for more complex queries use [chain()]{@link Collection#chain} or [where()]{@link Collection#where}.
-     * @example {@tutorial Query Examples}
-     * @param {object} query - 'mongo-like' query object
-     * @returns {array} Array of matching documents
-     * @memberof Collection
-     */
-    Collection.prototype.find = function (query) {
-      return this.chain().find(query).data();
     };
 
     /**
@@ -7167,37 +7391,6 @@
     };
 
     /**
-     * Query the collection by supplying a javascript filter function.
-     * @example
-     * var results = coll.where(function(obj) {
-     *   return obj.legs === 8;
-     * });
-     *
-     * @param {function} fun - filter function to run against all collection docs
-     * @returns {array} all documents which pass your filter function
-     * @memberof Collection
-     */
-    Collection.prototype.where = function (fun) {
-      return this.chain().where(fun).data();
-    };
-
-    /**
-     * Map Reduce operation
-     *
-     * @param {function} mapFunction - function to use as map function
-     * @param {function} reduceFunction - function to use as reduce function
-     * @returns {data} The result of your mapReduce operation
-     * @memberof Collection
-     */
-    Collection.prototype.mapReduce = function (mapFunction, reduceFunction) {
-      try {
-        return reduceFunction(this.data.map(mapFunction));
-      } catch (err) {
-        throw err;
-      }
-    };
-
-    /**
      * Join two collections on specified properties
      *
      * @param {array|Resultset|Collection} joinData - array of documents to 'join' to this collection
@@ -7244,7 +7437,7 @@
      */
     Collection.prototype.stage = function (stageName, obj) {
       var copy = JSON.parse(JSON.stringify(obj));
-      this.getStage(stageName)[obj.$loki] = copy;
+      this.getStage(stageName)[obj.$control] = copy;
       return copy;
     };
 
@@ -7321,11 +7514,11 @@
         if (max !== undefined) {
           if (max < deepProperty(this.data[i], field, deep)) {
             max = deepProperty(this.data[i], field, deep);
-            result.index = this.data[i].$loki;
+            result.index = this.data[i].$control;
           }
         } else {
           max = deepProperty(this.data[i], field, deep);
-          result.index = this.data[i].$loki;
+          result.index = this.data[i].$control;
         }
       }
       result.value = max;
@@ -7349,11 +7542,11 @@
         if (min !== undefined) {
           if (min > deepProperty(this.data[i], field, deep)) {
             min = deepProperty(this.data[i], field, deep);
-            result.index = this.data[i].$loki;
+            result.index = this.data[i].$control;
           }
         } else {
           min = deepProperty(this.data[i], field, deep);
-          result.index = this.data[i].$loki;
+          result.index = this.data[i].$control;
         }
       }
       result.value = min;
@@ -7557,10 +7750,10 @@
     function UniqueIndex(uniqueField) {
       this.field = uniqueField;
       this.keyMap = Object.create(null);
-      this.lokiMap = Object.create(null);
+      this.controlMap = Object.create(null);
     }
     UniqueIndex.prototype.keyMap = {};
-    UniqueIndex.prototype.lokiMap = {};
+    UniqueIndex.prototype.controlMap = {};
     UniqueIndex.prototype.set = function (obj) {
       var fieldValue = obj[this.field];
       if (fieldValue !== null && typeof (fieldValue) !== 'undefined') {
@@ -7568,7 +7761,7 @@
           throw new Error('Duplicate key for property ' + this.field + ': ' + fieldValue);
         } else {
           this.keyMap[fieldValue] = obj;
-          this.lokiMap[obj.$loki] = fieldValue;
+          this.controlMap[obj.$control] = fieldValue;
         }
       }
     };
@@ -7577,7 +7770,7 @@
     };
 
     UniqueIndex.prototype.byId = function (id) {
-      return this.keyMap[this.lokiMap[id]];
+      return this.keyMap[this.controlMap[id]];
     };
     /**
      * Updates a document's unique index given an updated object.
@@ -7585,8 +7778,8 @@
      * @param  {Object} doc New document object (likely the same as obj)
      */
     UniqueIndex.prototype.update = function (obj, doc) {
-      if (this.lokiMap[obj.$loki] !== doc[this.field]) {
-        var old = this.lokiMap[obj.$loki];
+      if (this.controlMap[obj.$control] !== doc[this.field]) {
+        var old = this.controlMap[obj.$control];
         this.set(doc);
         // make the old key fail bool test, while avoiding the use of delete (mem-leak prone)
         this.keyMap[old] = undefined;
@@ -7599,14 +7792,14 @@
       if (obj !== null && typeof obj !== 'undefined') {
         // avoid using `delete`
         this.keyMap[key] = undefined;
-        this.lokiMap[obj.$loki] = undefined;
+        this.controlMap[obj.$control] = undefined;
       } else {
         throw new Error('Key is not in unique index: ' + this.field);
       }
     };
     UniqueIndex.prototype.clear = function () {
       this.keyMap = Object.create(null);
-      this.lokiMap = Object.create(null);
+      this.controlMap = Object.create(null);
     };
 
     function ExactIndex(exactField) {
@@ -7731,27 +7924,27 @@
       }
     };
 
-    Loki.deepFreeze = deepFreeze;
-    Loki.freeze = freeze;
-    Loki.unFreeze = unFreeze;
-    Loki.LokiOps = LokiOps;
-    Loki.Collection = Collection;
-    Loki.DynamicView = DynamicView;
-    Loki.Resultset = Resultset;
-    Loki.KeyValueStore = KeyValueStore;
-    Loki.LokiMemoryAdapter = LokiMemoryAdapter;
-    Loki.LokiPartitioningAdapter = LokiPartitioningAdapter;
-    Loki.LokiLocalStorageAdapter = LokiLocalStorageAdapter;
-    Loki.LokiFsAdapter = LokiFsAdapter;
-    Loki.persistenceAdapters = {
-      fs: LokiFsAdapter,
-      localStorage: LokiLocalStorageAdapter
+    Control.deepFreeze = deepFreeze;
+    Control.freeze = freeze;
+    Control.unFreeze = unFreeze;
+    Control.ControlOps = ControlOps;
+    Control.Collection = Collection;
+    Control.DynamicView = DynamicView;
+    Control.Resultset = Resultset;
+    Control.KeyValueStore = KeyValueStore;
+    Control.ControlMemoryAdapter = ControlMemoryAdapter;
+    Control.ControlPartitioningAdapter = ControlPartitioningAdapter;
+    Control.ControlLocalStorageAdapter = ControlLocalStorageAdapter;
+    Control.ControlFsAdapter = ControlFsAdapter;
+    Control.persistenceAdapters = {
+      fs: ControlFsAdapter,
+      localStorage: ControlLocalStorageAdapter
     };
-    Loki.aeq = aeqHelper;
-    Loki.lt = ltHelper;
-    Loki.gt = gtHelper;
-    Loki.Comparators = Comparators;
-    return Loki;
+    Control.aeq = aeqHelper;
+    Control.lt = ltHelper;
+    Control.gt = gtHelper;
+    Control.Comparators = Comparators;
+    return Control;
   }());
 
 }));

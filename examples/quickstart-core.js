@@ -1,14 +1,14 @@
 /**
- * quickstart-core.js : example demonstrating 'core' lokijs methods
+ * quickstart-core.js : example demonstrating 'core' controldb methods
  *
- * This example will only use loki and collection classes.  We will not bother
+ * This example will only use control and collection classes.  We will not bother
  *    with persistence for this example.
  *
  */
 
-const loki = require('../src/lokijs.js');
+const control = require('../src/controldb.js');
 
-var db = new loki("quickstart-core.db");
+var db = new control("quickstart-core.db");
 
 var users = db.addCollection("users");
 
@@ -17,7 +17,7 @@ users.insert({ name: "odin", gender: "m", age: 1000, tags : ["woden", "knowlege"
 users.insert({ name: "frigg", gender: "f", age: 800, tags: ["foreknowlege"], items: ["eski"] });
 users.insert({ name: "thor", gender: "m", age: 35, items: ["mjolnir", "beer"] });
 users.insert({ name: "sif", gender: "f", age: 30 });
-users.insert({ name: "loki", gender: "m", age: 29 });
+users.insert({ name: "control", gender: "m", age: 29 });
 users.insert({ name: "sigyn", gender: "f", age: 29 });
 users.insert({ name: "freyr", age: 400 });
 users.insert({ name: "heimdallr", age: 99 });
@@ -99,7 +99,7 @@ mimir.age = 998;
 users.update(mimir);
 
 // remove a document by id
-users.remove(mimir.$loki);
+users.remove(mimir.$control);
 
 // remove a document by instance 
 var heimdallr = users.findOne({name: "heimdallr" });

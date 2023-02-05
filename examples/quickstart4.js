@@ -1,17 +1,17 @@
 /**
- * quickstart4.js example for lokijs with manual loading and saving
+ * quickstart4.js example for controldb with manual loading and saving
  *
- * This example shows how you can manually load and save your loki 
+ * This example shows how you can manually load and save your control 
  * database if do not need or want to use the 'autosave' functionality.
  *
- * Since most of loki's persistence adapters are asynchronous this example
+ * Since most of control's persistence adapters are asynchronous this example
  * shows you still need to use the appropriate callbacks to ensure those 
  * processes complete before you reload.
  */
 
-const loki = require('../src/lokijs.js');
+const control = require('../src/controldb.js');
 
-var db = new loki('quickstart4.db');
+var db = new control('quickstart4.db');
 
 // set up an initialize function for first load (when db hasn't been created yet)
 function databaseInitialize() {

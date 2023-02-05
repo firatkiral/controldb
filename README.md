@@ -1,20 +1,20 @@
-# LokiJS
+# ControlDB
 
 The super fast in-memory javascript document oriented database.
 
 Enable offline-syncing to your SQL/NoSQL database servers with [SyncProxy](https://www.syncproxy.com) !! Code-free real time syncing, ideal for mobile, electron and web apps.
 
-[![Join the chat at https://gitter.im/techfort/LokiJS](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/techfort/LokiJS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-![alt CI-badge](https://travis-ci.org/techfort/LokiJS.svg?branch=master)
-[![npm version](https://badge.fury.io/js/lokijs.svg)](http://badge.fury.io/js/lokijs)
-[![alt packagequality](http://npm.packagequality.com/shield/lokijs.svg)](http://packagequality.com/#?package=lokijs)
+[![Join the chat at https://gitter.im/techfort/ControlDB](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/techfort/ControlDB?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+![alt CI-badge](https://travis-ci.org/techfort/ControlDB.svg?branch=master)
+[![npm version](https://badge.fury.io/js/controldb.svg)](http://badge.fury.io/js/controldb)
+[![alt packagequality](http://npm.packagequality.com/shield/controldb.svg)](http://packagequality.com/#?package=controldb)
 
 ## Overview
 
-LokiJS is a document oriented database written in javascript, published under MIT License.
+ControlDB is a document oriented database written in javascript, published under MIT License.
 Its purpose is to store javascript objects as documents in a nosql fashion and retrieve them with a similar mechanism.
 Runs in node (including cordova/phonegap and node-webkit),  [nativescript](http://www.nativescript.org) and the browser.
-LokiJS is ideal for the following scenarios: 
+ControlDB is ideal for the following scenarios: 
 
 1. client-side in-memory db is ideal (e.g., a session store)
 2. performance critical applications
@@ -23,17 +23,17 @@ LokiJS is ideal for the following scenarios:
 5. node-webkit desktop apps
 6. nativescript mobile apps that mix the power and ubiquity of javascript with native performance and ui
 
-LokiJS supports indexing and views and achieves high-performance through maintaining unique and binary indexes (indices) for data.
+ControlDB supports indexing and views and achieves high-performance through maintaining unique and binary indexes (indices) for data.
 
 ## Demo
 
 The following demos are available:
-- [Sandbox / Playground](https://rawgit.com/techfort/LokiJS/master/examples/sandbox/LokiSandbox.htm)
+- [Sandbox / Playground](https://rawgit.com/techfort/ControlDB/master/examples/sandbox/ControlSandbox.htm)
 - a node-webkit small demo in the folder demos/desktop_app. You can launch it by running `/path/to/nw demos/desktop_app/`
 
 ## Wiki
 
-Example usage can be found on the [wiki](https://github.com/techfort/LokiJS/wiki)
+Example usage can be found on the [wiki](https://github.com/techfort/ControlDB/wiki)
 
 ## Main Features
 
@@ -46,21 +46,21 @@ Example usage can be found on the [wiki](https://github.com/techfort/LokiJS/wiki
 
 ## Current state
 
-LokiJS is at version 1.3 [Eostre].
+ControlDB is at version 1.3 [Eostre].
 
-As LokiJS is written in JavaScript it can be run on any environment supporting JavaScript such as browsers, node.js/node-webkit, nativescript mobile framework and hybrid mobile apps (such as phonegap/cordova).
+As ControlDB is written in JavaScript it can be run on any environment supporting JavaScript such as browsers, node.js/node-webkit, nativescript mobile framework and hybrid mobile apps (such as phonegap/cordova).
 
 Made by [@techfort](http://twitter.com/tech_fort), with the precious help of Dave Easterday. 
 
-_[Leave a tip](https://gratipay.com/techfort/) or give us a star if you find LokiJS useful!_
+_[Leave a tip](https://gratipay.com/techfort/) or give us a star if you find ControlDB useful!_
 
 ## Installation
 
-For browser environments you simply need the lokijs.js file contained in src/
+For browser environments you simply need the controldb.js file contained in src/
 
-You can use bower to install lokijs with `bower install lokijs`
+You can use bower to install controldb with `bower install controldb`
 
-For node and nativescript environments you can install through `npm install lokijs`.
+For node and nativescript environments you can install through `npm install controldb`.
 
 ## Roadmap
 

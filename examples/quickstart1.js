@@ -1,11 +1,11 @@
 // quickstart1.js example : 
-// This exmple does not save the database at all but just uses loki as an in-memory database with no persistence.
-// Since loki is synchronous -except- when dealing with persistence (I/O), 
-//   and this database uses no persistence, this example can deal with loki entirely synchronously.
+// This exmple does not save the database at all but just uses control as an in-memory database with no persistence.
+// Since control is synchronous -except- when dealing with persistence (I/O), 
+//   and this database uses no persistence, this example can deal with control entirely synchronously.
 
-const loki = require('../src/lokijs.js');
+const control = require('../src/controldb.js');
 
-var db = new loki("quickstart1.db");
+var db = new control("quickstart1.db");
 var users = db.addCollection("users");
 
 users.insert({name:'odin', age: 50});

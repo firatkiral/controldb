@@ -1,8 +1,8 @@
 <!--	
-  Loki Sandbox :
-  To support LokiJS project at  : https://github.com/techfort/LokiJS
+  Control Sandbox :
+  To support ControlDB project at  : https://github.com/techfort/ControlDB
 
-  This web page is designed to allow you to experiment with loki and/or inspect existing saved loki database files.
+  This web page is designed to allow you to experiment with control and/or inspect existing saved control database files.
 
   You can experiment, running queries on the default sample database or load a saved database from
   your filesystem, and inspect and/or run queries on it to inspect results.
@@ -10,10 +10,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Loki Sandbox</title>
+    <title>Control Sandbox</title>
 
-    <script src="../../src/lokijs.js"></script>
-    <script src="../../src/loki-indexed-adapter.js"></script>
+    <script src="../../src/controldb.js"></script>
+    <script src="../../src/control-indexed-adapter.js"></script>
     <script src="jquery-2.1.0.min.js"></script>
     <script src="sandbox.min.js"></script>
     <link rel="stylesheet" href="sandbox.min.css">
@@ -122,9 +122,9 @@
 
 <body style="background-color:#444; color:#fff">
 
-  <h1 style="font-family:'Segoe UI', 'sans-serif'">Loki Sandbox</h1>
+  <h1 style="font-family:'Segoe UI', 'sans-serif'">Control Sandbox</h1>
 
-  <div id="divLokiCode">
+  <div id="divControlCode">
   </div>
 
   <div id="divLoader" style="position:absolute; top:10px; right: 420px">
@@ -156,17 +156,17 @@
           <option value="https://gist.githubusercontent.com/obeliskos/7c52ded5a5bffd68c1ca2e0b91980173/raw/26c86e0c1ced72993dafae6202dc881b24a3330b/web-quickstart-chaining">Quickstart (Chaining)</option>
           <option value="https://gist.githubusercontent.com/obeliskos/59c4c64e3b8c4609fbf2d7ba9fc0264a/raw/fe5e8291a5af21395a7282ddc9d329f7e163803a/web-quickstart-dynview">Quickstart (DynView)</option>
           <option value="https://gist.githubusercontent.com/obeliskos/4a7a3db8f46c49fd051c54af0104da22/raw/266faaa464bb78635f36ef29414b1acff2791d97/web-quickstart-transforms">Quickstart (Transforms)</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/6335093d15e2f12838e642248a8179b9/raw/c0828d72a32130cde5a58c916c4dcc653a1dbb79/loki%2520sort%2520order">Loki Sort Ordering</option>
+          <option value="https://gist.githubusercontent.com/obeliskos/6335093d15e2f12838e642248a8179b9/raw/c0828d72a32130cde5a58c916c4dcc653a1dbb79/control%2520sort%2520order">Control Sort Ordering</option>
         </select>
       </td>
       
     <tr>
       <td width="50%" valign="top">
         <h2 style="font-family:'Segoe UI', 'sans-serif'">Sandbox Editor</h2>
-        <div id="divLokiEditor">
+        <div id="divControlEditor">
           <textarea id="jsedit"></textarea>
           <br />
-          <button class="minimal" style="width:140px" onclick="runloki();">Run</button>
+          <button class="minimal" style="width:140px" onclick="runcontrol();">Run</button>
         </div>
       </td>
       <td width="50%" valign="top">
@@ -193,31 +193,31 @@
             <tr>
               <td valign="top">
                 <label>Script name : </label><br/>
-                <input id="txtScriptName" type='text' style="font-size:16px; height:24px; width:200px" value="lokiscript1"/><br/><br/>
-                <button class="minimal" onclick="saveLokiScript()">Save</button>
+                <input id="txtScriptName" type='text' style="font-size:16px; height:24px; width:200px" value="controlscript1"/><br/><br/>
+                <button class="minimal" onclick="saveControlScript()">Save</button>
               </td>
               <td valign="top">
                 <label>Stored Scripts :</label><br/>
                 <select id="selScriptList" size=8 style="font-size:16pt; min-width:200px"></select>
                 <br/><br/>
-                <button class="minimal" onclick="loadLokiScript()">Load</button><br/><br/>
-                <button class="minimal" onclick="deleteLokiScript()">Delete</button>
+                <button class="minimal" onclick="loadControlScript()">Load</button><br/><br/>
+                <button class="minimal" onclick="deleteControlScript()">Delete</button>
               </td>
             </tr>
           </table>
         </div>
         <div id="divAbout" style="display:none;">
-          <h2>About Loki Sandbox 0.2.0</h2>
+          <h2>About Control Sandbox 0.2.0</h2>
           <p style="font-size:18px">
-              Loki Sandbox is a simple utility web page which lets you experiment with LokiJS using a browser environment.
+              Control Sandbox is a simple utility web page which lets you experiment with ControlDB using a browser environment.
               An example database is created by default (in memory), along with sample javascript interaction to populate, query, and sandbox logging capabilities.
           </p>
           <p style="font-size:18px">
             If you have databases which have been saved to the filesystem (from node.js, node webkit, or cordova), you load load them and inspect and/or
             query their contents.
           <p style="font-size:18px">
-            This utility page is to support <a href="http://lokijs.org" target="_blank">LokiJS</a>.<br /><br/>
-            You can also view the <a href="https://github.com/techfort/LokiJS" target="_blank">GitHub page</a>.
+            This utility page is to support <a href="http://controldb.org" target="_blank">ControlDB</a>.<br /><br/>
+            You can also view the <a href="https://github.com/techfort/ControlDB" target="_blank">GitHub page</a>.
           </p>
           <p>
             Some example logging commands are :<br/>
@@ -236,13 +236,13 @@
   </table>
 
   <script>
-    var db = new loki('sandbox.db');
+    var db = new control('sandbox.db');
     
-    // we will use loki indexed adapter as a generic app/key/value store
-    // we will store scripts instead of serialized loki databases in our 'sandbox' 'app'
+    // we will use control indexed adapter as a generic app/key/value store
+    // we will store scripts instead of serialized control databases in our 'sandbox' 'app'
     var sandboxAdapter = null;
     if (window && window.indexedDB) {
-      sandboxAdapter = new LokiIndexedAdapter('sandbox', { closeAfterSave: true });
+      sandboxAdapter = new ControlIndexedAdapter('sandbox', { closeAfterSave: true });
     }
 
     var sbv = {
@@ -318,7 +318,7 @@
       else {
         setTimeout(function() {
           windowResize();
-          runloki();
+          runcontrol();
         }, 250);
       }
     });
@@ -350,7 +350,7 @@
       });
     }
 
-    function loadLokiScript() {
+    function loadControlScript() {
       var selectedScript = $("#selScriptList").val();
       
       sandboxAdapter.loadKey(selectedScript, function (result) {
@@ -362,7 +362,7 @@
       });
     }
 
-    function saveLokiScript() {
+    function saveControlScript() {
       var scriptName = $("#txtScriptName").val();
 
 
@@ -374,7 +374,7 @@
       });
     }
     
-    function deleteLokiScript() {
+    function deleteControlScript() {
       var selectedScript = $("#selScriptList").val();
 
       // probably should have made this method async with callback, for now will use settimeout
@@ -426,16 +426,16 @@
       var filename = $("#file-import").val().replace(/^.*[\\\/]/, '');
       var filestring = evt.target.result;
 
-      $("#divLokiCode").empty();
+      $("#divControlCode").empty();
       sbv.editorJS.setValue('logDatabase();\r\ninspectObject(db);');
 
-      db = new loki('sandbox');
+      db = new control('sandbox');
       db.loadJSON(filestring);
 
       var control = $("#file-import");
       control.replaceWith( control = control.clone( true ) );
 
-      runloki();
+      runcontrol();
     }
 
     function setupEditor() {
@@ -479,7 +479,7 @@
         }
       });
 
-      var initCode = "var db = new loki('sandbox.db');\r\n\r\n";
+      var initCode = "var db = new control('sandbox.db');\r\n\r\n";
       initCode += "// Add a collection to the database\r\n";
       initCode += "var items = db.addCollection('items');\r\n\r\n";
       initCode += "// Add some documents to the collection\r\n";
@@ -500,7 +500,7 @@
       initCode += "inspectObject(db);\r\n";
 
       sbv.editorJS.setValue(initCode);
-      sbv.editorOutput.setValue("Welcome to loki sandbox 0.1.0\r\nClick 'Run' to launch your script.");
+      sbv.editorOutput.setValue("Welcome to control sandbox 0.1.0\r\nClick 'Run' to launch your script.");
     }
 
     var sandbox = {
@@ -539,8 +539,8 @@
     var logObject = sandbox.logObject;
     var inspectObject = sandbox.inspectObject;
 
-    function runloki() {
-        $("#divLokiCode").empty();
+    function runcontrol() {
+        $("#divControlCode").empty();
         sbv.editorOutput.setValue('');
 
         var s = document.createElement("script");
@@ -552,7 +552,7 @@
 
         // give dom a chance to clean out by waiting a bit?
         setTimeout(function () {
-            document.getElementById("divLokiCode").appendChild(s);
+            document.getElementById("divControlCode").appendChild(s);
         }, 250);
 
     }

@@ -1,15 +1,15 @@
 /**
- * quickstart-dynview.js : example demonstrating lokijs 'dynamic view' usage
+ * quickstart-dynview.js : example demonstrating controldb 'dynamic view' usage
  *
  * This example will use persistence and set up a dynamic view in the databaseInitialize
  * autoloadCallback.
  *
- * We'll just use the default LokiFsAdapter for this.
+ * We'll just use the default ControlFsAdapter for this.
  */
 
-const loki = require('../src/lokijs.js');
+const control = require('../src/controldb.js');
 
-var db = new loki('quickstart-dynview.db', {
+var db = new control('quickstart-dynview.db', {
 	autoload: true,
 	autoloadCallback : databaseInitialize,
 	autosave: true, 
@@ -73,7 +73,7 @@ function seedData() {
   users.insert({ name: "frigg", gender: "f", age: 800, tags: ["foreknowlege"], items: ["eski"] });
   users.insert({ name: "thor", gender: "m", age: 35, items: ["mjolnir", "beer"] });
   users.insert({ name: "sif", gender: "f", age: 30 });
-  users.insert({ name: "loki", gender: "m", age: 29 });
+  users.insert({ name: "control", gender: "m", age: 29 });
   users.insert({ name: "sigyn", gender: "f", age: 29 });
   users.insert({ name: "freyr", age: 400 });
   users.insert({ name: "heimdallr", age: 99 });
@@ -133,7 +133,7 @@ function runProgramLogic() {
 
 // All our logic ran in runProgramLogic so we are done...
 
-// We could have -not- enabled the autosave options in loki constructor
+// We could have -not- enabled the autosave options in control constructor
 // and then made a call to db.saveDatabase() as the last line of our runProgramLogic() 
 // function if we wanted the program to end automatically.
 

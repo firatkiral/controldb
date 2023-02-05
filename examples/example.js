@@ -13,7 +13,7 @@ window.runExample = function () {
 
         // init db
 
-        var db = new loki('Example');
+        var db = new control('Example');
 
 
         // create two example collections
@@ -28,17 +28,17 @@ window.runExample = function () {
         // create six users
         var odin = users.insert({
             name: 'odin',
-            email: 'odin.soap@lokijs.org',
+            email: 'odin.soap@controldb.org',
             age: 38
         });
         var thor = users.insert({
             name: 'thor',
-            email: 'thor.soap@lokijs.org',
+            email: 'thor.soap@controldb.org',
             age: 25
         });
         var stan = users.insert({
             name: 'stan',
-            email: 'stan.soap@lokijs.org',
+            email: 'stan.soap@controldb.org',
             age: 29
         });
         // we create a snapshot of the db here so that we can see the difference
@@ -48,32 +48,32 @@ window.runExample = function () {
 
         var oliver = users.insert({
             name: 'oliver',
-            email: 'oliver.soap@lokijs.org',
+            email: 'oliver.soap@controldb.org',
             age: 31
         });
         var hector = users.insert({
             name: 'hector',
-            email: 'hector.soap@lokijs.org',
+            email: 'hector.soap@controldb.org',
             age: 15
         });
         var achilles = users.insert({
             name: 'achilles',
-            email: 'achilles.soap@lokijs.org',
+            email: 'achilles.soap@controldb.org',
             age: 31
         });
         var lugh = users.insert({
             name: 'lugh',
-            email: 'lugh.soap@lokijs.org',
+            email: 'lugh.soap@controldb.org',
             age: 31
         });
         var nuada = users.insert({
             name: 'nuada',
-            email: 'nuada.soap@lokijs.org',
+            email: 'nuada.soap@controldb.org',
             age: 31
         });
         var cuchullain = users.insert({
             name: 'cuchullain',
-            email: 'cuchullain.soap@lokijs.org',
+            email: 'cuchullain.soap@controldb.org',
             age: 31
         });
 
@@ -88,7 +88,7 @@ window.runExample = function () {
         trace('--- test regexp finished-----');
         // create an example project
         var prj = projects.insert({
-            name: 'LokiJS',
+            name: 'ControlDB',
             owner: stan,
             tags: ['critical', 'public']
         });

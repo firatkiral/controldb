@@ -1,7 +1,4 @@
 node_modules/
-demos/desktop_app/bower_copmonents/
-demos/desktop_app/log
-demos/desktop_app/demo.json
 examples/quickstart2.db
 examples/quickstart3.db
 examples/quickstart3.db.0
@@ -9,12 +6,3 @@ examples/quickstart3.db.1
 examples/quickstart4.db
 examples/quickstart-dynview.db
 examples/quickstart-transforms.db
-coverage/
-testCollections
-testCollections~
-LokiContinuum.db
-sandbox.db
-sandbox.db.0
-sandbox.db.1
-sandbox.db.2
-.[iI]dea

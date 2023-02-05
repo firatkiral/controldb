@@ -1,15 +1,15 @@
 /**
- * quickstart3.js example for lokijs (running in node.js environment)
+ * quickstart3.js example for controldb (running in node.js environment)
  *
- * This exmple uses a higher performance, and better scaling LokiFsStructuredAdapter to persist its database.
+ * This exmple uses a higher performance, and better scaling ControlFsStructuredAdapter to persist its database.
  * This example uses autosave/autoload and we trap SIGINT (ctrl-c) to flush database on exit.
  * This example sets up multiple collections for our adapter (which has built in partitioning) to split out database into.
  */
 
-const loki = require('../src/lokijs.js');
-const lfsa = require('../src/loki-fs-structured-adapter.js');
+const control = require('../src/controldb.js');
+const lfsa = require('../src/control-fs-structured-adapter.js');
 
-var db = new loki('quickstart3.db', {
+var db = new control('quickstart3.db', {
   adapter: new lfsa(),
 	autoload: true,
 	autoloadCallback : databaseInitialize,
@@ -25,13 +25,13 @@ process.on('SIGINT', function() {
   db.close();
 });
 
-// Now let's implement the autoload callback referenced in loki constructor
+// Now let's implement the autoload callback referenced in control constructor
 function databaseInitialize() {
   var entries = db.getCollection("entries");
   var messages = db.getCollection("messages");
 
-  // Since our LokiFsStructuredAdapter is partitioned, the default 'quickstart3.db'
-  // file will actually contain only the loki database shell and each of the collections
+  // Since our ControlFsStructuredAdapter is partitioned, the default 'quickstart3.db'
+  // file will actually contain only the control database shell and each of the collections
   // will be saved into independent 'partition' files with numeric suffix.
   
   // Add our main example collection if this is first run.

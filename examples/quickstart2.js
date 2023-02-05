@@ -1,19 +1,19 @@
 // quickstart2.js example : 
-// This exmple uses the default persistence adapter for node environment (LokiFsAdapter), to persist its database.
+// This exmple uses the default persistence adapter for node environment (ControlFsAdapter), to persist its database.
 // To better handle asynchronous adapters and to write code that can handle any adapter, 
 // you can use the following as example for setting up your initialization logic.
 
-const loki = require('../src/lokijs.js');
+const control = require('../src/controldb.js');
 
 // We will use autoload (one time load at instantiation), and autosave  with 4 sec interval.
-var db = new loki('quickstart2.db', {
+var db = new control('quickstart2.db', {
 	autoload: true,
 	autoloadCallback : databaseInitialize,
 	autosave: true, 
 	autosaveInterval: 4000 // save every four seconds for our example
 });
 
-// implement the autoloadback referenced in loki constructor
+// implement the autoloadback referenced in control constructor
 function databaseInitialize() {
   // on the first load of (non-existent database), we will have no collections so we can 
   //   detect the absence of our collections and add (and configure) them now.
