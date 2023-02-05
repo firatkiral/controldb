@@ -7,7 +7,7 @@
     module.exports = factory();
   } else {
     // Browser globals
-    root.control = factory();
+    root.controldb = factory();
   }
 }(this, function () {
 
@@ -772,13 +772,13 @@
      *
      * @constructor ControlEventEmitter
      */
-    function ControlEventEmitter() { }
+    function ControlDBEventEmitter() { }
 
     /**
      * @prop {hashmap} events - a hashmap, with each property being an array of callbacks
      * @memberof ControlEventEmitter
      */
-    ControlEventEmitter.prototype.events = {};
+    ControlDBEventEmitter.prototype.events = {};
 
     /**
      * @prop {boolean} asyncListeners - boolean determines whether or not the callbacks associated with each event
@@ -786,7 +786,7 @@
      * Default is false, which means events are synchronous
      * @memberof ControlEventEmitter
      */
-    ControlEventEmitter.prototype.asyncListeners = false;
+    ControlDBEventEmitter.prototype.asyncListeners = false;
 
     /**
      * on(eventName, listener) - adds a listener to the queue of callbacks associated to an event
@@ -795,7 +795,7 @@
      * @returns {int} the index of the callback in the array of listeners for a particular event
      * @memberof ControlEventEmitter
      */
-    ControlEventEmitter.prototype.on = function (eventName, listener) {
+    ControlDBEventEmitter.prototype.on = function (eventName, listener) {
       var event;
       var self = this;
 
@@ -822,7 +822,7 @@
      * @param {object=} data - optional object passed with the event
      * @memberof ControlEventEmitter
      */
-    ControlEventEmitter.prototype.emit = function (eventName) {
+    ControlDBEventEmitter.prototype.emit = function (eventName) {
       var self = this;
       var selfArgs;
       if (eventName && this.events[eventName]) {
@@ -851,7 +851,7 @@
      * @returns {int} the index of the callback in the array of listeners for a particular event
      * @memberof ControlEventEmitter
      */
-    ControlEventEmitter.prototype.addListener = ControlEventEmitter.prototype.on;
+    ControlDBEventEmitter.prototype.addListener = ControlDBEventEmitter.prototype.on;
 
     /**
      * removeListener() - removes the listener at position 'index' from the event 'eventName'
@@ -859,7 +859,7 @@
      * @param {function} listener - the listener callback function to remove from emitter
      * @memberof ControlEventEmitter
      */
-    ControlEventEmitter.prototype.removeListener = function (eventName, listener) {
+    ControlDBEventEmitter.prototype.removeListener = function (eventName, listener) {
       var self = this;
 
       if (Array.isArray(eventName)) {
@@ -879,7 +879,7 @@
     /**
      * Control: The main database class
      * @constructor Control
-     * @implements ControlEventEmitter
+     * @implements ControlDBEventEmitter
      * @param {string} filename - name of the file to be saved to
      * @param {object=} options - (Optional) config options object
      * @param {string} options.env - override environment detection as 'NODEJS', 'BROWSER', 'CORDOVA'
@@ -894,8 +894,8 @@
      * @param {boolean} [options.throttledSaves=true] - debounces multiple calls to to saveDatabase reducing number of disk I/O operations
                                                 and guaranteeing proper serialization of the calls.
      */
-    function Control(filename, options) {
-      this.filename = filename || 'control.db';
+    function ControlDB(filename, options) {
+      this.filename = filename || 'controldb.db';
       this.collections = [];
 
       // persist version of code which created the database to the database.
@@ -985,12 +985,12 @@
     }
 
     // db class is an EventEmitter
-    Control.prototype = new ControlEventEmitter();
-    Control.prototype.constructor = Control;
+    ControlDB.prototype = new ControlDBEventEmitter();
+    ControlDB.prototype.constructor = ControlDB;
 
     // experimental support for browserify's abstract syntax scan to pick up dependency of indexed adapter.
     // Hopefully, once this hits npm a browserify require of controldb should scan the main file and detect this indexed adapter reference.
-    Control.prototype.getIndexedAdapter = function () {
+    ControlDB.prototype.getIndexedAdapter = function () {
       var adapter;
 
       if (typeof require === 'function') {
@@ -1017,7 +1017,7 @@
      * @param {boolean} initialConfig - (internal) true is passed when control ctor is invoking
      * @memberof Control
      */
-    Control.prototype.configureOptions = function (options, initialConfig) {
+    ControlDB.prototype.configureOptions = function (options, initialConfig) {
       var defaultPersistence = {
         'NODEJS': 'fs',
         'BROWSER': 'localStorage',
@@ -1025,9 +1025,9 @@
         'MEMORY': 'memory'
       },
         persistenceMethods = {
-          'fs': ControlFsAdapter,
-          'localStorage': ControlLocalStorageAdapter,
-          'memory': ControlMemoryAdapter
+          'fs': ControlDBFsAdapter,
+          'localStorage': ControlDBLocalStorageAdapter,
+          'memory': ControlDBMemoryAdapter
         };
 
       this.options = {};
@@ -1118,9 +1118,9 @@
      * @param {bool} options.removeNonSerializable - nulls properties not safe for serialization.
      * @memberof Control
      */
-    Control.prototype.copy = function (options) {
+    ControlDB.prototype.copy = function (options) {
       // in case running in an environment without accurate environment detection, pass 'NA'
-      var databaseCopy = new Control(this.filename, { env: "NA" });
+      var databaseCopy = new ControlDB(this.filename, { env: "NA" });
       var clen, idx;
 
       options = options || {};
@@ -1162,7 +1162,7 @@
      * @returns {Collection} a reference to the collection which was just added
      * @memberof Control
      */
-    Control.prototype.addCollection = function (name, options) {
+    ControlDB.prototype.addCollection = function (name, options) {
       var i,
         len = this.collections.length;
 
@@ -1194,7 +1194,7 @@
       return collection;
     };
 
-    Control.prototype.loadCollection = function (collection) {
+    ControlDB.prototype.loadCollection = function (collection) {
       if (!collection.name) {
         throw new Error('Collection must have a name property to be loaded');
       }
@@ -1207,7 +1207,7 @@
      * @returns {Collection} Reference to collection in database by that name, or null if not found
      * @memberof Control
      */
-    Control.prototype.getCollection = function (collectionName) {
+    ControlDB.prototype.getCollection = function (collectionName) {
       var i,
         len = this.collections.length;
 
@@ -1229,7 +1229,7 @@
      * @returns {Collection} reference to the newly renamed collection
      * @memberof Control
      */
-    Control.prototype.renameCollection = function (oldName, newName) {
+    ControlDB.prototype.renameCollection = function (oldName, newName) {
       var c = this.getCollection(oldName);
 
       if (c) {
@@ -1244,7 +1244,7 @@
      * @returns {object[]} array of objects containing 'name', 'type', and 'count' properties.
      * @memberof Control
      */
-    Control.prototype.listCollections = function () {
+    ControlDB.prototype.listCollections = function () {
 
       var i = this.collections.length,
         colls = [];
@@ -1264,7 +1264,7 @@
      * @param {string} collectionName - name of collection to remove
      * @memberof Control
      */
-    Control.prototype.removeCollection = function (collectionName) {
+    ControlDB.prototype.removeCollection = function (collectionName) {
       var i,
         len = this.collections.length;
 
@@ -1283,7 +1283,7 @@
       }
     };
 
-    Control.prototype.getName = function () {
+    ControlDB.prototype.getName = function () {
       return this.name;
     };
 
@@ -1291,7 +1291,7 @@
      * serializeReplacer - used to prevent certain properties from being serialized
      *
      */
-    Control.prototype.serializeReplacer = function (key, value) {
+    ControlDB.prototype.serializeReplacer = function (key, value) {
       switch (key) {
         case 'autosaveHandle':
         case 'persistenceAdapter':
@@ -1309,12 +1309,12 @@
     };
 
     /**
-     * Serialize database to a string which can be loaded via {@link Control#loadJSON}
+     * Serialize database to a string which can be loaded via {@link ControlDB#loadJSON}
      *
      * @returns {string} Stringified representation of the control database.
      * @memberof Control
      */
-    Control.prototype.serialize = function (options) {
+    ControlDB.prototype.serialize = function (options) {
       options = options || {};
 
       if (!options.hasOwnProperty("serializationMethod")) {
@@ -1330,7 +1330,7 @@
     };
 
     // alias of serialize
-    Control.prototype.toJson = Control.prototype.serialize;
+    ControlDB.prototype.toJson = ControlDB.prototype.serialize;
 
     /**
      * Database level destructured JSON serialization routine to allow alternate serialization methods.
@@ -1347,7 +1347,7 @@
      * @returns {string|array} A custom, restructured aggregation of independent serializations.
      * @memberof Control
      */
-    Control.prototype.serializeDestructured = function (options) {
+    ControlDB.prototype.serializeDestructured = function (options) {
       var idx, sidx, result, resultlen;
       var reconstruct = [];
       var dbcopy;
@@ -1376,7 +1376,7 @@
       }
 
       // not just an individual collection, so we will need to serialize db container via shallow copy
-      dbcopy = new Control(this.filename);
+      dbcopy = new ControlDB(this.filename);
       dbcopy.loadJSONObject(this);
 
       for (idx = 0; idx < dbcopy.collections.length; idx++) {
@@ -1480,7 +1480,7 @@
      * @returns {string|array} A custom, restructured aggregation of independent serializations for a single collection.
      * @memberof Control
      */
-    Control.prototype.serializeCollection = function (options) {
+    ControlDB.prototype.serializeCollection = function (options) {
       var doccount,
         docidx,
         resultlines = [];
@@ -1532,7 +1532,7 @@
      * @returns {object|array} An object representation of the deserialized database, not yet applied to 'this' db or document array
      * @memberof Control
      */
-    Control.prototype.deserializeDestructured = function (destructuredSource, options) {
+    ControlDB.prototype.deserializeDestructured = function (destructuredSource, options) {
       var workarray = [];
       var len, cdb;
       var idx, collIndex = 0, collCount, lineIndex = 1, done = false;
@@ -1638,7 +1638,7 @@
      * @returns {array} an array of documents to attach to collection.data.
      * @memberof Control
      */
-    Control.prototype.deserializeCollection = function (destructuredSource, options) {
+    ControlDB.prototype.deserializeCollection = function (destructuredSource, options) {
       var workarray = [];
       var idx, len;
 
@@ -1680,7 +1680,7 @@
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
      * @memberof Control
      */
-    Control.prototype.loadJSON = function (serializedDb, options) {
+    ControlDB.prototype.loadJSON = function (serializedDb, options) {
       var dbObject;
       if (serializedDb.length === 0) {
         dbObject = {};
@@ -1706,7 +1706,7 @@
      * @param {bool} options.retainDirtyFlags - whether collection dirty flags will be preserved
      * @memberof Control
      */
-    Control.prototype.loadJSONObject = function (dbObject, options) {
+    ControlDB.prototype.loadJSONObject = function (dbObject, options) {
       var i = 0,
         len = dbObject.collections ? dbObject.collections.length : 0,
         coll,
@@ -1870,7 +1870,7 @@
      * @param {function=} callback - (Optional) if supplied will be registered with close event before emitting.
      * @memberof Control
      */
-    Control.prototype.close = function (callback) {
+    ControlDB.prototype.close = function (callback) {
       // for autosave scenarios, we will let close perform final save (if dirty)
       // For web use, you might call from window.onbeforeunload to shutdown database, saving pending changes
       if (this.autosave) {
@@ -1906,7 +1906,7 @@
      * @see private method createChange() in Collection
      * @memberof Control
      */
-    Control.prototype.generateChangesNotification = function (arrayOfCollectionNames) {
+    ControlDB.prototype.generateChangesNotification = function (arrayOfCollectionNames) {
       function getCollName(coll) {
         return coll.name;
       }
@@ -1926,7 +1926,7 @@
      * @returns {string} string representation of the changes
      * @memberof Control
      */
-    Control.prototype.serializeChanges = function (collectionNamesArray) {
+    ControlDB.prototype.serializeChanges = function (collectionNamesArray) {
       return JSON.stringify(this.generateChangesNotification(collectionNamesArray));
     };
 
@@ -1934,7 +1934,7 @@
      * (Changes API) : clears all the changes in all collections.
      * @memberof Control
      */
-    Control.prototype.clearChanges = function () {
+    ControlDB.prototype.clearChanges = function () {
       this.collections.forEach(function (coll) {
         if (coll.flushChanges) {
           coll.flushChanges();
@@ -1961,7 +1961,7 @@
      * @param {int} [options.asyncTimeout=50] - timeout in ms to queue callbacks
      * @constructor ControlMemoryAdapter
      */
-    function ControlMemoryAdapter(options) {
+    function ControlDBMemoryAdapter(options) {
       this.hashStore = {};
       this.options = options || {};
 
@@ -1982,7 +1982,7 @@
      * @param {function} callback - adapter callback to return load result to caller
      * @memberof ControlMemoryAdapter
      */
-    ControlMemoryAdapter.prototype.loadDatabase = function (dbname, callback) {
+    ControlDBMemoryAdapter.prototype.loadDatabase = function (dbname, callback) {
       var self = this;
 
       if (this.options.asyncResponses) {
@@ -2015,7 +2015,7 @@
      * @param {function} callback - adapter callback to return load result to caller
      * @memberof ControlMemoryAdapter
      */
-    ControlMemoryAdapter.prototype.saveDatabase = function (dbname, dbstring, callback) {
+    ControlDBMemoryAdapter.prototype.saveDatabase = function (dbname, dbstring, callback) {
       var self = this;
       var saveCount;
 
@@ -2052,7 +2052,7 @@
      * @param {function} callback - function to call when done
      * @memberof ControlMemoryAdapter
      */
-    ControlMemoryAdapter.prototype.deleteDatabase = function (dbname, callback) {
+    ControlDBMemoryAdapter.prototype.deleteDatabase = function (dbname, callback) {
       if (this.hashStore.hasOwnProperty(dbname)) {
         delete this.hashStore[dbname];
       }
@@ -2079,7 +2079,7 @@
      * @param {string} options.delimiter - allows you to override the default delimeter
      * @constructor ControlPartitioningAdapter
      */
-    function ControlPartitioningAdapter(adapter, options) {
+    function ControlDBPartitioningAdapter(adapter, options) {
       this.mode = "reference";
       this.adapter = null;
       this.options = options || {};
@@ -2123,10 +2123,10 @@
      * @param {function} callback - adapter callback to return load result to caller
      * @memberof ControlPartitioningAdapter
      */
-    ControlPartitioningAdapter.prototype.loadDatabase = function (dbname, callback) {
+    ControlDBPartitioningAdapter.prototype.loadDatabase = function (dbname, callback) {
       var self = this;
       this.dbname = dbname;
-      this.dbref = new Control(dbname);
+      this.dbref = new ControlDB(dbname);
 
       // load the db container (without data)
       this.adapter.loadDatabase(dbname, function (result) {
@@ -2171,7 +2171,7 @@
      * @param {int} partition - ordinal collection position to load next
      * @param {function} callback - adapter callback to return load result to caller
      */
-    ControlPartitioningAdapter.prototype.loadNextPartition = function (partition, callback) {
+    ControlDBPartitioningAdapter.prototype.loadNextPartition = function (partition, callback) {
       var keyname = this.dbname + "." + partition;
       var self = this;
 
@@ -2199,7 +2199,7 @@
      *
      * @param {function} callback - adapter callback to return load result to caller
      */
-    ControlPartitioningAdapter.prototype.loadNextPage = function (callback) {
+    ControlDBPartitioningAdapter.prototype.loadNextPage = function (callback) {
       // calculate name for next saved page in sequence
       var keyname = this.dbname + "." + this.pageIterator.collection + "." + this.pageIterator.pageIndex;
       var self = this;
@@ -2258,7 +2258,7 @@
      *
      * @memberof ControlPartitioningAdapter
      */
-    ControlPartitioningAdapter.prototype.exportDatabase = function (dbname, dbref, callback) {
+    ControlDBPartitioningAdapter.prototype.exportDatabase = function (dbname, dbref, callback) {
       var self = this;
       var idx, clen = dbref.collections.length;
 
@@ -2283,7 +2283,7 @@
      *
      * @param {function} callback - adapter callback to return load result to caller
      */
-    ControlPartitioningAdapter.prototype.saveNextPartition = function (callback) {
+    ControlDBPartitioningAdapter.prototype.saveNextPartition = function (callback) {
       var self = this;
       var partition = this.dirtyPartitions.shift();
       var keyname = this.dbname + ((partition === -1) ? "" : ("." + partition));
@@ -2335,7 +2335,7 @@
      *
      * @param {function} callback - adapter callback to return load result to caller
      */
-    ControlPartitioningAdapter.prototype.saveNextPage = function (callback) {
+    ControlDBPartitioningAdapter.prototype.saveNextPage = function (callback) {
       var self = this;
       var coll = this.dbref.collections[this.pageIterator.collection];
       var keyname = this.dbname + "." + this.pageIterator.collection + "." + this.pageIterator.pageIndex;
@@ -2400,7 +2400,7 @@
      * A control persistence adapter which persists using node fs module
      * @constructor ControlFsAdapter
      */
-    function ControlFsAdapter() {
+    function ControlDBFsAdapter() {
       try {
         this.fs = require('fs');
       } catch (e) {
@@ -2414,7 +2414,7 @@
      * @param {function} callback - the callback to handle the result
      * @memberof ControlFsAdapter
      */
-    ControlFsAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
+    ControlDBFsAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
       var self = this;
 
       this.fs.stat(dbname, function (err, stats) {
@@ -2442,7 +2442,7 @@
      * @param {function} callback - the callback to handle the result
      * @memberof ControlFsAdapter
      */
-    ControlFsAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
+    ControlDBFsAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
       var self = this;
       var tmpdbname = dbname + '~';
       this.fs.writeFile(tmpdbname, dbstring, function writeFileCallback(err) {
@@ -2461,7 +2461,7 @@
      * @param {function} callback - the callback to handle the result
      * @memberof ControlFsAdapter
      */
-    ControlFsAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
+    ControlDBFsAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
       this.fs.unlink(dbname, function deleteDatabaseCallback(err) {
         if (err) {
           callback(new Error(err));
@@ -2476,7 +2476,7 @@
      * A control persistence adapter which persists to web browser's local storage object
      * @constructor ControlLocalStorageAdapter
      */
-    function ControlLocalStorageAdapter() { }
+    function ControlDBLocalStorageAdapter() { }
 
     /**
      * loadDatabase() - Load data from localstorage
@@ -2484,7 +2484,7 @@
      * @param {function} callback - the callback to handle the result
      * @memberof ControlLocalStorageAdapter
      */
-    ControlLocalStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
+    ControlDBLocalStorageAdapter.prototype.loadDatabase = function loadDatabase(dbname, callback) {
       if (localStorageAvailable()) {
         callback(localStorage.getItem(dbname));
       } else {
@@ -2499,7 +2499,7 @@
      * @param {function} callback - the callback to handle the result
      * @memberof ControlLocalStorageAdapter
      */
-    ControlLocalStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
+    ControlDBLocalStorageAdapter.prototype.saveDatabase = function saveDatabase(dbname, dbstring, callback) {
       if (localStorageAvailable()) {
         localStorage.setItem(dbname, dbstring);
         callback(null);
@@ -2515,7 +2515,7 @@
      * @param {function} callback - the callback to handle the result
      * @memberof ControlLocalStorageAdapter
      */
-    ControlLocalStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
+    ControlDBLocalStorageAdapter.prototype.deleteDatabase = function deleteDatabase(dbname, callback) {
       if (localStorageAvailable()) {
         localStorage.removeItem(dbname);
         callback(null);
@@ -2534,7 +2534,7 @@
      * @param {int} options.recursiveWaitLimitDelay - (default: 2000) cutoff in ms to stop recursively re-draining
      * @memberof Control
      */
-    Control.prototype.throttledSaveDrain = function (callback, options) {
+    ControlDB.prototype.throttledSaveDrain = function (callback, options) {
       var self = this;
       var now = (new Date()).getTime();
 
@@ -2598,7 +2598,7 @@
      * @param {object} options - not currently used (remove or allow overrides?)
      * @param {function=} callback - (Optional) user supplied async callback / error handler
      */
-    Control.prototype.loadDatabaseInternal = function (options, callback) {
+    ControlDB.prototype.loadDatabaseInternal = function (options, callback) {
       var cFun = callback || function (err, data) {
         if (err) {
           throw err;
@@ -2677,7 +2677,7 @@
      *   }
      * });
      */
-    Control.prototype.loadDatabase = function (options, callback) {
+    ControlDB.prototype.loadDatabase = function (options, callback) {
       var self = this;
 
       // if throttling disabled, just call internal
@@ -2719,7 +2719,7 @@
     /**
      * Internal save logic, decoupled from save throttling logic
      */
-    Control.prototype.saveDatabaseInternal = function (callback) {
+    ControlDB.prototype.saveDatabaseInternal = function (callback) {
       var cFun = callback || function (err) {
         if (err) {
           throw err;
@@ -2812,7 +2812,7 @@
      *   }
      * });
      */
-    Control.prototype.saveDatabase = function (callback) {
+    ControlDB.prototype.saveDatabase = function (callback) {
       if (!this.throttledSaves) {
         this.saveDatabaseInternal(callback);
         return;
@@ -2848,7 +2848,7 @@
     };
 
     // alias
-    Control.prototype.save = Control.prototype.saveDatabase;
+    ControlDB.prototype.save = ControlDB.prototype.saveDatabase;
 
     /**
      * Handles deleting a database from file system, local
@@ -2859,7 +2859,7 @@
      * @param {function=} callback - (Optional) user supplied async callback / error handler
      * @memberof Control
      */
-    Control.prototype.deleteDatabase = function (options, callback) {
+    ControlDB.prototype.deleteDatabase = function (options, callback) {
       var cFun = callback || function (err, data) {
         if (err) {
           throw err;
@@ -2887,7 +2887,7 @@
      *
      * @returns {boolean} - true if database has changed since last autosave, false if not.
      */
-    Control.prototype.autosaveDirty = function () {
+    ControlDB.prototype.autosaveDirty = function () {
       for (var idx = 0; idx < this.collections.length; idx++) {
         if (this.collections[idx].dirty) {
           return true;
@@ -2902,7 +2902,7 @@
      *    Called from saveDatabase() after db is saved.
      *
      */
-    Control.prototype.autosaveClearFlags = function () {
+    ControlDB.prototype.autosaveClearFlags = function () {
       for (var idx = 0; idx < this.collections.length; idx++) {
         this.collections[idx].dirty = false;
       }
@@ -2914,7 +2914,7 @@
      * @param {object} options - not currently used (remove or allow overrides?)
      * @param {function=} callback - (Optional) user supplied async callback
      */
-    Control.prototype.autosaveEnable = function (options, callback) {
+    ControlDB.prototype.autosaveEnable = function (options, callback) {
       this.autosave = true;
 
       var delay = 5000,
@@ -2939,7 +2939,7 @@
      * autosaveDisable - stop the autosave interval timer.
      *
      */
-    Control.prototype.autosaveDisable = function () {
+    ControlDB.prototype.autosaveDisable = function () {
       if (typeof (this.autosaveHandle) !== 'undefined' && this.autosaveHandle !== null) {
         clearInterval(this.autosaveHandle);
         this.autosaveHandle = null;
@@ -3777,7 +3777,7 @@
      *        the collection is not configured for clone object.
      * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
      *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
-     * @param {bool} options.removeMeta - Will force clones and strip $control and meta properties from documents
+     * @param {bool} options.removeMeta - Will force clones and strip $ctrl and meta properties from documents
      *
      * @returns {array} Array of documents in the resultset
      * @memberof Resultset
@@ -3817,7 +3817,7 @@
             for (i = 0; i < len; i++) {
               obj = clone(data[i], method);
               if (options.removeMeta) {
-                delete obj.$control;
+                delete obj.$ctrl;
                 delete obj.meta;
               }
               result.push(obj);
@@ -3842,7 +3842,7 @@
         for (i = 0; i < len; i++) {
           obj = clone(data[fr[i]], method);
           if (options.removeMeta) {
-            delete obj.$control;
+            delete obj.$ctrl;
             delete obj.meta;
           }
           result.push(obj);
@@ -3929,7 +3929,7 @@
      * @returns {value} The output of your reduceFunction
      * @memberof Resultset
      * @example
-     * var db = new control("order.db");
+     * var db = new controldb("order.db");
      * var orders = db.addCollection("orders");
      * orders.insert([{ qty: 4, unitCost: 100.00 }, { qty: 10, unitCost: 999.99 }, { qty: 2, unitCost: 49.99 }]);
      *
@@ -3964,7 +3964,7 @@
      * @returns {Resultset} A resultset with data in the format [{left: leftObj, right: rightObj}]
      * @memberof Resultset
      * @example
-     * var db = new control('sandbox.db');
+     * var db = new controldb('sandbox.db');
      *
      * var products = db.addCollection('products');
      * var orders = db.addCollection('orders');
@@ -3982,7 +3982,7 @@
      *
      * var mapfun = function(left, right) {
      *   return {
-     *     orderId: left.$control,
+     *     orderId: left.$ctrl,
      *     orderDate: new Date(left.orderDate) + '',
      *     customerId: left.customerId,
      *     qty: left.qty,
@@ -4068,7 +4068,7 @@
      * @example
      * var orders.chain().find({ productId: 32 }).map(function(obj) {
      *   return {
-     *     orderId: $control,
+     *     orderId: $ctrl,
      *     productId: productId,
      *     quantity: qty
      *   };
@@ -4097,7 +4097,7 @@
      * var results = mydv.data();
      *
      * @constructor DynamicView
-     * @implements ControlEventEmitter
+     * @implements ControlDBEventEmitter
      * @param {Collection} collection - A reference to the collection to work against
      * @param {string} name - The name of this dynamic view
      * @param {object=} options - (Optional) Pass in object with 'persistent' and/or 'sortPriority' options.
@@ -4156,7 +4156,7 @@
       };
     }
 
-    DynamicView.prototype = new ControlEventEmitter();
+    DynamicView.prototype = new ControlDBEventEmitter();
     DynamicView.prototype.constructor = DynamicView;
 
     /**
@@ -4227,7 +4227,7 @@
       }
 
       // during creation of unit tests, i will remove this forced refresh and leave lazy
-      this.data();
+      this.docs();
 
       // emit rebuild event in case user wants to be notified
       this.emit('rebuild', this);
@@ -4245,7 +4245,7 @@
      * @returns {Resultset} A copy of the internal resultset for branched queries.
      * @memberof DynamicView
      * @example
-     * var db = new control('test');
+     * var db = new controldb('test');
      * var coll = db.addCollection('mydocs');
      * var dv = coll.addDynamicView('myview');
      * var tx = [
@@ -4654,11 +4654,11 @@
      *        the collection is not configured for clone object.
      * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
      *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
-     * @param {bool} options.removeMeta - Will force clones and strip $control and meta properties from documents
+     * @param {bool} options.removeMeta - Will force clones and strip $ctrl and meta properties from documents
      * @returns {array} An array of documents representing the current DynamicView contents.
      * @memberof DynamicView
      */
-    DynamicView.prototype.data = function (options) {
+    DynamicView.prototype.docs = function (options) {
       // using final sort phase as 'catch all' for a few use cases which require full rebuild
       if (this.sortDirty || this.resultsdirty) {
         this.performSortPhase({
@@ -4933,7 +4933,7 @@
      */
     DynamicView.prototype.mapReduce = function (mapFunction, reduceFunction) {
       try {
-        return reduceFunction(this.data().map(mapFunction));
+        return reduceFunction(this.docs().map(mapFunction));
       } catch (err) {
         throw err;
       }
@@ -4943,7 +4943,7 @@
     /**
      * Collection class that handles documents of same type
      * @constructor Collection
-     * @implements ControlEventEmitter
+     * @implements ControlDBEventEmitter
      * @param {string} name - collection name
      * @param {(array|object)=} options - (optional) array of property names to be indicized OR a configuration object
      * @param {array=} [options.unique=[]] - array of property names to define unique constraints for
@@ -4961,7 +4961,7 @@
      * @param {string} [options.cloneMethod='parse-stringify'] - 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
      * @param {int=} options.ttl - age of document (in ms.) before document is considered aged/stale.
      * @param {int=} options.ttlInterval - time interval for clearing out 'aged' documents; not set by default.
-     * @see {@link Control#addCollection} for normal creation of collections
+     * @see {@link ControlDB#addCollection} for normal creation of collections
      */
     function Collection(name, options) {
       // the name of the collection
@@ -4969,7 +4969,7 @@
       this.name = name;
       // the data held by the collection
       this.data = [];
-      this.idIndex = null; // position->$control index (built lazily)
+      this.idIndex = null; // position->$ctrl index (built lazily)
       this.binaryIndices = {}; // user defined indexes
       this.constraints = {
         unique: {},
@@ -5119,7 +5119,7 @@
         });
 
         changedObjects.forEach(function (object) {
-          if (!hasOwnProperty.call(object, '$control'))
+          if (!hasOwnProperty.call(object, '$ctrl'))
             return self.removeAutoUpdateObserver(object);
           try {
             self.update(object);
@@ -5148,7 +5148,7 @@
           for (var i = 0; i < propertyNames.length; i++) {
             var propertyName = propertyNames[i];
             if (newObject.hasOwnProperty(propertyName)) {
-              if (!oldObject.hasOwnProperty(propertyName) || self.uniqueNames.indexOf(propertyName) >= 0 || propertyName == '$control' || propertyName == 'meta') {
+              if (!oldObject.hasOwnProperty(propertyName) || self.uniqueNames.indexOf(propertyName) >= 0 || propertyName == '$ctrl' || propertyName == 'meta') {
                 delta[propertyName] = newObject[propertyName];
               }
               else {
@@ -5197,11 +5197,11 @@
       flushChanges();
     }
 
-    Collection.prototype = new ControlEventEmitter();
+    Collection.prototype = new ControlDBEventEmitter();
     Collection.prototype.contructor = Collection;
 
     /*
-      * For ChangeAPI default to clone entire object, for delta changes create object with only differences (+ $control and meta)
+      * For ChangeAPI default to clone entire object, for delta changes create object with only differences (+ $ctrl and meta)
       */
     Collection.prototype.createChange = function (name, op, obj, old) {
       this.changes.push({
@@ -5749,7 +5749,7 @@
       var len = data.length;
       var index = new Array(len);
       for (i; i < len; i++) {
-        index[i] = data[i].$control;
+        index[i] = data[i].$ctrl;
       }
       this.idIndex = index;
     };
@@ -6048,12 +6048,12 @@
       }
 
       // verify object is a properly formed document
-      if (!hasOwnProperty.call(doc, '$control')) {
+      if (!hasOwnProperty.call(doc, '$ctrl')) {
         throw new Error('Trying to update unsynced document. Please save the document first by using insert() or addMany()');
       }
       try {
         this.startTransaction();
-        var arr = this.get(doc.$control, true),
+        var arr = this.get(doc.$ctrl, true),
           oldInternal,   // ref to existing obj
           newInternal, // ref to new internal obj
           position,
@@ -6100,11 +6100,11 @@
           this.flagBinaryIndexesDirty();
         }
 
-        this.idIndex[position] = newInternal.$control;
+        this.idIndex[position] = newInternal.$ctrl;
         //this.flagBinaryIndexesDirty();
 
         if (this.isIncremental) {
-          this.dirtyIds.push(newInternal.$control);
+          this.dirtyIds.push(newInternal.$ctrl);
         }
 
         this.commit();
@@ -6152,7 +6152,7 @@
       // if object you are adding already has id column it is either already in the collection
       // or the object is carrying its own 'id' property.  If it also has a meta property,
       // then this is already in collection so throw error, otherwise rename to originalId and continue adding.
-      if (typeof (obj.$control) !== 'undefined') {
+      if (typeof (obj.$ctrl) !== 'undefined') {
         throw new Error('Document is already in collection, please use update()');
       }
 
@@ -6164,11 +6164,11 @@
         this.maxId++;
 
         if (isNaN(this.maxId)) {
-          this.maxId = (this.data[this.data.length - 1].$control + 1);
+          this.maxId = (this.data[this.data.length - 1].$ctrl + 1);
         }
 
         var newId = this.maxId;
-        obj.$control = newId;
+        obj.$ctrl = newId;
 
         if (!this.disableMeta) {
           obj.meta.version = 0;
@@ -6281,7 +6281,7 @@
         this.startTransaction();
 
         // create hashobject for positional removal inclusion tests...
-        // all keys defined in this hashobject represent $control ids of the documents to remove.
+        // all keys defined in this hashobject represent $ctrl ids of the documents to remove.
         this.ensureId();
         for (idx = 0; idx < len; idx++) {
           xo[this.idIndex[positions[idx]]] = true;
@@ -6338,7 +6338,7 @@
         // remove from data[] :
         // filter collection data for items not in inclusion hashobject
         this.data = this.data.filter(function (obj) {
-          return !xo[obj.$control];
+          return !xo[obj.$ctrl];
         });
 
         if (this.isIncremental) {
@@ -6377,7 +6377,7 @@
 
     /**
      *  Internal method called by remove()
-     * @param {object[]|number[]} batch - array of documents or $control ids to remove
+     * @param {object[]|number[]} batch - array of documents or $ctrl ids to remove
      */
     Collection.prototype.removeBatch = function (batch) {
       var len = batch.length,
@@ -6386,15 +6386,15 @@
       var xlt = {};
       var posx = [];
 
-      // create lookup hashobject to translate $control id to position
+      // create lookup hashobject to translate $ctrl id to position
       for (idx = 0; idx < dlen; idx++) {
-        xlt[this.data[idx].$control] = idx;
+        xlt[this.data[idx].$ctrl] = idx;
       }
 
       // iterate the batch
       for (idx = 0; idx < len; idx++) {
         if (typeof (batch[idx]) === 'object') {
-          posx.push(xlt[batch[idx].$control]);
+          posx.push(xlt[batch[idx].$ctrl]);
         }
         else {
           posx.push(xlt[batch[idx]]);
@@ -6424,13 +6424,13 @@
         return;
       }
 
-      if (!hasOwnProperty.call(doc, '$control')) {
+      if (!hasOwnProperty.call(doc, '$ctrl')) {
         throw new Error('Object is not a document stored in the collection');
       }
 
       try {
         this.startTransaction();
-        var arr = this.get(doc.$control, true),
+        var arr = this.get(doc.$ctrl, true),
           // obj = arr[0],
           position = arr[1];
         var self = this;
@@ -6466,7 +6466,7 @@
         this.idIndex.splice(position, 1);
 
         if (this.isIncremental) {
-          this.dirtyIds.push(doc.$control);
+          this.dirtyIds.push(doc.$ctrl);
         }
 
         this.commit();
@@ -6476,7 +6476,7 @@
         if (!this.disableFreeze) {
           doc = unFreeze(doc);
         }
-        delete doc.$control;
+        delete doc.$ctrl;
         delete doc.meta;
         if (!this.disableFreeze) {
           freeze(doc);
@@ -6497,7 +6497,7 @@
 
     /**
      * Get by Id - faster than other methods because of the searching algorithm
-     * @param {int} id - $control id of document you want to retrieve
+     * @param {int} id - $ctrl id of document you want to retrieve
      * @param {boolean} returnPosition - if 'true' we will return [object, position]
      * @returns {(object|array|null)} Object reference if document was found, null if not,
      *     or an array if 'returnPosition' was passed.
@@ -7012,14 +7012,6 @@
     };
 
     /**
-     * toJSON() - Override of toJSON to avoid circular references
-     *
-     */
-    Collection.prototype.toJSON = function () {
-      return this.chain().toJSON();
-    };
-
-    /**
      * Allows you to limit the number of documents passed to next chain operation.
      *    A resultset copy() is made to avoid altering original resultset.
      *
@@ -7198,7 +7190,7 @@
      *        the collection is not configured for clone object.
      * @param {string} options.forceCloneMethod - Allows overriding the default or collection specified cloning method.
      *        Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'shallow-assign'
-     * @param {bool} options.removeMeta - Will force clones and strip $control and meta properties from documents
+     * @param {bool} options.removeMeta - Will force clones and strip $ctrl and meta properties from documents
      *
      * @returns {array} Array of documents in the resultset
      * @memberof Resultset
@@ -7207,19 +7199,6 @@
      */
     Collection.prototype.docs = function (options) {
       return this.chain().docs(options);
-    };
-
-    /**
-     * Removes all document objects which are currently in resultset from collection (as well as resultset)
-     *
-     * @returns {Resultset} this (empty) resultset for further chain ops.
-     * @memberof Resultset
-     * @example
-     * // remove users inactive since 1/1/2001
-     * users.chain().find({ lastActive: { $lte: new Date("1/1/2001").getTime() } }).remove();
-     */
-    Collection.prototype.remove = function () {
-      return this.chain().remove();
     };
 
     /**
@@ -7245,7 +7224,7 @@
      * @example
      * var orders.chain().find({ productId: 32 }).map(function(obj) {
      *   return {
-     *     orderId: $control,
+     *     orderId: $ctrl,
      *     productId: productId,
      *     quantity: qty
      *   };
@@ -7447,7 +7426,7 @@
      */
     Collection.prototype.stage = function (stageName, obj) {
       var copy = JSON.parse(JSON.stringify(obj));
-      this.getStage(stageName)[obj.$control] = copy;
+      this.getStage(stageName)[obj.$ctrl] = copy;
       return copy;
     };
 
@@ -7524,11 +7503,11 @@
         if (max !== undefined) {
           if (max < deepProperty(this.data[i], field, deep)) {
             max = deepProperty(this.data[i], field, deep);
-            result.index = this.data[i].$control;
+            result.index = this.data[i].$ctrl;
           }
         } else {
           max = deepProperty(this.data[i], field, deep);
-          result.index = this.data[i].$control;
+          result.index = this.data[i].$ctrl;
         }
       }
       result.value = max;
@@ -7552,11 +7531,11 @@
         if (min !== undefined) {
           if (min > deepProperty(this.data[i], field, deep)) {
             min = deepProperty(this.data[i], field, deep);
-            result.index = this.data[i].$control;
+            result.index = this.data[i].$ctrl;
           }
         } else {
           min = deepProperty(this.data[i], field, deep);
-          result.index = this.data[i].$control;
+          result.index = this.data[i].$ctrl;
         }
       }
       result.value = min;
@@ -7771,7 +7750,7 @@
           throw new Error('Duplicate key for property ' + this.field + ': ' + fieldValue);
         } else {
           this.keyMap[fieldValue] = obj;
-          this.controlMap[obj.$control] = fieldValue;
+          this.controlMap[obj.$ctrl] = fieldValue;
         }
       }
     };
@@ -7788,8 +7767,8 @@
      * @param  {Object} doc New document object (likely the same as obj)
      */
     UniqueIndex.prototype.update = function (obj, doc) {
-      if (this.controlMap[obj.$control] !== doc[this.field]) {
-        var old = this.controlMap[obj.$control];
+      if (this.controlMap[obj.$ctrl] !== doc[this.field]) {
+        var old = this.controlMap[obj.$ctrl];
         this.set(doc);
         // make the old key fail bool test, while avoiding the use of delete (mem-leak prone)
         this.keyMap[old] = undefined;
@@ -7802,7 +7781,7 @@
       if (obj !== null && typeof obj !== 'undefined') {
         // avoid using `delete`
         this.keyMap[key] = undefined;
-        this.controlMap[obj.$control] = undefined;
+        this.controlMap[obj.$ctrl] = undefined;
       } else {
         throw new Error('Key is not in unique index: ' + this.field);
       }
@@ -7934,27 +7913,27 @@
       }
     };
 
-    Control.deepFreeze = deepFreeze;
-    Control.freeze = freeze;
-    Control.unFreeze = unFreeze;
-    Control.ControlOps = ControlOps;
-    Control.Collection = Collection;
-    Control.DynamicView = DynamicView;
-    Control.Resultset = Resultset;
-    Control.KeyValueStore = KeyValueStore;
-    Control.ControlMemoryAdapter = ControlMemoryAdapter;
-    Control.ControlPartitioningAdapter = ControlPartitioningAdapter;
-    Control.ControlLocalStorageAdapter = ControlLocalStorageAdapter;
-    Control.ControlFsAdapter = ControlFsAdapter;
-    Control.persistenceAdapters = {
-      fs: ControlFsAdapter,
-      localStorage: ControlLocalStorageAdapter
+    ControlDB.deepFreeze = deepFreeze;
+    ControlDB.freeze = freeze;
+    ControlDB.unFreeze = unFreeze;
+    ControlDB.ControlOps = ControlOps;
+    ControlDB.Collection = Collection;
+    ControlDB.DynamicView = DynamicView;
+    ControlDB.Resultset = Resultset;
+    ControlDB.KeyValueStore = KeyValueStore;
+    ControlDB.ControlDBMemoryAdapter = ControlDBMemoryAdapter;
+    ControlDB.ControlDBPartitioningAdapter = ControlDBPartitioningAdapter;
+    ControlDB.ControlDBLocalStorageAdapter = ControlDBLocalStorageAdapter;
+    ControlDB.ControlDBFsAdapter = ControlDBFsAdapter;
+    ControlDB.persistenceAdapters = {
+      fs: ControlDBFsAdapter,
+      localStorage: ControlDBLocalStorageAdapter
     };
-    Control.aeq = aeqHelper;
-    Control.lt = ltHelper;
-    Control.gt = gtHelper;
-    Control.Comparators = Comparators;
-    return Control;
+    ControlDB.aeq = aeqHelper;
+    ControlDB.lt = ltHelper;
+    ControlDB.gt = gtHelper;
+    ControlDB.Comparators = Comparators;
+    return ControlDB;
   }());
 
 }));

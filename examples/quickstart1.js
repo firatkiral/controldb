@@ -3,9 +3,9 @@
 // Since control is synchronous -except- when dealing with persistence (I/O), 
 //   and this database uses no persistence, this example can deal with control entirely synchronously.
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 
-var db = new control("quickstart1.db");
+var db = new controldb("quickstart1.db");
 var users = db.addCollection("users");
 
 users.insert({name:'odin', age: 50});

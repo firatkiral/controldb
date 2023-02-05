@@ -1,8 +1,7 @@
 # ControlDB
 
-[ControlDB.org web site](http://controldb.org) | 
-[ControlDB GitHub page](https://github.com/techfort/ControlDB) | 
-[Sandbox / Playground](https://rawgit.com/techfort/ControlDB/master/examples/sandbox/ControlSandbox.htm)
+[ControlDB GitHub page](https://github.com/firatkiral/controldb) | 
+[Sandbox / Playground](https://rawgit.com/firatkiral/controldb/master/examples/sandbox/ControlSandbox.htm)
 
 ## Documentation Overview
 
@@ -14,7 +13,7 @@ maintaining this documentation.
 Creating a database :
 
 ```javascript
-var db = new control('example.db');
+var db = new controldb('example.db');
 ```
 
 Add a collection :

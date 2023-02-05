@@ -3,10 +3,10 @@
 // To better handle asynchronous adapters and to write code that can handle any adapter, 
 // you can use the following as example for setting up your initialization logic.
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 
 // We will use autoload (one time load at instantiation), and autosave  with 4 sec interval.
-var db = new control('quickstart2.db', {
+var db = new controldb('quickstart2.db', {
 	autoload: true,
 	autoloadCallback : databaseInitialize,
 	autosave: true, 

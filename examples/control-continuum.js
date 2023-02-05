@@ -1,4 +1,4 @@
-var control = require('../src/controldb.js');
+var controldb = require('../src/controldb.js');
 
 /* 
   control-continuum - a stripped down port of  c#.net program to test capabilities of control and javascript.  
@@ -97,9 +97,9 @@ function Projector(universeName, dbOptions) {
   dbOptions.actors = { proto: Actor };
   dbOptions.funds = { proto: Fund };
 
-	this.db = new control(universeName, dbOptions); 
+	this.db = new controldb(universeName, dbOptions); 
 	this.vol = null;
-	this.activities = new control.Collection("activities");
+	this.activities = new controldb.Collection("activities");
   
   // Add a parameterized transform to our disconnected collection to determine set of activities affecting a given fundId (sorted by activityDate ascending)
 

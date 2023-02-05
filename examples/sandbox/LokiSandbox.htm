@@ -236,7 +236,7 @@
   </table>
 
   <script>
-    var db = new control('sandbox.db');
+    var db = new controldb('sandbox.db');
     
     // we will use control indexed adapter as a generic app/key/value store
     // we will store scripts instead of serialized control databases in our 'sandbox' 'app'
@@ -429,7 +429,7 @@
       $("#divControlCode").empty();
       sbv.editorJS.setValue('logDatabase();\r\ninspectObject(db);');
 
-      db = new control('sandbox');
+      db = new controldb('sandbox');
       db.loadJSON(filestring);
 
       var control = $("#file-import");
@@ -479,7 +479,7 @@
         }
       });
 
-      var initCode = "var db = new control('sandbox.db');\r\n\r\n";
+      var initCode = "var db = new controldb('sandbox.db');\r\n\r\n";
       initCode += "// Add a collection to the database\r\n";
       initCode += "var items = db.addCollection('items');\r\n\r\n";
       initCode += "// Add some documents to the collection\r\n";

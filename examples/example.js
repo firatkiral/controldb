@@ -13,7 +13,11 @@ window.runExample = function () {
 
         // init db
 
-        var db = new control('Example');
+        var db = new controldb('Example', {
+            verbose: true,
+            autosave: true,
+            autosaveInterval: 5000
+        });
 
 
         // create two example collections
@@ -203,10 +207,10 @@ window.runExample = function () {
         sep();
         trace('Example: Resultset chained operations');
         // get users over 25 with substring 'in' in the name 
-        // data() ends the chain and returns data[]
+        // docs() ends the chain and returns docs[]
         // the where() function is a renamed equivalent to previous view() function
         trace(
-            users.chain()
+            users
             .find({
                 'age': {
                     '$gt': 25
@@ -216,7 +220,7 @@ window.runExample = function () {
                 return obj.name.indexOf("in") != -1
             })
             .simplesort("age")
-            .data()
+            .docs()
         );
 
         sep();
@@ -231,10 +235,11 @@ window.runExample = function () {
         });
         // .applyWhere() can also be used to apply a user supplied filter function
 
-        trace("Number of over 30 users : " + dynView.data().length);
+        trace("Number of over 30 users : " + dynView.docs().length);
         lugh.age = 29;
+        console.log(lugh);
         users.update(lugh);
-        trace("Number of over 30 users : " + dynView.data().length);
+        trace("Number of over 30 users : " + dynView.docs().length);
 
         sep();
         trace("Example : Simple Sort");
@@ -242,7 +247,7 @@ window.runExample = function () {
         // sort by age, true is optional second param which will sort descending
         // we are allowed one sort which can be either simple (as below) 
         dynView.applySimpleSort("age", true);
-        trace(dynView.data());
+        trace(dynView.docs());
 
         sep();
         trace("Example : Sort via compare function");
@@ -254,7 +259,7 @@ window.runExample = function () {
             if (obj1.name > obj2.name) return 1;
             if (obj1.name < obj2.name) return -1;
         });
-        trace(dynView.data());
+        trace(dynView.docs());
 
         sep();
         trace("Example : Persistent DynamicView")
@@ -271,10 +276,10 @@ window.runExample = function () {
             }
         });
         dynViewPersistent.applySimpleSort("age");
-        trace(dynViewPersistent.data());
+        trace(dynViewPersistent.docs());
 
-        // user should use data() but let's monitor persistent data array 
-        trace("Internal persistent data array length : " +
+        // user should use docs() but let's monitor persistent docs array 
+        trace("Internal persistent docs array length : " +
             dynViewPersistent.resultdata.length);
 
         // let's also verify it matches the internal resultset filtered rows
@@ -289,18 +294,26 @@ window.runExample = function () {
         clonedResults.where(function (obj) {
             return obj.name.indexOf("in") != -1
         });
-        trace("forked query result count : " + clonedResults.data().length);
-        trace("original result count : " + dynViewPersistent.data().length);
+        trace("forked query result count : " + clonedResults.docs().length);
+        trace("original result count : " + dynViewPersistent.docs().length);
 
         sep();
         trace("Example : offset/limit");
-        trace(dynViewPersistent.resultset.offset(2).limit(4).data());
+        trace(dynViewPersistent.resultset.offset(2).limit(4).docs());
 
         sep();
 
         db.loadJSON(json);
 
         trace(db.serialize());
+
+        db.saveDatabase(function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Database saved successfully");
+            }
+        })
 
     } catch (err) {
         console.error(err);

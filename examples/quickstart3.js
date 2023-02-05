@@ -6,10 +6,10 @@
  * This example sets up multiple collections for our adapter (which has built in partitioning) to split out database into.
  */
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 const lfsa = require('../src/control-fs-structured-adapter.js');
 
-var db = new control('quickstart3.db', {
+var db = new controldb('quickstart3.db', {
   adapter: new lfsa(),
 	autoload: true,
 	autoloadCallback : databaseInitialize,

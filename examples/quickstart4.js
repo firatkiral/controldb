@@ -9,9 +9,9 @@
  * processes complete before you reload.
  */
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 
-var db = new control('quickstart4.db');
+var db = new controldb('quickstart4.db');
 
 // set up an initialize function for first load (when db hasn't been created yet)
 function databaseInitialize() {

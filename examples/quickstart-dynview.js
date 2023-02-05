@@ -7,9 +7,9 @@
  * We'll just use the default ControlFsAdapter for this.
  */
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 
-var db = new control('quickstart-dynview.db', {
+var db = new controldb('quickstart-dynview.db', {
 	autoload: true,
 	autoloadCallback : databaseInitialize,
 	autosave: true, 

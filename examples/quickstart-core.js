@@ -6,9 +6,9 @@
  *
  */
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 
-var db = new control("quickstart-core.db");
+var db = new controldb("quickstart-core.db");
 
 var users = db.addCollection("users");
 

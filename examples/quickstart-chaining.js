@@ -6,9 +6,9 @@
  *
  */
 
-const control = require('../src/controldb.js');
+const controldb = require('../src/controldb.js');
 
-var db = new control("quickstart-chaining.db");
+var db = new controldb("quickstart-chaining.db");
 
 var users = db.addCollection("users");
 
@@ -22,6 +22,8 @@ users.insert({ name: "sigyn", gender: "f", age: 29 });
 users.insert({ name: "freyr", age: 400 });
 users.insert({ name: "heimdallr", age: 99 });
 users.insert({ name: "mimir", age: 999 });
+
+console.log(db.serialize());
 
 // call data() method to terminate chain and return results
 
@@ -83,6 +85,6 @@ console.log("result 6");
 console.log(result);
 
 // get all documents but return clones even though we did not define clones on collection
-result = users.data({forceClones: true});
+result = users.docs({forceClones: true});
 console.log("result 7");
 console.log(result);
