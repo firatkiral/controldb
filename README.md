@@ -23,7 +23,7 @@ ControlDB supports indexing and views and achieves high-performance through main
 ## Demo
 
 The following demos are available:
-- [Sandbox / Playground](https://rawgit.com/firatkiral/ControlDB/master/examples/sandbox/ControlDBSandbox.htm)
+- [Sandbox / Playground](https://rawgit.com/firatkiral/controldb/master/examples/sandbox/ControlDBSandbox.htm)
 
 ## Documentation
 

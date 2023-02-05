@@ -994,7 +994,7 @@
       var adapter;
 
       if (typeof require === 'function') {
-        adapter = require("./control-indexed-adapter.js");
+        adapter = require("./controldb-indexed-adapter.js");
       }
 
       return adapter;

@@ -13,7 +13,7 @@
     <title>Control Sandbox</title>
 
     <script src="../../src/controldb.js"></script>
-    <script src="../../src/control-indexed-adapter.js"></script>
+    <script src="../../src/controldb-indexed-adapter.js"></script>
     <script src="jquery-2.1.0.min.js"></script>
     <script src="sandbox.min.js"></script>
     <link rel="stylesheet" href="sandbox.min.css">
@@ -242,7 +242,7 @@
     // we will store scripts instead of serialized control databases in our 'sandbox' 'app'
     var sandboxAdapter = null;
     if (window && window.indexedDB) {
-      sandboxAdapter = new ControlIndexedAdapter('sandbox', { closeAfterSave: true });
+      sandboxAdapter = new ControlDBIndexedAdapter('sandbox', { closeAfterSave: true });
     }
 
     var sbv = {
