@@ -1,6 +1,6 @@
 # Overview
 
-LokiJS 1.1 introduces a "Changes API" that enables the user to keep track of the changes happened to each collection since a particular point in time, which is usually the start of a work session but it could be a user defined one.
+ControlDB 1.1 introduces a "Changes API" that enables the user to keep track of the changes happened to each collection since a particular point in time, which is usually the start of a work session but it could be a user defined one.
 This is particularly useful for remote synchronization.
 
 ## Description of the Changes API
@@ -8,7 +8,7 @@ This is particularly useful for remote synchronization.
 The Changes API is a collection-level feature, hence you can establish which collections may simply contain volatile data and which ones need to keep a record of what has changed.
 
 The Changes API is an optional feature and can be activated/deactivated by either passing the option `{ disableChangesApi: isDisabled }` in the config parameter of a collection constructor, or by calling `collection.setChangesApi(isEnabled)`.
-Note that LokiJS will always set the fastest performing setting as default on a collection or database, hence the Changes API is **disabled** by default.
+Note that ControlDB will always set the fastest performing setting as default on a collection or database, hence the Changes API is **disabled** by default.
 
 There are three events which will trigger a Changes API operation: inserts, updates and deletes.
 When either of these events occur, on a collection with Changes API activated, the collection will store a snapshot of the relevant object, associated with the operation and the name of the collection.

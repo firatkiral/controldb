@@ -3,7 +3,7 @@
 **_The basic idea behind transforms is to allow converting a Resultset 'chain' process into an object definition of that process.  This data definition can then be optionally named and saved along with the collections, within a  database._**
 
 This might be useful for :  
-* Writing tools which operate on loki databases
+* Writing tools which operate on controldb databases
 * Creating 'stored procedure-like' named queries
 * Transforming your data for extraction purposes
 * Can be extended upon with custom meta
@@ -22,9 +22,9 @@ A transform is a (ordered) array of 'step' objects to be executed on collection 
 * 'mapReduce'
 * 'eqJoin' 
 
-These transform steps may hardcode their parameters or use a parameter substitution mechanism added for loki transforms.
+These transform steps may hardcode their parameters or use a parameter substitution mechanism added for controldb transforms.
 
-A simple, one step loki transform might appear as follows : 
+A simple, one step controldb transform might appear as follows : 
 ```javascript
 var tx = [
   {
@@ -174,7 +174,7 @@ You can now use transforms as an extraction method for a DynamicView.  Certain a
 
 An example of this might look like the following : 
 ```javascript
-var db = new loki('test');
+var db = new controldb('test');
 var coll = db.addCollection('mydocs');
 var dv = coll.addDynamicView('myview');
 var tx = [
@@ -201,8 +201,8 @@ The important distinction is that branching (and thus your transform results) re
 
 One use for transforms might be to have user driven solutions where you have the user interface constructing, managing, and executing these transforms.  In such situations you might want to add your own metadata to the transforms to further describe the transform, steps, or parameters.
 
-- Any step with a 'type' unknown to loki transforms will be ignored.  You might decide to always have the first step as a 'meta' type with properties containing information about author, description, or required parameter description meta data.  
+- Any step with a 'type' unknown to controldb transforms will be ignored.  You might decide to always have the first step as a 'meta' type with properties containing information about author, description, or required parameter description meta data.  
 - Each of the steps may also include additional properties above what we have defined as required, so you might have step descriptions, last changed dates, etc embedded within steps.
 
 ## Summary
-Loki transforms establish (with little additional footprint) a process for automating data transformations on your data.  This is not a required functionality and is not intended to replace method chaining, but it allows you to abstract and organize repetitive querying for cleanliness or dynamic purposes.
+ControlDB transforms establish (with little additional footprint) a process for automating data transformations on your data.  This is not a required functionality and is not intended to replace method chaining, but it allows you to abstract and organize repetitive querying for cleanliness or dynamic purposes.

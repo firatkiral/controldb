@@ -8,7 +8,7 @@ This is a fork of [LokiJS](https://github.com/techfort/LokiJS). The goal is to m
 
 ControlDB is a document oriented database written in javascript, published under MIT License.
 Its purpose is to store javascript objects as documents in a nosql fashion and retrieve them with a similar mechanism.
-Runs in node (including cordova/phonegap and node-webkit),  [nativescript](http://www.nativescript.org) and the browser.
+Runs in node (including cordova/phonegap and node-webkit), nativescript and the browser.
 ControlDB is ideal for the following scenarios: 
 
 1. client-side in-memory db is ideal (e.g., a session store)
@@ -23,7 +23,7 @@ ControlDB supports indexing and views and achieves high-performance through main
 ## Demo
 
 The following demos are available:
-- [Sandbox / Playground](https://rawgit.com/techfort/ControlDB/master/examples/sandbox/ControlSandbox.htm)
+- [Sandbox / Playground](https://rawgit.com/firatkiral/ControlDB/master/examples/sandbox/ControlDBSandbox.htm)
 
 ## Documentation
 

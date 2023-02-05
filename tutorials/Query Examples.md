@@ -1,15 +1,15 @@
 ### Note: we now have several quickstart examples in the 'examples' subfolder of this repository.
 
-> https://github.com/techfort/LokiJS/blob/master/examples/quickstart-core.js and
-> https://github.com/techfort/LokiJS/blob/master/examples/quickstart-chaining.js
-> https://github.com/techfort/LokiJS/blob/master/examples/quickstart-transforms.js
-> https://github.com/techfort/LokiJS/blob/master/examples/quickstart-dynview.js
+> https://github.com/firatkiral/controldb/blob/master/examples/quickstart-core.js and
+> https://github.com/firatkiral/controldb/blob/master/examples/quickstart-chaining.js
+> https://github.com/firatkiral/controldb/blob/master/examples/quickstart-transforms.js
+> https://github.com/firatkiral/controldb/blob/master/examples/quickstart-dynview.js
 
-> For persistence examples we have numbered node quickstarts in the [examples folder](https://github.com/techfort/LokiJS/tree/master/examples) and web quickstart gists available within [Loki Sandbox](https://rawgit.com/techfort/LokiJS/master/examples/sandbox/LokiSandbox.htm).
+> For persistence examples we have numbered node quickstarts in the [examples folder](https://github.com/firatkiral/controldb/tree/master/examples) and web quickstart gists available within [ControlDB Sandbox](https://rawgit.com/firatkiral/controldb/master/examples/sandbox/ControlDBSandbox.htm).
 
 ### Designing Queries
 
-LokiJS has evolved several mechanisms for querying the database.  At the highest level of abstraction, let us divide the methods into these categories : 
+ControlDB has evolved several mechanisms for querying the database.  At the highest level of abstraction, let us divide the methods into these categories : 
 * Core Methods - simple, yet powerful method for queries applied directly to a collection.
 * Chaining (via Resultsets) - allows for sorting, limiting, offsets, and multiple queries in sequence.
 * Chaining Transforms - similar to method chaining above, yet defined in object structure which can be serialized.
@@ -36,7 +36,7 @@ results = coll.where(sleipnirFunction);
 ```
 
 ### 'Find' queries
-Find queries are based on subset of mongo query syntax and are capable of utilizing indexes to speed up queries.  When used with Collection Transforms or Dynamic Views, these filters can be saved into the database itself.  This is the preferred method for querying a Loki database.  Query everything (or filter as much as you can) with find queries, and use 'where' filtering if there are edge cases which find does not support (or does not support yet).
+Find queries are based on subset of mongo query syntax and are capable of utilizing indexes to speed up queries.  When used with Collection Transforms or Dynamic Views, these filters can be saved into the database itself.  This is the preferred method for querying a ControlDB database.  Query everything (or filter as much as you can) with find queries, and use 'where' filtering if there are edge cases which find does not support (or does not support yet).
 
 ### 'Find' Operator Examples : 
 
@@ -95,7 +95,7 @@ var results = coll.find({'age': {'$lte': 40}});
 var results = users.find({ count : { '$between': [50, 75] }});
 ```
 >
-> Note : the above $gt, $gte, $lt, $lte, and $between ops use 'loki' sorting which provides a unified range actoss 
+> Note : the above $gt, $gte, $lt, $lte, and $between ops use 'controldb' sorting which provides a unified range actoss 
 > mixed types and which return the same results whether the property is indexed or not. This is needed for binary 
 > indexes and for guarantees of results equality between indexed and non-indexed comparisons.
 >
@@ -156,18 +156,18 @@ users.insert({ name : 'svafrlami' });
 // match users with name not in array set ['odin' or 'thor'] (svafrlami doc only)
 var results = users.find({ 'name' : { '$nin' : ['odin', 'thor'] } }); 
 ```
-**$keyin** - filter for document(s) whose property value is defined in the provided hash object keys.  _(Equivalent to $in: Object.keys(hashObject))_ ( [#362](https://github.com/techfort/LokiJS/issues/362), [#365](https://github.com/techfort/LokiJS/issues/365) )
+**$keyin** - filter for document(s) whose property value is defined in the provided hash object keys.  _(Equivalent to $in: Object.keys(hashObject))_ 
 ```javascript
 categories.insert({ name: 'Title', column: 'title'})
 
 // since the op doesn't use the title value, this is most effective with existing objects
 var result = categories.find({column: { $keyin: { title: 'anything'} }});
 ```
-**$nkeyin** - filter for document(s) whose property value is not defined in the provided hash object keys. **_(Equivalent to $nin: Object.keys(hashObject))_** ( [#362](https://github.com/techfort/LokiJS/issues/362), [#365](https://github.com/techfort/LokiJS/issues/365) )
+**$nkeyin** - filter for document(s) whose property value is not defined in the provided hash object keys. **_(Equivalent to $nin: Object.keys(hashObject))_** 
 ```javascript
 var result = categories.find({column: { $nkeyin: { title: 'anything'} }});
 ```
-**$definedin** - filter for document(s) whose property value is defined in the provided hash object as a value other than **_undefined_**. [#285](https://github.com/techfort/LokiJS/issues/285)
+**$definedin** - filter for document(s) whose property value is defined in the provided hash object as a value other than **_undefined_**.
 ```javascript
 items.insert({ name : 'mjolnir', owner: 'thor', maker: 'dwarves' });
 items.insert({ name : 'gungnir', owner: 'odin', maker: 'elves' });
@@ -177,7 +177,7 @@ items.insert({ name : 'draupnir', owner: 'odin', maker: 'elves' });
 // returns gungnir and draupnir.  similar to $keyin, the value ('rule') is not used by the op
 var results = items.find({maker: { $efinedin: { elves: 'rule' } } });
 ```
-**$undefinedin** -  filter for document(s) whose property value is not defined in the provided hash object or defined but is **_undefined_**. [#285](https://github.com/techfort/LokiJS/issues/285)
+**$undefinedin** -  filter for document(s) whose property value is not defined in the provided hash object or defined but is **_undefined_**. 
 ```javascript
 items.insert({ name : 'mjolnir', owner: 'thor', maker: 'dwarves' });
 items.insert({ name : 'gungnir', owner: 'odin', maker: 'elves' });
@@ -187,7 +187,7 @@ items.insert({ name : 'draupnir', owner: 'odin', maker: 'elves' });
 // returns mjolnir and tyrfing where the 'dwarves' val is not a property on our passed object
 var results = items.find({maker: { $undefinedin: { elves: 'rule' } } });
 ```
-**$contains** - filter for document(s) with property containing the provided value. ( [commit](https://github.com/techfort/LokiJS/pull/120/commits/1f08433203554ccf00b381cbea4e72e25e62d5da), [#205](https://github.com/techfort/LokiJS/issues/205) ).  Use this when your property contains an array but your 
+**$contains** - filter for document(s) with property containing the provided value. Use this when your property contains an array but your 
 compare value is not an array.
 >When typeof property is : 
 >- string: it will do a substring match for your string (indexOf)
@@ -363,7 +363,7 @@ The core 'find' and 'where' functionality are two of the main building blocks th
 * map - maps into a new anonymous collection, provide this with a map function
 * mapReduce - allows you to specify both a map function and a reduce function on the current resultset data.
 * eqJoin - Left joining two sets of data. Join keys can be defined or calculated properties
-* transform - at the resultset level, this requires a raw transform array. When beginning a chain, a named or raw transform may be passed in to the chain method.  (See the ['Collection Transforms'](https://github.com/techfort/LokiJS/wiki/Collection-Transforms) wiki page for more details.)
+* transform - at the resultset level, this requires a raw transform array. When beginning a chain, a named or raw transform may be passed in to the chain method.  (See the ['Collection Transforms'](https://firatkiral.github.io/controldb/tutorial-Collection%20Transforms.html) wiki page for more details.)
 
 An example making better use of chaining might be the following : 
 
@@ -398,7 +398,7 @@ Retaining the resultset (even when not branching) can be done to break up a chai
 
 Wherever possible, use 'Find' queries over 'Where' queries.  'Find' queries are able to utilize indexes if they are applied and are relevant to your query.
 
-The 'Core' (Collection) querying methods (Collection.where(), Collection.find(), Collection.findOne(), Collection.by()) are the best method for learning lokijs.  For many applications this may be sufficient for your query needs.  Features not (yet?) available would be sorting, limiting, offsets and other higher level transformations.  
+The 'Core' (Collection) querying methods (Collection.where(), Collection.find(), Collection.findOne(), Collection.by()) are the best method for learning controldb.  For many applications this may be sufficient for your query needs.  Features not (yet?) available would be sorting, limiting, offsets and other higher level transformations.  
 
 Chaining queries is done via a call to collection.chain() which instances the Resultset class.  In doing so, we establish a 'state' for our queries.  You can string together multiple 'find', 'where', sorts, limit, offset (etc) operations to progressively filter and transform your results.  You may also establish query branching to split off your query into multiple directions as efficiently as possible.  Chaining via resultsets is still intended for instant evaluation.  If you keep a resultset around in memory, it is not guaranteed to remain up-to-date if the underlying data changes.  Only the first chained operation may use database filters, so prioritize your most expensive find() filter (which has an index applied) to be the first chained operation.
 
