@@ -24,11 +24,10 @@ ControlDB supports indexing and views and achieves high-performance through main
 
 The following demos are available:
 - [Sandbox / Playground](https://rawgit.com/techfort/ControlDB/master/examples/sandbox/ControlSandbox.htm)
-- a node-webkit small demo in the folder demos/desktop_app. You can launch it by running `/path/to/nw demos/desktop_app/`
 
-## Wiki
+## Documentation
 
-Example usage can be found on the [wiki](https://github.com/techfort/ControlDB/wiki)
+Example usage and API documentation can be found in the [here](https://firatkiral.github.io/controldb/)
 
 ## Main Features
 
@@ -39,44 +38,17 @@ Example usage can be found on the [wiki](https://github.com/techfort/ControlDB/w
 5. Changes API
 6. Joins
 
-## Current state
-
-ControlDB is at version 1.3 [Eostre].
-
-As ControlDB is written in JavaScript it can be run on any environment supporting JavaScript such as browsers, node.js/node-webkit, nativescript mobile framework and hybrid mobile apps (such as phonegap/cordova).
-
-Made by [@techfort](http://twitter.com/tech_fort), with the precious help of Dave Easterday. 
-
-_[Leave a tip](https://gratipay.com/techfort/) or give us a star if you find ControlDB useful!_
 
 ## Installation
 
 For browser environments you simply need the controldb.js file contained in src/
 
-You can use bower to install controldb with `bower install controldb`
-
 For node and nativescript environments you can install through `npm install controldb`.
 
-## Roadmap
-
-* exactIndex
-* key-value datastore
-* MRU cache
-* MongoDB API compatibility
-* server standalone (tcp and http servers and clients)
-* replication and horizontal scaling
-
-## Contact
-
-For help / enquiries contact joe.minichino@gmail.com
-
-## Commercial Support
-
-For commercial support contact info.techfort@gmail.com
 
 ## License
 
-Copyright (c) 2015 TechFort <joe.minichino@gmail.com>
+Copyright (c) 2023 Firat Kiral
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
