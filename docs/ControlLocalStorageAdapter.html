@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: ControlMemoryAdapter</title>
+    <title>JSDoc: Class: ControlLocalStorageAdapter</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: ControlMemoryAdapter</h1>
+    <h1 class="page-title">Class: ControlLocalStorageAdapter</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>ControlMemoryAdapter<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>ControlLocalStorageAdapter<span class="signature">()</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -41,7 +41,7 @@
     
 
     
-    <h4 class="name" id="ControlMemoryAdapter"><span class="type-signature"></span>new ControlMemoryAdapter<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="ControlLocalStorageAdapter"><span class="type-signature"></span>new ControlLocalStorageAdapter<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -49,8 +49,7 @@
 
 
 <div class="description">
-    <p>In in-memory persistence adapter for an in-memory database.
-This simple 'key/value' adapter is intended for unit testing and diagnostics.</p>
+    <p>A control persistence adapter which persists to web browser's local storage object</p>
 </div>
 
 
@@ -59,175 +58,6 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>memory adapter options</p>
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>asyncResponses</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>whether callbacks are invoked asynchronously</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>asyncTimeout</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    50
-                
-                </td>
-            
-
-            <td class="description last"><p>timeout in ms to queue callbacks</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -263,7 +93,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line1955">line 1955</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2475">line 2475</a>
     </li></ul></dd>
     
 
@@ -327,7 +157,8 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
 
 <div class="description">
-    <p>Deletes a database from its in-memory store.</p>
+    <p>deleteDatabase() - delete the database from localstorage, will throw an error if it
+can't be deleted</p>
 </div>
 
 
@@ -379,7 +210,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
             
 
-            <td class="description last"><p>name of the database (filename/keyname)</p></td>
+            <td class="description last"><p>the filename of the database to delete</p></td>
         </tr>
 
     
@@ -402,7 +233,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
             
 
-            <td class="description last"><p>function to call when done</p></td>
+            <td class="description last"><p>the callback to handle the result</p></td>
         </tr>
 
     
@@ -443,7 +274,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2055">line 2055</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2518">line 2518</a>
     </li></ul></dd>
     
 
@@ -487,8 +318,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
 
 <div class="description">
-    <p>Loads a serialized database from its in-memory store.
-(Control persistence adapter interface function)</p>
+    <p>loadDatabase() - Load data from localstorage</p>
 </div>
 
 
@@ -540,7 +370,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
             
 
-            <td class="description last"><p>name of the database (filename/keyname)</p></td>
+            <td class="description last"><p>the name of the database to load</p></td>
         </tr>
 
     
@@ -563,7 +393,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
             
 
-            <td class="description last"><p>adapter callback to return load result to caller</p></td>
+            <td class="description last"><p>the callback to handle the result</p></td>
         </tr>
 
     
@@ -604,7 +434,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line1985">line 1985</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2487">line 2487</a>
     </li></ul></dd>
     
 
@@ -648,8 +478,8 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
 
 <div class="description">
-    <p>Saves a serialized database to its in-memory store.
-(Control persistence adapter interface function)</p>
+    <p>saveDatabase() - save data to localstorage, will throw an error if the file can't be saved
+might want to expand this to avoid dataloss on partial save</p>
 </div>
 
 
@@ -701,7 +531,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
             
 
-            <td class="description last"><p>name of the database (filename/keyname)</p></td>
+            <td class="description last"><p>the filename of the database to load</p></td>
         </tr>
 
     
@@ -724,7 +554,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 
             
 
-            <td class="description last"><p>adapter callback to return load result to caller</p></td>
+            <td class="description last"><p>the callback to handle the result</p></td>
         </tr>
 
     
@@ -765,7 +595,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2018">line 2018</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2502">line 2502</a>
     </li></ul></dd>
     
 
@@ -817,7 +647,7 @@ This simple 'key/value' adapter is intended for unit testing and diagnostics.</p
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sat Feb 04 2023 23:13:13 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sat Feb 04 2023 23:29:52 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

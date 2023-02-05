@@ -1,7 +1,7 @@
 {
 	"opts": {
 		"readme": "./OVERVIEW.md",
-		"destination": "./jsdoc",
+		"destination": "./docs",
 		"tutorials": "./tutorials"
 	},
 	"tags": {
