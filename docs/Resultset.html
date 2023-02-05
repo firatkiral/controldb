@@ -827,7 +827,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
 
             
 
-            <td class="description last"><p>Will force clones and strip $control and meta properties from documents</p></td>
+            <td class="description last"><p>Will force clones and strip $ctrl and meta properties from documents</p></td>
         </tr>
 
     
@@ -1338,7 +1338,7 @@ eqJoin expects the right join key values to be unique.  Otherwise left data will
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>var db = new control('sandbox.db');
+    <pre class="prettyprint"><code>var db = new controldb('sandbox.db');
 
 var products = db.addCollection('products');
 var orders = db.addCollection('orders');
@@ -1356,7 +1356,7 @@ orders.insert({ orderDate : new Date("8/3/2016").getTime(), prodId: "174592", qt
 
 var mapfun = function(left, right) {
   return {
-    orderId: left.$control,
+    orderId: left.$ctrl,
     orderDate: new Date(left.orderDate) + '',
     customerId: left.customerId,
     qty: left.qty,
@@ -1859,7 +1859,7 @@ console.log(orderSummary);</code></pre>
     
     <pre class="prettyprint"><code>var orders.chain().find({ productId: 32 }).map(function(obj) {
   return {
-    orderId: $control,
+    orderId: $ctrl,
     productId: productId,
     quantity: qty
   };
@@ -2050,7 +2050,7 @@ console.log(orderSummary);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>var db = new control("order.db");
+    <pre class="prettyprint"><code>var db = new controldb("order.db");
 var orders = db.addCollection("orders");
 orders.insert([{ qty: 4, unitCost: 100.00 }, { qty: 10, unitCost: 999.99 }, { qty: 2, unitCost: 49.99 }]);
 
@@ -3386,7 +3386,7 @@ var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7134">line 7134</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7126">line 7126</a>
     </li></ul></dd>
     
 
@@ -3504,7 +3504,7 @@ rs.compoundsort(['age', ['name', true]]);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7055">line 7055</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7047">line 7047</a>
     </li></ul></dd>
     
 
@@ -3724,7 +3724,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
 
             
 
-            <td class="description last"><p>Will force clones and strip $control and meta properties from documents</p></td>
+            <td class="description last"><p>Will force clones and strip $ctrl and meta properties from documents</p></td>
         </tr>
 
     
@@ -3772,7 +3772,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7208">line 7208</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7200">line 7200</a>
     </li></ul></dd>
     
 
@@ -3979,7 +3979,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7174">line 7174</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7166">line 7166</a>
     </li></ul></dd>
     
 
@@ -4281,7 +4281,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7254">line 7254</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7233">line 7233</a>
     </li></ul></dd>
     
 
@@ -4314,127 +4314,11 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <pre class="prettyprint"><code>var orders.chain().find({ productId: 32 }).map(function(obj) {
   return {
-    orderId: $control,
+    orderId: $ctrl,
     productId: productId,
     quantity: qty
   };
 });</code></pre>
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="remove"><span class="type-signature">(static) </span>Collection#remove<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Resultset.html">Resultset</a>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Removes all document objects which are currently in resultset from collection (as well as resultset)</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7221">line 7221</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>this (empty) resultset for further chain ops.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="Resultset.html">Resultset</a></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// remove users inactive since 1/1/2001
-users.chain().find({ lastActive: { $lte: new Date("1/1/2001").getTime() } }).remove();</code></pre>
 
 
 
@@ -4758,7 +4642,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7118">line 7118</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7110">line 7110</a>
     </li></ul></dd>
     
 
@@ -4922,7 +4806,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7099">line 7099</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7091">line 7091</a>
     </li></ul></dd>
     
 
@@ -5136,7 +5020,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7082">line 7082</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7074">line 7074</a>
     </li></ul></dd>
     
 
@@ -5228,7 +5112,7 @@ var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data()
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sat Feb 04 2023 23:29:52 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Feb 05 2023 02:06:37 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

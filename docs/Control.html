@@ -577,7 +577,7 @@ and guaranteeing proper serialization of the calls.</p></td>
     <dt class="implements">Implements:</dt>
     <dd class="implements"><ul>
         
-            <li><a href="ControlEventEmitter.html">ControlEventEmitter</a></li>
+            <li>ControlDBEventEmitter</li>
         
     </ul></dd>
     
@@ -653,7 +653,7 @@ and guaranteeing proper serialization of the calls.</p></td>
     
 
     
-    <h4 class="name" id="addCollection"><span class="type-signature"></span>addCollection<span class="signature">(name, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
+    <h4 class="name" id="addCollection"><span class="type-signature">(static) </span>ControlDB#addCollection<span class="signature">(name, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
     
 
     
@@ -1349,7 +1349,7 @@ and guaranteeing proper serialization of the calls.</p></td>
     
 
     
-    <h4 class="name" id="clearChanges"><span class="type-signature"></span>clearChanges<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="clearChanges"><span class="type-signature">(static) </span>ControlDB#clearChanges<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
@@ -1437,7 +1437,7 @@ and guaranteeing proper serialization of the calls.</p></td>
     
 
     
-    <h4 class="name" id="close"><span class="type-signature"></span>close<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="close"><span class="type-signature">(static) </span>ControlDB#close<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1587,7 +1587,7 @@ Does not actually destroy the db.</p>
     
 
     
-    <h4 class="name" id="configureOptions"><span class="type-signature"></span>configureOptions<span class="signature">(options, initialConfig)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="configureOptions"><span class="type-signature">(static) </span>ControlDB#configureOptions<span class="signature">(options, initialConfig)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1980,7 +1980,7 @@ Does not actually destroy the db.</p>
     
 
     
-    <h4 class="name" id="copy"><span class="type-signature"></span>copy<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="copy"><span class="type-signature">(static) </span>ControlDB#copy<span class="signature">(options)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2166,7 +2166,7 @@ Does not actually destroy the db.</p>
     
 
     
-    <h4 class="name" id="deleteDatabase"><span class="type-signature"></span>deleteDatabase<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="deleteDatabase"><span class="type-signature">(static) </span>ControlDB#deleteDatabase<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2318,7 +2318,7 @@ persistence method to use, or environment detection (if configuration was not pr
     
 
     
-    <h4 class="name" id="deserializeCollection"><span class="type-signature"></span>deserializeCollection<span class="signature">(destructuredSource, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="deserializeCollection"><span class="type-signature">(static) </span>ControlDB#deserializeCollection<span class="signature">(destructuredSource, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
     
 
     
@@ -2629,7 +2629,7 @@ persistence method to use, or environment detection (if configuration was not pr
     
 
     
-    <h4 class="name" id="deserializeDestructured"><span class="type-signature"></span>deserializeDestructured<span class="signature">(destructuredSource, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {object|array}</span></h4>
+    <h4 class="name" id="deserializeDestructured"><span class="type-signature">(static) </span>ControlDB#deserializeDestructured<span class="signature">(destructuredSource, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {object|array}</span></h4>
     
 
     
@@ -3022,7 +3022,7 @@ your own structured persistence or data exchange.</p>
     
 
     
-    <h4 class="name" id="generateChangesNotification"><span class="type-signature"></span>generateChangesNotification<span class="signature">(optional<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="generateChangesNotification"><span class="type-signature">(static) </span>ControlDB#generateChangesNotification<span class="signature">(optional<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {array}</span></h4>
     
 
     
@@ -3202,7 +3202,7 @@ of collections is passed then only the included collections will be tracked.</p>
     
 
     
-    <h4 class="name" id="getCollection"><span class="type-signature"></span>getCollection<span class="signature">(collectionName)</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
+    <h4 class="name" id="getCollection"><span class="type-signature">(static) </span>ControlDB#getCollection<span class="signature">(collectionName)</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
     
 
     
@@ -3361,7 +3361,7 @@ of collections is passed then only the included collections will be tracked.</p>
     
 
     
-    <h4 class="name" id="listCollections"><span class="type-signature"></span>listCollections<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;object>}</span></h4>
+    <h4 class="name" id="listCollections"><span class="type-signature">(static) </span>ControlDB#listCollections<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;object>}</span></h4>
     
 
     
@@ -3471,7 +3471,7 @@ of collections is passed then only the included collections will be tracked.</p>
     
 
     
-    <h4 class="name" id="loadDatabase"><span class="type-signature"></span>loadDatabase<span class="signature">(options, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadDatabase"><span class="type-signature">(static) </span>ControlDB#loadDatabase<span class="signature">(options, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3762,7 +3762,7 @@ To avoid contention with any throttledSaves, we will drain the save queue first.
     
 
     
-    <h4 class="name" id="loadJSON"><span class="type-signature"></span>loadJSON<span class="signature">(serializedDb, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadJSON"><span class="type-signature">(static) </span>ControlDB#loadJSON<span class="signature">(serializedDb, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3991,7 +3991,7 @@ To avoid contention with any throttledSaves, we will drain the save queue first.
     
 
     
-    <h4 class="name" id="loadJSONObject"><span class="type-signature"></span>loadJSONObject<span class="signature">(dbObject, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="loadJSONObject"><span class="type-signature">(static) </span>ControlDB#loadJSONObject<span class="signature">(dbObject, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -4220,7 +4220,7 @@ To avoid contention with any throttledSaves, we will drain the save queue first.
     
 
     
-    <h4 class="name" id="removeCollection"><span class="type-signature"></span>removeCollection<span class="signature">(collectionName)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="removeCollection"><span class="type-signature">(static) </span>ControlDB#removeCollection<span class="signature">(collectionName)</span><span class="type-signature"></span></h4>
     
 
     
@@ -4357,7 +4357,7 @@ To avoid contention with any throttledSaves, we will drain the save queue first.
     
 
     
-    <h4 class="name" id="renameCollection"><span class="type-signature"></span>renameCollection<span class="signature">(oldName, newName)</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
+    <h4 class="name" id="renameCollection"><span class="type-signature">(static) </span>ControlDB#renameCollection<span class="signature">(oldName, newName)</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
     
 
     
@@ -4539,7 +4539,7 @@ To avoid contention with any throttledSaves, we will drain the save queue first.
     
 
     
-    <h4 class="name" id="saveDatabase"><span class="type-signature"></span>saveDatabase<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="saveDatabase"><span class="type-signature">(static) </span>ControlDB#saveDatabase<span class="signature">(callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -4703,7 +4703,7 @@ persistence method to use, or environment detection (if configuration was not pr
     
 
     
-    <h4 class="name" id="serialize"><span class="type-signature"></span>serialize<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="serialize"><span class="type-signature">(static) </span>ControlDB#serialize<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -4711,7 +4711,7 @@ persistence method to use, or environment detection (if configuration was not pr
 
 
 <div class="description">
-    <p>Serialize database to a string which can be loaded via <a href="Control.html#loadJSON">Control#loadJSON</a></p>
+    <p>Serialize database to a string which can be loaded via ControlDB#loadJSON</p>
 </div>
 
 
@@ -4813,7 +4813,7 @@ persistence method to use, or environment detection (if configuration was not pr
     
 
     
-    <h4 class="name" id="serializeChanges"><span class="type-signature"></span>serializeChanges<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="serializeChanges"><span class="type-signature">(static) </span>ControlDB#serializeChanges<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
     
@@ -4923,7 +4923,7 @@ persistence method to use, or environment detection (if configuration was not pr
     
 
     
-    <h4 class="name" id="serializeCollection"><span class="type-signature"></span>serializeCollection<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string|array}</span></h4>
+    <h4 class="name" id="serializeCollection"><span class="type-signature">(static) </span>ControlDB#serializeCollection<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string|array}</span></h4>
     
 
     
@@ -5192,7 +5192,7 @@ persistence method to use, or environment detection (if configuration was not pr
     
 
     
-    <h4 class="name" id="serializeDestructured"><span class="type-signature"></span>serializeDestructured<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string|array}</span></h4>
+    <h4 class="name" id="serializeDestructured"><span class="type-signature">(static) </span>ControlDB#serializeDestructured<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string|array}</span></h4>
     
 
     
@@ -5529,7 +5529,7 @@ your own structured persistence or data exchange.</p>
     
 
     
-    <h4 class="name" id="throttledSaveDrain"><span class="type-signature"></span>throttledSaveDrain<span class="signature">(callback, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="throttledSaveDrain"><span class="type-signature">(static) </span>ControlDB#throttledSaveDrain<span class="signature">(callback, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -5820,7 +5820,7 @@ your own structured persistence or data exchange.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sat Feb 04 2023 23:29:52 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Feb 05 2023 02:06:37 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
