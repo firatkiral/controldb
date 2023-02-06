@@ -24,10 +24,6 @@ ControlDB is ideal for the following scenarios:
 
 ControlDB supports indexing and views and achieves high-performance through maintaining unique and binary indexes (indices) for data.
 
-## Documentation
-
-Example usage and API documentation can be found in the [here](https://firatkiral.github.io/controldb/)
-
 ## Main Features
 
 1. Fast performance NoSQL in-memory database, collections with unique index (1.1M ops/s) and binary-index (500k ops/s)
@@ -36,6 +32,10 @@ Example usage and API documentation can be found in the [here](https://firatkira
 4. Built-in persistence adapters, and the ability to support user-defined ones
 5. Changes API
 6. Joins
+
+## Documentation
+
+Example usage and API documentation can be found in the [here](https://firatkiral.github.io/controldb/)
 
 
 ## Installation
