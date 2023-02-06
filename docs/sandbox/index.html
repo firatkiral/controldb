@@ -12,8 +12,8 @@
 <head>
     <title>Control Sandbox</title>
 
-    <script src="../../src/controldb.js"></script>
-    <script src="../../src/controldb-indexed-adapter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/controldb/src/controldb.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/controldb/src/controldb-indexed-adapter.js"></script>
     <script src="jquery-2.1.0.min.js"></script>
     <script src="sandbox.min.js"></script>
     <link rel="stylesheet" href="sandbox.min.css">
@@ -148,15 +148,14 @@
         <label>Github sample gists : </label>
         <select id="selSamples" style="min-width:200px" onchange="selSamplesChanged()">
           <option value=""></option>
-          <option value="https://gist.githubusercontent.com/obeliskos/f62fc11049c6264f90951fad6d3c487b/raw/71c57b9b3643ab0a94bd96801f9c3c00b6ea80bf/web-quickstart1">Quickstart 1</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/3acee5f8d70e24d66fe306bfdcd724d1/raw/2ebdb7df0ccc3097de2216cd84c1dcf89d29e8ee/web-quickstart2">Quickstart 2</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/b3b50f3589596218da68b6252ed236bd/raw/6a6349810f8af36abb0e0c82d11e473318a9606b/web-quickstart3">Quickstart 3</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/fa0bda5c722bf225c6527c5187ab1ea7/raw/d51d09ba05f6d7eda7b7364c6748b413ce1e344c/web-quickstart4">Quickstart 4</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/32e0e730e1d2e1ac5e84f7363331b498/raw/267b2f8023499208ed06514524921acbc1841fcc/web-quickstart-core">Quickstart (Core)</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/7c52ded5a5bffd68c1ca2e0b91980173/raw/26c86e0c1ced72993dafae6202dc881b24a3330b/web-quickstart-chaining">Quickstart (Chaining)</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/59c4c64e3b8c4609fbf2d7ba9fc0264a/raw/fe5e8291a5af21395a7282ddc9d329f7e163803a/web-quickstart-dynview">Quickstart (DynView)</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/4a7a3db8f46c49fd051c54af0104da22/raw/266faaa464bb78635f36ef29414b1acff2791d97/web-quickstart-transforms">Quickstart (Transforms)</option>
-          <option value="https://gist.githubusercontent.com/obeliskos/6335093d15e2f12838e642248a8179b9/raw/c0828d72a32130cde5a58c916c4dcc653a1dbb79/control%2520sort%2520order">Control Sort Ordering</option>
+          <option value="data/qs1.txt">Quickstart 1</option>
+          <option value="data/qs2.txt">Quickstart 2</option>
+          <option value="data/qs3.txt">Quickstart 3</option>
+          <option value="data/qs4.txt">Quickstart 4</option>
+          <option value="data/qcr.txt">Quickstart (Core)</option>
+          <option value="data/qch.txt">Quickstart (Chaining)</option>
+          <option value="data/qdy.txt">Quickstart (DynView)</option>
+          <option value="data/qtr.txt">Quickstart (Transforms)</option>
         </select>
       </td>
       
@@ -324,11 +323,7 @@
     });
     
     function loadGist(rawgist) {
-        if (rawgist.indexOf("https://gist.githubusercontent.com") !== 0) {
-          console.log("only allowing ajax fetch to gist.githubusercontent.com");
-        }
-
-        console.log ("loading rawgist : " + rawgist);
+        console.log ("loading data : " + rawgist);
 
         var oReq = new XMLHttpRequest();
         oReq.addEventListener("load", gistLoaded);

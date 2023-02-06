@@ -1,0 +1,83 @@
+/**
+ * quickstart-chaining.js : example demonstrating controldb method chaining via Resultset class.
+ *
+ * This example will only use controldb, collection, and resultset classes.  We will not bother
+ *    with persistence for this example.
+ *
+ */
+
+var db = new controldb("quickstart-chaining.db");
+
+var users = db.addCollection("users");
+
+// seed data
+users.insert({ name: "odin", gender: "m", age: 1000, tags : ["woden", "knowlege", "sorcery", "frenzy", "runes"], items: ["gungnir"], attributes: { eyes: 1} });
+users.insert({ name: "frigg", gender: "f", age: 800, tags: ["foreknowlege"], items: ["eski"] });
+users.insert({ name: "thor", gender: "m", age: 35, items: ["mjolnir", "beer"] });
+users.insert({ name: "sif", gender: "f", age: 30 });
+users.insert({ name: "controldb", gender: "m", age: 29 });
+users.insert({ name: "sigyn", gender: "f", age: 29 });
+users.insert({ name: "freyr", age: 400 });
+users.insert({ name: "heimdallr", age: 99 });
+users.insert({ name: "mimir", age: 999 });
+
+// call chain() method on collection to begin chaining
+// call docs() method to terminate chain and return results
+
+var result;
+
+// find all records
+result = users.docs();
+
+// find all records sorted by age :
+result = users.simplesort("age").docs();
+
+// find all records greater than or equal to 400 sorted by age descending
+result = users.find({age: { $gte: 400 }}).simplesort("age", true).docs();
+logText("result 1");
+logObject(result);
+
+// find the two oldest users
+result = users.simplesort("age", true).limit(2).docs();
+logText("result 2");
+logObject(result);
+
+// find everyone but the two oldest users
+result = users.simplesort("age", true).offset(2).docs();
+logText("result 3");
+logObject(result);
+
+// incrementally chaining filters
+result = users.find({ age: 29}).find({ gender: "f"}).docs();
+logText("result 4");
+logObject(result);
+
+// mixing filter methods
+result = users
+  .find({ age: 29})
+  .where(function(obj) { return obj.gender === "f" })
+  .docs();
+logText("result 5");
+logObject(result);
+  
+// find all users between 30-40 and add a year to their age using javascript update function
+// dont need data back so don't need to call docs()
+users
+  .find({ age: { $between: [30, 40] } })
+  .update(function(obj) { obj.age = obj.age+1; });
+  
+// remove all users with age of 29
+// dont need data back so don't need to call docs()
+users
+  .find({ age: 29 })
+  .remove();
+  
+// get all documents but strip $ctrl and meta properties from results
+result = users.docs({removeMeta: true});
+logText("result 6");
+logObject(result);
+
+// get all documents but return clones even though we did not define clones on collection
+result = users.docs({forceClones: true});
+logText("result 7");
+logObject(result);

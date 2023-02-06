@@ -1,0 +1,70 @@
+/**
+ * web-quickstart4.js example for controldb with manual loading and saving
+ *
+ * This example shows how you can manually load and save your controldb 
+ * database if do not need or want to use the 'autosave' functionality.
+ *
+ * Since most of controldb's persistence adapters are asynchronous this example
+ * shows you still need to use the appropriate callbacks to ensure those 
+ * processes complete before you reload.
+ */
+
+// include script reference in html (controldb sandbox already has)
+// <script src="../../src/controldb.js"></script>
+
+var db = new controldb('quickstart4.db');
+
+// set up an initialize function for first load (when db hasn't been created yet)
+function databaseInitialize() {
+  var entries = db.getCollection("entries");
+  var messages = db.getCollection("messages");
+
+  // Add our main example collection if this is first run.
+  // This collection will save into a partition named quickstart3.db.0 (collection 0)  
+  if (entries === null) {
+    // first time run so add and configure collection with some arbitrary options
+    entries = db.addCollection("entries");
+  }
+
+  if (messages === null) {
+    messages = db.addCollection("messages");
+    messages.insert({ txt: "i will only insert into this collection during databaseInitialize" });
+  }
+}
+
+// place any bootstrap logic which needs to be run after loadDatabase has completed
+function runProgramLogic() {
+  var entries = db.getCollection("entries");
+  var entryCount = entries.count();
+  var now = new Date();
+
+  logText("old number of entries in database : " + entryCount);
+
+  entries.insert({ x: now.getTime(), y: 100 - entryCount });
+  entryCount = entries.count();
+
+  logText("new number of entries in database : " + entryCount);
+  logText("");
+  
+  // manually save
+  db.saveDatabase(function(err) {
+    if (err) {
+      logObject(err);
+    }
+    else {
+      logText("saved... it can now be loaded or reloaded with up to date data");
+    }
+  });
+}
+
+logText("Loading database...");
+
+// manual bootstrap
+db.loadDatabase({}, function(err) {
+  databaseInitialize();
+  logText("db initialized");
+  runProgramLogic();
+  logText("program logic run but it's save database probably not finished yet");
+});
+
+logText("wait for it...");

@@ -1,0 +1,108 @@
+/**
+ * quickstart-core.js : example demonstrating 'core' controldb methods
+ *
+ * This example will only use controldb and collection classes.  We will not bother
+ *    with persistence for this example.
+ *
+ */
+
+var db = new controldb("quickstart-core.db");
+
+var users = db.addCollection("users");
+
+// seed data
+users.insert({ name: "odin", gender: "m", age: 1000, tags : ["woden", "knowlege", "sorcery", "frenzy", "runes"], items: ["gungnir"], attributes: { eyes: 1} });
+users.insert({ name: "frigg", gender: "f", age: 800, tags: ["foreknowlege"], items: ["eski"] });
+users.insert({ name: "thor", gender: "m", age: 35, items: ["mjolnir", "beer"] });
+users.insert({ name: "sif", gender: "f", age: 30 });
+users.insert({ name: "controldb", gender: "m", age: 29 });
+users.insert({ name: "sigyn", gender: "f", age: 29 });
+users.insert({ name: "freyr", age: 400 });
+users.insert({ name: "heimdallr", age: 99 });
+users.insert({ name: "mimir", age: 999 });
+
+var result;
+
+// find all records where age is equal to 1000 (just odin)
+// query object is { age: 1000 }
+// this form is shorthand where $eq op is implicit
+// this will return array of all docs matching that filter
+result = users.find({ age: 1000 });
+logText("result 1 : ");
+logObject(result);
+
+// do same query but explicitly state the $eq op
+// this will return array of all docs matching that filter
+result = users.find({ age: { $eq: 1000 } });
+logText("result 2 : ");
+logObject(result);
+
+// if we know we only want one record, use findOne instead
+// this will single object reference of (first) found item or null if not found
+result = users.findOne({ age: 1000 });
+logText("result 3 : ");
+logObject(result);
+
+// use a range operator ($gt)
+// returns all documents with age greater than 500
+result = users.find({age: { $gt: 500 }});
+logText("result 4 : ");
+logObject(result);
+
+// find implicit $and
+result = users.find({ age: 29, gender: "f" });
+logText("result 5 : ");
+logObject(result);
+
+// find explicit $and
+result = users.find({ $and: [
+  { age: 29},
+  { gender: "f" }
+]});
+logText("result 6 : ");
+logObject(result);
+
+// find users in an age range
+result = users.find({ age: { $between: [20, 40] } });
+logText("result 7 : ");
+logObject(result);
+
+// find within nested object by using dot notation
+result = users.find({ "attributes.eyes": 1 });
+logText("one eyed : ");
+logObject(result);
+
+// find where array property contains a value
+result = users.find({ items: { $contains: "eski" } });
+logText("frigg : ");
+logObject(result);
+
+// more array logic : find all users which has 1 element in an 'items' property
+result = users.find({ items: { $size: 2 } });
+logText("users with 2 items : ");
+logObject(result);
+
+// filter using a javascript "where" filter
+// filter for users which not only have an 'items' property, but
+// its length is exactly 1
+result = users.where(function(obj) {
+  return obj.age === 400;
+});
+logText("where filter: ");
+logObject(result);
+
+
+// update a document
+var mimir = users.findOne({name: "mimir" });
+mimir.age = 998;
+users.update(mimir);
+
+// remove a document by id
+users.remove(mimir.$ctrl);
+
+// remove a document by instance 
+var heimdallr = users.findOne({name: "heimdallr" });
+users.remove(heimdallr);
+
+logText("");
+logText("deleted 2 items, current user count : " + users.count());

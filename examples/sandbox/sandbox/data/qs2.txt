@@ -1,0 +1,44 @@
+// web-quickstart2.js example : 
+// This exmple uses the default persistence adapter for web environment (LokiLocalStorageAdapter),
+// to persist its database.
+
+// include controldb in html (this sandbox already has)
+// <script src="../../src/controldb.js"></script>
+
+var db = new controldb('web-quickstart2.db', {
+	autoload: true,
+	autoloadCallback : databaseInitialize,
+	autosave: true, 
+	autosaveInterval: 4000 // save every four seconds for our example
+});
+
+// implement the autoloadback referenced in controldb constructor
+function databaseInitialize() {
+  // on the first load of (non-existent database), we will have no collections so we can 
+  //   detect the absence of our collections and add (and configure) them now.
+  var entries = db.getCollection("entries");
+  if (entries === null) {
+    entries = db.addCollection("entries");
+  }
+
+  // kick off any program logic or start listening to external events
+  runProgramLogic();
+}
+
+// While we could have done this in our databaseInitialize function, 
+//   lets go ahead and split out the logic to run 'after' initialization into this 'runProgramLogic' function
+function runProgramLogic() {
+  var entries = db.getCollection("entries");
+  var entryCount = entries.count();
+  var now = new Date();
+
+  logText("old number of entries in database : " + entryCount);
+
+  entries.insert({ x: now.getTime(), y: 100 - entryCount });
+  entryCount = entries.count();
+
+  logText("new number of entries in database : " + entryCount);
+  logText("");
+  logText("Wait 4 seconds for the autosave timer to save our new addition and then press [Ctrl-c] to quit")
+  logText("If you waited 4 seconds, the next time you run this script the numbers should increase by 1");
+}

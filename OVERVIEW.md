@@ -106,3 +106,8 @@ users.insert({
 // Error: age: input must be of type Number.
 
 ```
+
+## Demo
+
+The following demos are available:
+- [Sandbox / Playground](https://firatkiral.github.io/controldb/sandbox/)

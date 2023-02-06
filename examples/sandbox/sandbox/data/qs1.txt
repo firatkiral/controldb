@@ -1,0 +1,31 @@
+/**
+ * web-quickstart1 - starter example showing use use of controldb
+ *   entirely in-memory with no persistence.
+ */
+ 
+// Since we don't pass a name parameter, our database will have 
+//   default name of 'controldb'
+var db = new controldb();
+
+// controldb is mostly synchronous except for persistence adapters.
+// Since we are not auto-loading a persisted database in this
+//   example, controldb is entirely synchronous.
+
+// add simple 'users' collection with default options
+var users = db.addCollection("users");
+
+// insert some documents
+users.insert({name:'odin', age: 50});
+users.insert({name:'thor', age: 35});
+users.insert({name:'controldb', age: 30});
+
+// run a 'find' query with a 'less-than-or-equal' range operator
+//   to grab two of our documents.
+var result = users.find({ age : { $lte: 35 } });
+
+// inspect the result with sandbox logger.
+// As documents are inserted into our collection they have 
+//   $ctrl property added which is a unique id you can pass to 
+//   collection.get(). They also have 'meta' property added which 
+//   is used internally.
+logObject(result);

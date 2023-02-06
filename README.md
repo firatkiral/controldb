@@ -147,7 +147,7 @@ users.insert({
 ## Demo
 
 The following demos are available:
-- [Sandbox / Playground](https://rawgit.com/firatkiral/controldb/master/examples/sandbox/ControlDBSandbox.htm)
+- [Sandbox / Playground](https://firatkiral.github.io/controldb/sandbox/)
 
 
 ## License
