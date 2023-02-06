@@ -54,7 +54,7 @@ var results = users.where(function(obj) {
 Simple Chaining :
 
 ```javascript
-var results = users.chain().find({ age: {'$gte': 35} }).simplesort('name').data();
+var results = users.find({ age: {'$gte': 35} }).simplesort('name').docs();
 ```
 
 Simple named transform :
@@ -69,7 +69,7 @@ users.addTransform('progeny', [
   }
 ]);
 
-var results = users.chain('progeny').data();
+var results = users.chain('progeny').docs();
 ```
 
 Simple Dynamic View :
@@ -83,5 +83,26 @@ pview.applyFind({
 
 pview.applySimpleSort('name');
 
-var results = pview.data();
+var results = pview.docs();
+```
+
+Schema Validation :
+
+```javascript
+var userSchema = {
+  name: {
+    type: String,
+    required: true
+  },
+  age: Number,
+};
+
+var users = db.addCollection('users', {schema: userSchema});
+
+users.insert({
+  name: 'Odin',
+  age: "50",
+});
+// Error: age: input must be of type Number.
+
 ```

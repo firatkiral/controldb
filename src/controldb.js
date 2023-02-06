@@ -528,7 +528,7 @@
         return b.indexOf(a) !== -1;
       },
 
-      $inSet: function(a, b) {
+      $inSet: function (a, b) {
         return b.has(a);
       },
 
@@ -1775,7 +1775,7 @@
           copyColl.getData = coll.getData;
           Object.defineProperty(copyColl, 'data', {
             /* jshint loopfunc:true */
-            get: function() {
+            get: function () {
               var data = this.getData();
               this.getData = null;
               Object.defineProperty(this, 'data', { value: data });
@@ -4946,6 +4946,7 @@
      * @implements ControlDBEventEmitter
      * @param {string} name - collection name
      * @param {(array|object)=} options - (optional) array of property names to be indicized OR a configuration object
+     * @param {object=} [options.schema] - schema definition object, validates documents added to collection if defined
      * @param {array=} [options.unique=[]] - array of property names to define unique constraints for
      * @param {array=} [options.exact=[]] - array of property names to define exact constraints for
      * @param {array=} [options.indices=[]] - array property names to define binary indexes for
@@ -5017,6 +5018,8 @@
           self.constraints.exact[prop] = new ExactIndex(prop);
         });
       }
+
+      this.schema = options.hasOwnProperty('schema') ? options.schema : null;
 
       // if set to true we will optimally keep indices 'fresh' during insert/update/remove ops (never dirty/never needs rebuild)
       // if you frequently intersperse insert/update/remove ops between find ops this will likely be significantly faster option.
@@ -6071,6 +6074,13 @@
 
         this.emit('pre-update', doc);
 
+        if (this.schema) {
+          doc = validateSchema(doc, this.schema, key);
+          if (doc instanceof Error) {
+            throw doc;
+          }
+        }
+
         this.uniqueNames.forEach(function (key) {
           self.getUniqueIndex(key, true).update(oldInternal, newInternal);
         });
@@ -6174,7 +6184,14 @@
           obj.meta.version = 0;
         }
 
-        for (var i = 0, len = this.uniqueNames.length; i < len; i ++) {
+        if (this.schema) {
+          obj = validateSchema(obj, this.schema, key);
+          if (obj instanceof Error) {
+            throw obj;
+          }
+        }
+
+        for (var i = 0, len = this.uniqueNames.length; i < len; i++) {
           this.getUniqueIndex(this.uniqueNames[i], true).set(obj);
         }
 
@@ -6342,7 +6359,7 @@
         });
 
         if (this.isIncremental) {
-          for(idx=0; idx < len; idx++) {
+          for (idx = 0; idx < len; idx++) {
             this.dirtyIds.push(this.idIndex[positions[idx]]);
           }
         }
@@ -7167,17 +7184,17 @@
       return this.chain().find(query, firstOnly);
     };
 
-     /**
-     * Query the collection by supplying a javascript filter function.
-     * @example
-     * var results = coll.where(function(obj) {
-     *   return obj.legs === 8;
-     * });
-     *
-     * @param {function} fun - filter function to run against all collection docs
-     * @returns {array} all documents which pass your filter function
-     * @memberof Collection
-     */
+    /**
+    * Query the collection by supplying a javascript filter function.
+    * @example
+    * var results = coll.where(function(obj) {
+    *   return obj.legs === 8;
+    * });
+    *
+    * @param {function} fun - filter function to run against all collection docs
+    * @returns {array} all documents which pass your filter function
+    * @memberof Collection
+    */
     Collection.prototype.where = function (fun) {
       return this.chain().where(fun);
     };
@@ -7706,6 +7723,119 @@
       return function (array, item) {
         return binarySearch(array, item, fun);
       };
+    }
+
+    function validateSchema(doc, schema) {
+      function validate(input, template, key) {
+        if (input == null && template.required && template.default == null) {
+          return new Error(`${key} is required.`);
+        }
+        if (input == null && template.default != null) {
+          if (typeof template.default === 'function') {
+            input = template.default();
+          }
+          else {
+            input = template.default;
+          }
+        }
+        if (input != null && template.minlength) {
+          if (input.length < template.minlength) {
+            return new Error(`${key}: ${input} length is shorter than min length ${template.minlength}`);
+          }
+        }
+        if (input != null && template.maxlength) {
+          if (input.length > template.maxlength) {
+            return new Error(`${key}: ${input} length is longer than max length ${template.maxlength}`);
+          }
+        }
+        if (input != null && template.min) {
+          if (input < template.min) {
+            return new Error(`${key}: ${input} is less than min value ${template.min}`);
+          }
+        }
+        if (input != null && template.max) {
+          if (input > template.max) {
+            return new Error(`${key}: ${input} is greater than max value ${template.max}`);
+          }
+        }
+        if (input != null && template.validation) {
+          const result = template.validation(input);
+          if (result !== true) {
+            return new Error(`${key}: ${typeof result === 'string' ? result : 'validation failed' }`);
+          }
+        }
+        if (input != null && template.enum) {
+          if (!template.enum.includes(input)) {
+            return new Error(`${key}: ${input} is not in enum values ${template.enum}`);
+          }
+        }
+        if (input != null) {
+          if (Array.isArray(template.type)) {
+            if (!Array.isArray(input)) {
+              return new Error(`${key}: ${input} must be an array.`);
+            }
+            for (let i = 0; i < input.length; i++) {
+              const res = validate(input[i], template.type[0], key);
+              if (res instanceof Error) {
+                return res;
+              }
+              input[i] = res;
+            }
+          }
+          else if (template.type.name === "Object") {
+            if (typeof input !== 'object') {
+              return new Error(`${key}: ${input} must be an object.`);
+            }
+            if (template.properties == null || typeof template.properties !== 'object') {
+              return new Error(`Object ${key} must have a properties object.`);
+            }
+            const objKeys = new Set([...Object.keys(input), ...Object.keys(template.properties)]);
+            for (const objKey of objKeys) {
+              if (template.properties.hasOwnProperty(objKey) === false) {
+                return new Error(`${objKey} is not a valid property.`);
+              }
+              let objTemplate = template.properties[objKey];
+              if (typeof objTemplate !== 'object') {
+                objTemplate = { type: objTemplate };
+              }
+              const res = validate(input[objKey], objTemplate, objKey);
+              if (res instanceof Error) {
+                return res;
+              }
+              input[objKey] = res;
+            }
+          }
+          else if (input.constructor.name === "Number" || input.constructor.name === "String" || input.constructor.name === "Boolean") {
+            if (input.constructor.name !== template.type.name) {
+              return new Error(`${key}: input must be of type ${template.type.name}.`);
+            }
+          }
+          else{
+            return new Error(`${key}: input must be one of the following types: Object, Number, String, Boolean.`);
+          }
+        }
+
+        return input;
+      }
+      const keys = [...Object.keys(doc), ...Object.keys(schema)];
+      for (const key of keys) {
+        if (key === '$ctrl' || key === 'meta') {
+          continue;
+        }
+        if (schema.hasOwnProperty(key) === false) {
+          return new Error(`${key} is not a valid property.`);
+        }
+        let template = schema[key];
+        if (typeof template !== 'object') {
+          template = { type: template };
+        }
+        let res = validate(doc[key], template, key);
+        if (res instanceof Error) {
+          return res;
+        }
+        doc[key] = res;
+      }
+      return doc;
     }
 
     function KeyValueStore() { }
