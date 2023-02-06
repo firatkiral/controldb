@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Tutorial: Schema Validation</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Tutorial: Schema Validation</h1>
+
+    <section>
+
+<header>
+    
+
+    <h2>Schema Validation</h2>
+</header>
+
+<article>
+    <h3>Schema Validation</h3>
+<p>ControlDB supports schema validation for documents in a collection. This is done by passing a schema object to the collection constructor.</p>
+<pre class="prettyprint source lang-javascript"><code>var userSchema = {
+  name: {
+    type: String,
+    required: true
+  },
+  age: Number,
+};
+
+var users = db.addCollection('users', {schema: userSchema});
+
+users.insert({
+  name: 'Odin',
+  age: &quot;50&quot;,
+});
+// Error: age: input must be of type Number.
+
+</code></pre>
+<p>The schema object is an object with keys corresponding to the properties of the documents in the collection. The value of each key is an object with the following properties:</p>
+<p><strong>type</strong> : The type of the property. The following types are supported:</p>
+<ul>
+<li>
+<p>String :</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  name: String
+}
+</code></pre>
+</li>
+<li>
+<p>Number</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  age: Number
+}
+</code></pre>
+</li>
+<li>
+<p>Boolean</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  isAlive: Boolean
+}
+</code></pre>
+</li>
+<li>
+<p>Array : An array of values of the specified type.</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  tags: [String]
+}
+</code></pre>
+</li>
+<li>
+<p>Object : The object can have a nested schema. The nested schema is specified in the properties property of the object.</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  address: {
+    type: Object,
+    properties: {
+      street: String,
+      city: String,
+      state: String,
+      zip: Number
+    }
+  }
+}
+</code></pre>
+</li>
+</ul>
+<p>Schema objects can be defined in the following ways:</p>
+<pre class="prettyprint source lang-javascript"><code>  {
+    key: type,
+    key: {type, required, default, min, max, enum, ...},
+  }
+</code></pre>
+<p><strong>required</strong> : Boolean indicating whether the property is required. If true, the property must be present in the document. If false, the property is optional. If not specified, the property is optional.</p>
+<p><strong>default</strong> : The default value for the property. If the property is not present in the document, the default value will be used. If not specified, the default value is undefined.</p>
+<p><strong>min</strong> : The minimum value for the property. If the property is a number, the value must be greater than or equal to min. If the property is a string, the length of the string must be greater than or equal to min. If the property is an array, the length of the array must be greater than or equal to min. If the property is an object, the number of keys in the object must be greater than or equal to min. If not specified, there is no minimum value.</p>
+<p><strong>max</strong> : The maximum value for the property. If the property is a number, the value must be less than or equal to max. If the property is a string, the length of the string must be less than or equal to max. If the property is an array, the length of the array must be less than or equal to max. If the property is an object, the number of keys in the object must be less than or equal to max. If not specified, there is no maximum value.</p>
+<p><strong>minLength</strong> : The minimum length of the property. If the property is a string, the length of the string must be greater than or equal to minLength. If the property is an array, the length of the array must be greater than or equal to minLength. If the property is an object, the number of keys in the object must be greater than or equal to minLength. If not specified, there is no minimum length.</p>
+<p><strong>maxLength</strong> : The maximum length of the property. If the property is a string, the length of the string must be less than or equal to maxLength. If the property is an array, the length of the array must be less than or equal to maxLength. If the property is an object, the number of keys in the object must be less than or equal to maxLength. If not specified, there is no maximum length.</p>
+<p><strong>enum</strong> : An array of values that the property can take. If the property is not present in the document, the default value will be used. If not specified, the default value is undefined.</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  visibility: {
+    type: String,
+    enum: {'private', 'public', 'friends'},
+    default: &quot;public&quot;,
+  }
+}
+</code></pre>
+<p><strong>validation</strong>: A function that validates the property. The function takes the value of the property as an argument and returns true if the value is valid and false if the value is invalid.</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  name: {
+    type: String,
+    validation: function(value) {
+      return /^[a-zA-Z0-9-]{5,40}$/.test(v);
+    }
+  }
+  tags: {
+    type: [String],
+    validation: function(value) {
+      // Returns true if the value is valid or error message if the value is invalid.
+      return value.length &lt;= 5 || &quot;Maximum 5 tags.&quot;;
+    }
+  }
+}
+</code></pre>
+<p><strong>properties</strong> : The schema object can be nested by setting the type of the key to Object and specifying properties property. The following example shows a schema for a document with nested properties:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  address: {
+    type: Object,
+    required: true,
+    properties: {
+      street: String,
+      city: {
+        type: String,
+        required: true
+      },
+      postalCode: {
+        type: String,
+        required: true,
+        minLength: 5,
+        maxLength: 10
+      }
+    }
+  }
+}
+</code></pre>
+</article>
+
+</section>
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Collection.html">Collection</a></li><li><a href="ControlDB.html">ControlDB</a></li><li><a href="ControlDBEventEmitter.html">ControlDBEventEmitter</a></li><li><a href="ControlDBFsAdapter.html">ControlDBFsAdapter</a></li><li><a href="ControlDBLocalStorageAdapter.html">ControlDBLocalStorageAdapter</a></li><li><a href="ControlDBMemoryAdapter.html">ControlDBMemoryAdapter</a></li><li><a href="ControlDBPartitioningAdapter.html">ControlDBPartitioningAdapter</a></li><li><a href="DynamicView.html">DynamicView</a></li><li><a href="Resultset.html">Resultset</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Autoupdating Collections.html">Autoupdating Collections</a></li><li><a href="tutorial-Changes API.html">Changes API</a></li><li><a href="tutorial-Collection Transforms.html">Collection Transforms</a></li><li><a href="tutorial-Indexing and Query performance.html">Indexing and Query performance</a></li><li><a href="tutorial-Persistence Adapters.html">Persistence Adapters</a></li><li><a href="tutorial-Query Examples.html">Query Examples</a></li><li><a href="tutorial-Schema Validation.html">Schema Validation</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Sun Feb 05 2023 23:37:35 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
