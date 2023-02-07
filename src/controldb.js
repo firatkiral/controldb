@@ -7025,7 +7025,7 @@
      * @memberof Collection
      */
     Collection.prototype.exists = function (query) {
-      return !!this.find(query)[0];
+      return !!this.findOne(query);
     };
 
     /**
