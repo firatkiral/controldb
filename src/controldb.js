@@ -6075,7 +6075,7 @@
         this.emit('pre-update', doc);
 
         if (this.schema) {
-          doc = validateSchema(doc, this.schema, key);
+          doc = validateSchema(doc, this.schema);
           if (doc instanceof Error) {
             throw doc;
           }
@@ -6185,7 +6185,7 @@
         }
 
         if (this.schema) {
-          obj = validateSchema(obj, this.schema, key);
+          obj = validateSchema(obj, this.schema);
           if (obj instanceof Error) {
             throw obj;
           }
@@ -8063,6 +8063,7 @@
     ControlDB.lt = ltHelper;
     ControlDB.gt = gtHelper;
     ControlDB.Comparators = Comparators;
+    ControlDB.validateSchema = validateSchema;
     return ControlDB;
   }());
 
