@@ -7,7 +7,7 @@ var userSchema = {
   age: { type: Number, required: true, min: 1, max: 100, default: 30 },
   god: { type: Boolean, default: false },
   powers: {
-    type: Object, 
+    type: Object,
     properties: {
       air: Boolean,
       fire: String,
@@ -23,7 +23,12 @@ var userSchema = {
 
 var users = db.addCollection("users", { unique: ["name"], schema: userSchema });
 
-users.insert({ name: "mimir", age: 66 });
+try {
+  users.insert({ name: "mimir", age: 66 });
+} catch (error) {
+  console.log(error.message);
+}
+
 users.insert({ name: "mimira", powers: { air: true, fire: "hot", water: 30 } });
 
 let mim = users.findOne({ name: "mimira" });
