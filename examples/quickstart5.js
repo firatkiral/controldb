@@ -3,16 +3,17 @@ const controldb = require('../src/controldb.js');
 var db = new controldb("quickstart5.db");
 
 var userSchema = {
-  name: String,
-  age: { type: Number, required: true, min: 1, max: 100, default: 30 },
-  god: { type: Boolean, default: false },
+  name: "String",
+  age: { type: "Number", required: true, min: 1, max: 100, default: 30 },
+  god: { type: "Boolean", default: false },
+  number: { type: "Number", default: 1 },
   powers: {
-    type: Object,
+    type: "Object",
     properties: {
-      air: Boolean,
-      fire: String,
+      air: "Boolean",
+      fire: "String",
       water: {
-        type: Number,
+        type: "Number",
         min: 20,
         max: 50,
         required: true

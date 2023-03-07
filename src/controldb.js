@@ -1760,6 +1760,7 @@
         copyColl.autoupdate = coll.autoupdate;
         copyColl.changes = coll.changes;
         copyColl.dirtyIds = coll.dirtyIds || [];
+        copyColl.schema = coll.schema || null;
 
         if (options && options.retainDirtyFlags === true) {
           copyColl.dirty = coll.dirty;
@@ -7738,7 +7739,7 @@
             input = template.default;
           }
         }
-        if (input == null && template.type.name === "Object") {
+        if (input == null && template.type === "Object") {
           input = {};
         }
         if (input != null && template.minlength) {
@@ -7785,7 +7786,7 @@
               input[i] = res;
             }
           }
-          else if (template.type.name === "Object") {
+          else if (template.type === "Object") {
             if (typeof input !== 'object') {
               return new Error(`${key}: ${input} must be an object.`);
             }
@@ -7809,8 +7810,8 @@
             }
           }
           else if (input.constructor.name === "Number" || input.constructor.name === "String" || input.constructor.name === "Boolean") {
-            if (input.constructor.name !== template.type.name) {
-              return new Error(`${key}: input must be of type ${template.type.name}.`);
+            if (input.constructor.name !== template.type) {
+              return new Error(`${key}: input must be of type ${template.type}.`);
             }
           }
           else{
@@ -7829,7 +7830,7 @@
           return new Error(`${key} is not a valid property.`);
         }
         let template = schema[key];
-        if (typeof template !== 'object') {
+        if (typeof template == 'string') {
           template = { type: template };
         }
         let res = validate(doc[key], template, key);
