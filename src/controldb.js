@@ -1207,13 +1207,17 @@
      * @returns {Collection} Reference to collection in database by that name, or null if not found
      * @memberof ControlDB
      */
-    ControlDB.prototype.getCollection = function (collectionName) {
+    ControlDB.prototype.getCollection = function (collectionName, options) {
       var i,
         len = this.collections.length;
 
       for (i = 0; i < len; i += 1) {
         if (this.collections[i].name === collectionName) {
-          return this.collections[i];
+          const collection = this.collections[i];
+          if (options) {
+            collection.configureOptions(options);
+          }
+          return collection;
         }
       }
 
@@ -1303,6 +1307,21 @@
           return undefined;
         case 'controlConsoleWrapper':
           return null;
+        case 'validation':
+          return `return ${value.toString()}`;
+        default:
+          return value;
+      }
+    };
+
+    /**
+     * serializeReviver - used to transform value before being returned
+     *
+     */
+    ControlDB.prototype.serializeReviver = function (key, value) {
+      switch (key) {
+        case 'validation':
+          return new Function(value)();
         default:
           return value;
       }
@@ -1689,9 +1708,9 @@
         // using option defined in instantiated db not what was in serialized db
         switch (this.options.serializationMethod) {
           case "normal":
-          case "pretty": dbObject = JSON.parse(serializedDb); break;
+          case "pretty": dbObject = JSON.parse(serializedDb, this.serializeReviver); break;
           case "destructured": dbObject = this.deserializeDestructured(serializedDb); break;
-          default: dbObject = JSON.parse(serializedDb); break;
+          default: dbObject = JSON.parse(serializedDb, this.serializeReviver); break;
         }
       }
 
@@ -5441,6 +5460,10 @@
           this.ensureAllIndexes();
         }
       }
+      if (options.hasOwnProperty('schema')) {
+        this.schema = options.schema;
+        this.dirty = true; // for autosave scenarios
+      }
     };
 
     /**
@@ -7821,7 +7844,7 @@
 
         return input;
       }
-      const keys = [...Object.keys(doc), ...Object.keys(schema)];
+      const keys = new Set([...Object.keys(doc), ...Object.keys(schema)]);
       for (const key of keys) {
         if (key === '$ctrl' || key === 'meta') {
           continue;
