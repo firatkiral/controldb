@@ -6090,6 +6090,13 @@
           throw new Error('Trying to update a document not in collection.');
         }
 
+        if (this.schema) {
+          doc = validateSchema(doc, this.schema);
+          if (doc instanceof Error) {
+            throw doc;
+          }
+        }
+
         oldInternal = arr[0]; // -internal- obj ref
         position = arr[1]; // position in data array
 
@@ -6097,13 +6104,6 @@
         newInternal = this.cloneObjects || (!this.disableDeltaChangesApi && this.disableFreeze) ? clone(doc, this.cloneMethod) : doc;
 
         this.emit('pre-update', doc);
-
-        if (this.schema) {
-          doc = validateSchema(doc, this.schema);
-          if (doc instanceof Error) {
-            throw doc;
-          }
-        }
 
         this.uniqueNames.forEach(function (key) {
           self.getUniqueIndex(key, true).update(oldInternal, newInternal);

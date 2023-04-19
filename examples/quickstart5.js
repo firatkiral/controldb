@@ -6,7 +6,7 @@ var userSchema = {
   name: "String",
   age: { type: "Number", required: true, min: 1, max: 100, default: 30 },
   god: { type: "Boolean", default: false },
-  number: { type: "Number", default: 1 },
+  number: { type: "Number", default: 1, required: true },
   powers: {
     type: "Object",
     properties: {
@@ -35,5 +35,13 @@ users.insert({ name: "mimira", powers: { air: true, fire: "hot", water: 30 } });
 let mim = users.findOne({ name: "mimira" });
 mim.powers.water = 40;
 users.update(mim);
+
+try {
+  mim.number = undefined;
+  let res = users.update(mim);
+  console.log(res);
+} catch (error) {
+  console.log(error.message);
+}
 
 console.log(users.docs());
