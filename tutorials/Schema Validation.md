@@ -6,10 +6,10 @@ ControlDB supports schema validation for documents in a collection. This is done
 ```javascript
 var userSchema = {
   name: {
-    type: String,
+    type: "String",
     required: true
   },
-  age: Number,
+  age: "Number",
 };
 
 var users = db.addCollection('users', {schema: userSchema});
@@ -18,7 +18,7 @@ users.insert({
   name: 'Odin',
   age: "50",
 });
-// Error: age: input must be of type Number.
+// Error: age: input must be of type "Number".
 
 ```
 
@@ -26,27 +26,27 @@ The schema object is an object with keys corresponding to the properties of the 
 
 **type** : The type of the property. The following types are supported:
 
-  * String :
+  * "String" :
 
     ```javascript
     {
-      name: String
+      name: "String"
     }
     ```
 
-  * Number
+  * "Number"
 
     ```javascript
     {
-      age: Number
+      age: "Number"
     }
     ```
 
-  * Boolean
+  * "Boolean"
 
     ```javascript
     {
-      isAlive: Boolean
+      isAlive: "Boolean"
     }
     ```
 
@@ -54,7 +54,7 @@ The schema object is an object with keys corresponding to the properties of the 
 
     ```javascript
     {
-      tags: [String]
+      tags: ["String"]
     }
     ```
 
@@ -63,12 +63,12 @@ The schema object is an object with keys corresponding to the properties of the 
     ```javascript
     {
       address: {
-        type: Object,
-        properties: {
-          street: String,
-          city: String,
-          state: String,
-          zip: Number
+        type: "Object",
+        schema: {
+          street: "String",
+          city: "String",
+          state: "String",
+          zip: "Number"
         }
       }
     }
@@ -100,7 +100,7 @@ Schema objects can be defined in the following ways:
 ```javascript
 {
   visibility: {
-    type: String,
+    type: "String",
     enum: {'private', 'public', 'friends'},
     default: "public",
   }
@@ -112,13 +112,13 @@ Schema objects can be defined in the following ways:
 ```javascript
 {
   name: {
-    type: String,
+    type: "String",
     validation: function(value) {
       return /^[a-zA-Z0-9-]{5,40}$/.test(v);
     }
   }
   tags: {
-    type: [String],
+    type: ["String"],
     validation: function(value) {
       // Returns true if the value is valid or error message if the value is invalid.
       return value.length <= 5 || "Maximum 5 tags.";
@@ -132,16 +132,16 @@ Schema objects can be defined in the following ways:
 ```javascript
 {
   address: {
-    type: Object,
+    type: "Object",
     required: true,
     properties: {
-      street: String,
+      street: "String",
       city: {
-        type: String,
+        type: "String",
         required: true
       },
       postalCode: {
-        type: String,
+        type: "String",
         required: true,
         minLength: 5,
         maxLength: 10

@@ -54,7 +54,7 @@ ControlDB would prefer to deal with pure clean data but has had to evolve to sup
 The Resultset class introduced method chaining as an option for querying.  You might use this method chaining to apply several find operations in succession or mix find(), where(), and sort() operations into a sequential chained pipe.  For simplicity, an example of this might be (where users is a collection object) :
 
 ```javascript
-    users.chain().find(queryObj).where(queryFunc).simplesort('name').data();
+    users.find(queryObj).where(queryFunc).simplesort('name').docs();
 ```
 
 Examining this statement, if queryObj (a mongo-style query object) were { 'age': { '$gt': 30 } }, then that age column would be best to apply an index on, and that find() chain operation should come first in the chain.  In chained operations, only the first chained filter can utilize the indexes for filtering.  If it filtered out a sufficient number of records, the impact of the (where) query function will be less.  The overhead of maintaining the filtered result set reduces performance by about 20% over collection.find, but they enable much more versatility.  In our benchmarks this is still about _400k ops/sec_.
@@ -62,13 +62,13 @@ Examining this statement, if queryObj (a mongo-style query object) were { 'age':
 ### Indexes and sorting
 When no filters are applied and a binary index exists on (for example) a 'name' property, the following can fully utilize the binary index : 
 ```javascript
-coll.chain().simplesort('name').data();
+coll.simplesort('name').docs();
 ```
 If filtering has occurred we will detect whether we can leverage the index within an 'index intersect' algorithm to speed up the sorting over a typical controldb sort.  This 'index intersect' algorithm will only be enabled if your resultset has more than 10% of the total documents within its resultset, otherwise a standard controldb sort will be determined to be the faster method.  The performance advantages of 'index intersect' are somewhat inversely proportional to your filter quality, so it leverages the binary index to help to reduce 'worst case' sorting penalties.
 
 ControlDB sorting is used not just for sorting but for building the binary indices, but if you do not need it's more unified sorting across mixed types, you might be able to shave additional milliseconds off your sort call by calling : 
 ```javascript
-coll.chain().simplesort('name', { useJavascriptSorting: true }).data();
+coll.simplesort('name', { useJavascriptSorting: true }).docs();
 ```
 Which (if a binary index exists on that 'name' property) we will use the index intersect algorithm unless resultset has 10% or less total document count, at which point we will fallback to javascript sorting on the property passed to simplesort. If you do not have a binary index applied on that property, we would always use javascript sorting if that option were passed.
 
@@ -81,10 +81,10 @@ Dynamic Views behave similarly to resultsets in that you want to utilize an inde
   userview.applyFind({'Age': {'$gte':30}});
 
   // at any time later you can grab the latest view results
-  var results = userview.data();
+  var results = userview.docs();
 
   // or branch the results for further filtering
-  results = userview.branchResultset().find({'Country': 'JP'}).data();
+  results = userview.branchResultset().find({'Country': 'JP'}).docs();
 ```
 
 That find filter should ideally refer to a field which you have applied an index to ('Age' in this case).  Dynamic Views run their filters once however, so even non performant query pipelines are fast after they are set up.  This is due to re-evaluation of those filters on single objects as they are inserted, updated, or deleted from the collection.  Being single object evaluations there is no array scan penalty which occurs during the first evaluation. The overhead of dynamic views, which ride on top of the resultset, reduces performance of the first evaluation by about 40%, however subsequent queries are highly optimized (faster than collection.find).  Even with that overhead, our benchmarks show roughly _300k ops/sec_ performance on initial evaluation. Depending on update frequency, subsequent evaluations can scale up to over 1 million ops/sec.

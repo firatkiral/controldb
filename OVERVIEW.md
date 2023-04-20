@@ -91,10 +91,10 @@ Schema Validation :
 ```javascript
 var userSchema = {
   name: {
-    type: String,
+    type: "String",
     required: true
   },
-  age: Number,
+  age: "Number",
 };
 
 var users = db.addCollection('users', {schema: userSchema});

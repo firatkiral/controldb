@@ -7813,15 +7813,15 @@
             if (typeof input !== 'object') {
               return new Error(`${key}: ${input} must be an object.`);
             }
-            if (template.properties == null || typeof template.properties !== 'object') {
-              return new Error(`Object ${key} must have a properties object.`);
+            if (template.schema == null || typeof template.schema !== 'object') {
+              return new Error(`Object ${key} must have a schema object.`);
             }
-            const objKeys = new Set([...Object.keys(input), ...Object.keys(template.properties)]);
+            const objKeys = new Set([...Object.keys(input), ...Object.keys(template.schema)]);
             for (const objKey of objKeys) {
-              if (template.properties.hasOwnProperty(objKey) === false) {
+              if (template.schema.hasOwnProperty(objKey) === false) {
                 return new Error(`${objKey} is not a valid property.`);
               }
-              let objTemplate = template.properties[objKey];
+              let objTemplate = template.schema[objKey];
               if (typeof objTemplate !== 'object') {
                 objTemplate = { type: objTemplate };
               }

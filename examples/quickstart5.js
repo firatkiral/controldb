@@ -9,7 +9,7 @@ var userSchema = {
   number: { type: "Number", default: 1, required: true },
   powers: {
     type: "Object",
-    properties: {
+    schema: {
       air: "Boolean",
       fire: "String",
       water: {

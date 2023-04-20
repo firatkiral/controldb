@@ -128,10 +128,10 @@ Schema Validation :
 ```javascript
 var userSchema = {
   name: {
-    type: String,
+    type: "String",
     required: true
   },
-  age: Number,
+  age: "Number",
 };
 
 var users = db.addCollection('users', {schema: userSchema});
@@ -140,7 +140,7 @@ users.insert({
   name: 'Odin',
   age: "50",
 });
-// Error: age: input must be of type Number.
+// Error: age: input must be of type "Number".
 
 ```
 

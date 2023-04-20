@@ -43,13 +43,13 @@ userCollection.addTransform('OwnerFilter', tx);
 
 This transform can be executed by either : 
 ```javascript
-userCollection.chain('OwnerFilter').data();
+userCollection.chain('OwnerFilter').docs();
 ```
 
 or 
 
 ```javascript
-userCollection.chain(tx).data();
+userCollection.chain(tx).docs();
 ```
 
 Parameterization is resolved on any object property right-hand value which is represented in your transform as a string beginning with '[%lktxp]'.  An example of this might be : 
@@ -71,13 +71,13 @@ var params = {
   OwnerName: 'odin'
 };
 
-userCollection.chain(tx, params).data();
+userCollection.chain(tx, params).docs();
 ```
 
 or
 
 ```javascript
-userCollection.chain("OwnerFilter", params).data();
+userCollection.chain("OwnerFilter", params).docs();
 ```
 
 **Where filter functions cannot be saved into a database** but (if you still need them), utilizing transforms along with parameterization can allow for cleanly structuring and executing saved transforms.  An example might be : 
@@ -99,11 +99,11 @@ var params = {
   }
 };
 
-var results = items.chain("ByFilteredName", params).data();
+var results = items.chain("ByFilteredName", params).docs();
 
 ```
 
-Transforms can contain multiple steps to be executed in succession.  Behind the scenes, the chain command will instance a Resultset and invoke your steps as independent chain operations before finally returning the result upon completion.  A few of the built in 'steps' such as 'mapReduce' actually terminate the transform/chain by returning a data array, so in those cases the chain() result is the actual data, not a resultset which you would need to call data() to resolve.
+Transforms can contain multiple steps to be executed in succession.  Behind the scenes, the chain command will instance a Resultset and invoke your steps as independent chain operations before finally returning the result upon completion.  A few of the built in 'steps' such as 'mapReduce' actually terminate the transform/chain by returning a data array, so in those cases the chain() result is the actual data, not a resultset which you would need to call docs() to resolve.
 
 A more complicated transform example might appear as follows : 
 ```javascript
@@ -191,7 +191,7 @@ coll.addTransform('viewPaging', tx);
 
 // add some records
 
-var results = dv.branchResultset('viewPaging', { pageStart: 10, pageSize: 10 }).data();
+var results = dv.branchResultset('viewPaging', { pageStart: 10, pageSize: 10 }).docs();
 
 ```
 

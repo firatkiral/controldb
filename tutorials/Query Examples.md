@@ -368,15 +368,14 @@ The core 'find' and 'where' functionality are two of the main building blocks th
 An example making better use of chaining might be the following : 
 
 ```javascript
-var results = coll.chain()
-                  .find({'Age': {'$gt':20}})
+var results = coll.find({'Age': {'$gt':20}})
                   .where(function(obj) {
                      return obj.Country.indexOf('FR') === 0;
                    })
                   .simplesort('Name')
                   .offset(100)
                   .limit(25)
-                  .data();
+                  .docs();
 ```
 
 ### Resultset branching
@@ -384,11 +383,11 @@ Resultsets and their results are not meant to be 'held' around. Those situations
 
 A simple example of collection branching might appear as follows : 
 ```javascript
-var baseResulset = coll.chain().find({'Age': {'$gte': 40}});
+var baseResulset = coll.find({'Age': {'$gte': 40}});
 var branchedResulset = baseResultset.branch();
 
-var usResults = baseResultset.find({'Country': 'US'}).data();
-var ieResults = branchedResulset.find({'Country': 'IE'}).data();
+var usResults = baseResultset.find({'Country': 'US'}).docs();
+var ieResults = branchedResulset.find({'Country': 'IE'}).docs();
 ```
 The advantage being if the base resulset query was time consuming, your subsequent branches would not need to incur that common cost.  Branching is typically more useful in large collections or extremely time sensitive applications.  
 
