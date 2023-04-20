@@ -7788,7 +7788,7 @@
         if (input != null && template.validation) {
           const result = template.validation(input);
           if (result !== true) {
-            return new Error(`${key}: ${typeof result === 'string' ? result : 'validation failed' }`);
+            return new Error(`${key}: ${typeof result === 'string' ? result : 'validation failed'}`);
           }
         }
         if (input != null && template.enum) {
@@ -7802,7 +7802,7 @@
               return new Error(`${key}: ${input} must be an array.`);
             }
             for (let i = 0; i < input.length; i++) {
-              const res = validate(input[i], {type: template.type[0]}, key);
+              const res = validate(input[i], { type: template.type[0], schema: template.schema }, key);
               if (res instanceof Error) {
                 return res;
               }
@@ -7837,7 +7837,7 @@
               return new Error(`${key}: input must be of type ${template.type}.`);
             }
           }
-          else{
+          else {
             return new Error(`${key}: input must be one of the following types: Object, Number, String, Boolean.`);
           }
         }
