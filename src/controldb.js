@@ -7853,7 +7853,7 @@
           return new Error(`${key} is not a valid property.`);
         }
         let template = schema[key];
-        if (typeof template == 'string') {
+        if (typeof template == 'string' || Array.isArray(template)) {
           template = { type: template };
         }
         let res = validate(doc[key], template, key);
