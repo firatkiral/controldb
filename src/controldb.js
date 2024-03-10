@@ -4106,6 +4106,38 @@
     };
 
     /**
+     * Specifies which document fields to include
+     * @param {string} selections - string of properties to select
+     * @param {object=} dataOptions - options to data() before input to your map function
+     * @param {bool} dataOptions.removeMeta - allows removing meta before calling mapFun
+     * @param {boolean} dataOptions.forceClones - forcing the return of cloned objects to your map object
+     * @param {string} dataOptions.forceCloneMethod - Allows overriding the default or collection specified cloning method.
+     * @memberof Resultset
+     * @example
+     * var orders.chain().find({ productId: 32 }).select("orderId productId qty");
+     * // returns only orderId, productId and qty
+     * // [{orderId: 1, productId: 32, qty: 100}, {orderId: 2, productId: 32, qty: 200}]
+     **/
+    Resultset.prototype.select = function (selections, dataOptions) {
+      let _selections = selections.split(' ');
+      var data = this.docs(dataOptions).map(item =>{
+        var obj = {};
+        _selections.forEach(selection => {
+          obj[selection] = item[selection];
+        });
+        return obj;
+      })
+      //return return a new resultset with no filters
+      this.collection = new Collection('mappedData');
+      this.collection.insert(data);
+      this.filteredrows = [];
+      this.filterInitialized = false;
+
+      return this;
+    };
+
+
+    /**
      * DynamicView class is a versatile 'live' view class which can have filters and sorts applied.
      *    Collection.addDynamicView(name) instantiates this DynamicView object and notifies it
      *    whenever documents are add/updated/removed so it can remain up-to-date. (chainable)
