@@ -7845,8 +7845,12 @@
             if (typeof input !== 'object') {
               return new Error(`${key}: ${input} must be an object.`);
             }
+            template.schema = template.schema || {};
             if (template.schema == null || typeof template.schema !== 'object') {
               return new Error(`Object ${key} must have a schema object.`);
+            }
+            if(Object.keys(template.schema).length === 0) {
+              return input;
             }
             const objKeys = new Set([...Object.keys(input), ...Object.keys(template.schema)]);
             for (const objKey of objKeys) {
