@@ -5484,6 +5484,35 @@
     Collection.prototype.configureOptions = function (options) {
       options = options || {};
 
+      // exact match and unique constraints
+      if (options.hasOwnProperty('unique')) {
+        if (!Array.isArray(options.unique)) {
+          options.unique = [options.unique];
+        }
+        // save names; actual index is built lazily
+        this.uniqueNames = [];
+        options.unique.forEach((prop) => {
+          this.uniqueNames.push(prop);
+        });
+      }
+      
+      // initialize optional user-supplied indices array ['age', 'lname', 'zip']
+      if (options.hasOwnProperty('indices')) {
+        this.binaryIndices = {};
+        var indices = [];
+        if (Object.prototype.toString.call(options.indices) === '[object Array]') {
+          indices = options.indices;
+        } else if (typeof options.indices === 'string') {
+          indices = [options.indices];
+        } else {
+          throw new TypeError('Indices needs to be a string or an array of strings');
+        }
+
+        for (var idx = 0; idx < indices.length; idx++) {
+          this.ensureIndex(indices[idx]);
+        }
+      }
+
       if (options.hasOwnProperty('adaptiveBinaryIndices')) {
         this.adaptiveBinaryIndices = options.adaptiveBinaryIndices;
 

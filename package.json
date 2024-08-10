@@ -1,6 +1,6 @@
 {
   "name": "controldb",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Fast document oriented javascript in-memory database",
   "homepage": "https://firatkiral.github.io/controldb/",
   "main": "src/controldb.js",
