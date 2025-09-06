@@ -143,7 +143,7 @@ Collection.find(), Collection.where(), and Collection.chain() instantiate this.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2949">line 2949</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line2971">line 2971</a>
     </li></ul></dd>
     
 
@@ -245,7 +245,7 @@ Collection.find(), Collection.where(), and Collection.chain() instantiate this.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3060">line 3060</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3082">line 3082</a>
     </li></ul></dd>
     
 
@@ -374,7 +374,7 @@ Collection.find(), Collection.where(), and Collection.chain() instantiate this.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3330">line 3330</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3352">line 3352</a>
     </li></ul></dd>
     
 
@@ -492,7 +492,7 @@ rs.compoundsort(['age', ['name', true]]);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3045">line 3045</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3067">line 3067</a>
     </li></ul></dd>
     
 
@@ -602,7 +602,7 @@ rs.compoundsort(['age', ['name', true]]);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3765">line 3765</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3787">line 3787</a>
     </li></ul></dd>
     
 
@@ -875,7 +875,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3787">line 3787</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3809">line 3809</a>
     </li></ul></dd>
     
 
@@ -1285,7 +1285,7 @@ eqJoin expects the right join key values to be unique.  Otherwise left data will
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line4001">line 4001</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line4023">line 4023</a>
     </li></ul></dd>
     
 
@@ -1524,7 +1524,7 @@ console.log(orderSummary);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3464">line 3464</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3486">line 3486</a>
     </li></ul></dd>
     
 
@@ -1826,7 +1826,7 @@ console.log(orderSummary);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line4077">line 4077</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line4099">line 4099</a>
     </li></ul></dd>
     
 
@@ -1997,7 +1997,7 @@ console.log(orderSummary);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3945">line 3945</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3967">line 3967</a>
     </li></ul></dd>
     
 
@@ -2123,7 +2123,7 @@ console.log(grandOrderTotal);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3910">line 3910</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3932">line 3932</a>
     </li></ul></dd>
     
 
@@ -2178,6 +2178,288 @@ console.log(grandOrderTotal);</code></pre>
     
     <pre class="prettyprint"><code>// remove users inactive since 1/1/2001
 users.chain().find({ lastActive: { $lte: new Date("1/1/2001").getTime() } }).remove();</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="select"><span class="type-signature"></span>select<span class="signature">(selections, dataOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Specifies which document fields to include</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>selections</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>string of properties to select</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dataOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>options to data() before input to your map function</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>removeMeta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>allows removing meta before calling mapFun</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>forceClones</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>forcing the return of cloned objects to your map object</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>forceCloneMethod</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Allows overriding the default or collection specified cloning method.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line4123">line 4123</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>var orders.chain().find({ productId: 32 }).select("orderId productId qty");
+// returns only orderId, productId and qty
+// [{orderId: 1, productId: 32, qty: 100}, {orderId: 2, productId: 32, qty: 200}]</code></pre>
 
 
 
@@ -2501,7 +2783,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3202">line 3202</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3224">line 3224</a>
     </li></ul></dd>
     
 
@@ -2665,7 +2947,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3169">line 3169</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3191">line 3191</a>
     </li></ul></dd>
     
 
@@ -2879,7 +3161,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3085">line 3085</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3107">line 3107</a>
     </li></ul></dd>
     
 
@@ -3056,7 +3338,7 @@ var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3869">line 3869</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3891">line 3891</a>
     </li></ul></dd>
     
 
@@ -3222,7 +3504,7 @@ var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3713">line 3713</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line3735">line 3735</a>
     </li></ul></dd>
     
 
@@ -3386,7 +3668,7 @@ var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7143">line 7143</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7261">line 7261</a>
     </li></ul></dd>
     
 
@@ -3504,7 +3786,7 @@ rs.compoundsort(['age', ['name', true]]);</code></pre>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7064">line 7064</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7182">line 7182</a>
     </li></ul></dd>
     
 
@@ -3772,7 +4054,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7217">line 7217</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7335">line 7335</a>
     </li></ul></dd>
     
 
@@ -3979,7 +4261,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7183">line 7183</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7301">line 7301</a>
     </li></ul></dd>
     
 
@@ -4281,7 +4563,7 @@ Possible values include 'parse-stringify', 'jquery-extend-deep', 'shallow', 'sha
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7250">line 7250</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7368">line 7368</a>
     </li></ul></dd>
     
 
@@ -4642,7 +4924,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7127">line 7127</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7245">line 7245</a>
     </li></ul></dd>
     
 
@@ -4806,7 +5088,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7108">line 7108</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7226">line 7226</a>
     </li></ul></dd>
     
 
@@ -5020,7 +5302,7 @@ Sorting based on the same lt/gt helper functions used for binary indices.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7091">line 7091</a>
+        <a href="controldb.js.html">controldb.js</a>, <a href="controldb.js.html#line7209">line 7209</a>
     </li></ul></dd>
     
 
@@ -5112,7 +5394,7 @@ var results = users.chain().transform("CountryFilter", { Country: 'fr' }).data()
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Mon Feb 06 2023 00:25:12 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Sep 05 2025 20:41:41 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

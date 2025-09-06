@@ -1235,13 +1235,17 @@
      * @returns {Collection} Reference to collection in database by that name, or null if not found
      * @memberof ControlDB
      */
-    ControlDB.prototype.getCollection = function (collectionName) {
+    ControlDB.prototype.getCollection = function (collectionName, options) {
       var i,
         len = this.collections.length;
 
       for (i = 0; i &lt; len; i += 1) {
         if (this.collections[i].name === collectionName) {
-          return this.collections[i];
+          const collection = this.collections[i];
+          if (options) {
+            collection.configureOptions(options);
+          }
+          return collection;
         }
       }
 
@@ -1332,6 +1336,23 @@
         case 'controlConsoleWrapper':
           return null;
         default:
+          if (typeof value === 'function') {
+            return value.toString();
+          }
+          return value;
+      }
+    };
+
+    /**
+     * serializeReviver - used to transform value before being returned
+     *
+     */
+    ControlDB.prototype.serializeReviver = function (key, value) {
+      switch (key) {
+        default:
+          if (typeof value === 'string' &amp;&amp; value.startsWith('function')) {
+            return new Function('return ' + value)();
+          }
           return value;
       }
     };
@@ -1717,9 +1738,9 @@
         // using option defined in instantiated db not what was in serialized db
         switch (this.options.serializationMethod) {
           case "normal":
-          case "pretty": dbObject = JSON.parse(serializedDb); break;
+          case "pretty": dbObject = JSON.parse(serializedDb, this.serializeReviver); break;
           case "destructured": dbObject = this.deserializeDestructured(serializedDb); break;
-          default: dbObject = JSON.parse(serializedDb); break;
+          default: dbObject = JSON.parse(serializedDb, this.serializeReviver); break;
         }
       }
 
@@ -1788,6 +1809,7 @@
         copyColl.autoupdate = coll.autoupdate;
         copyColl.changes = coll.changes;
         copyColl.dirtyIds = coll.dirtyIds || [];
+        copyColl.schema = coll.schema || null;
 
         if (options &amp;&amp; options.retainDirtyFlags === true) {
           copyColl.dirty = coll.dirty;
@@ -4114,6 +4136,38 @@
     };
 
     /**
+     * Specifies which document fields to include
+     * @param {string} selections - string of properties to select
+     * @param {object=} dataOptions - options to data() before input to your map function
+     * @param {bool} dataOptions.removeMeta - allows removing meta before calling mapFun
+     * @param {boolean} dataOptions.forceClones - forcing the return of cloned objects to your map object
+     * @param {string} dataOptions.forceCloneMethod - Allows overriding the default or collection specified cloning method.
+     * @memberof Resultset
+     * @example
+     * var orders.chain().find({ productId: 32 }).select("orderId productId qty");
+     * // returns only orderId, productId and qty
+     * // [{orderId: 1, productId: 32, qty: 100}, {orderId: 2, productId: 32, qty: 200}]
+     **/
+    Resultset.prototype.select = function (selections, dataOptions) {
+      let _selections = selections.split(' ');
+      var data = this.docs(dataOptions).map(item => {
+        var obj = {};
+        _selections.forEach(selection => {
+          obj[selection] = item[selection];
+        });
+        return obj;
+      });
+      //return return a new resultset with no filters
+      this.collection = new Collection('mappedData');
+      this.collection.insert(data);
+      this.filteredrows = [];
+      this.filterInitialized = false;
+
+      return this;
+    };
+
+
+    /**
      * DynamicView class is a versatile 'live' view class which can have filters and sorts applied.
      *    Collection.addDynamicView(name) instantiates this DynamicView object and notifies it
      *    whenever documents are add/updated/removed so it can remain up-to-date. (chainable)
@@ -5460,6 +5514,35 @@
     Collection.prototype.configureOptions = function (options) {
       options = options || {};
 
+      // exact match and unique constraints
+      if (options.hasOwnProperty('unique')) {
+        if (!Array.isArray(options.unique)) {
+          options.unique = [options.unique];
+        }
+        // save names; actual index is built lazily
+        this.uniqueNames = [];
+        options.unique.forEach((prop) => {
+          this.uniqueNames.push(prop);
+        });
+      }
+
+      // initialize optional user-supplied indices array ['age', 'lname', 'zip']
+      if (options.hasOwnProperty('indices')) {
+        this.binaryIndices = {};
+        var indices = [];
+        if (Object.prototype.toString.call(options.indices) === '[object Array]') {
+          indices = options.indices;
+        } else if (typeof options.indices === 'string') {
+          indices = [options.indices];
+        } else {
+          throw new TypeError('Indices needs to be a string or an array of strings');
+        }
+
+        for (var idx = 0; idx &lt; indices.length; idx++) {
+          this.ensureIndex(indices[idx]);
+        }
+      }
+
       if (options.hasOwnProperty('adaptiveBinaryIndices')) {
         this.adaptiveBinaryIndices = options.adaptiveBinaryIndices;
 
@@ -5467,6 +5550,41 @@
         if (this.adaptiveBinaryIndices) {
           this.ensureAllIndexes();
         }
+      }
+      if (options.hasOwnProperty('schema')) {
+        var newSchema = options.schema;
+
+        var schemaChanged = false;
+        try {
+          // simple deep-equality check for schema objects
+          schemaChanged = JSON.stringify(this.schema || {}) !== JSON.stringify(newSchema || {}, (key, value) => typeof value === 'function' ? value.toString() : value);
+        } catch (e) {
+          schemaChanged = true; // fallback: assume changed if stringify fails
+        }
+
+        if (schemaChanged &amp;&amp; this.data &amp;&amp; this.data.length > 0) {
+          this.emit('warning', `Schema change detected, revalidating existing documents in collection ${this.name}`);
+          this.schema = newSchema;
+
+          for (var i = 0; i &lt; this.data.length; i++) {
+            var internal = clone(this.data[i], this.cloneMethod);
+            try {
+              this.update(internal); // it automatically validates against current schema
+            } catch (err) {
+              this.emit('warning', err.message || err);
+            }
+          }
+
+          // after revalidation, flag binary indices appropriately
+          if (this.adaptiveBinaryIndices) {
+            // adaptive: try to update each index via a full ensureAllIndexes
+            this.ensureAllIndexes(true);
+          } else {
+            this.flagBinaryIndexesDirty();
+          }
+        }
+
+        this.dirty = true;
       }
     };
 
@@ -6094,6 +6212,13 @@
           throw new Error('Trying to update a document not in collection.');
         }
 
+        if (this.schema) {
+          doc = validateSchema(doc, this.schema);
+          if (doc instanceof Error) {
+            throw doc;
+          }
+        }
+
         oldInternal = arr[0]; // -internal- obj ref
         position = arr[1]; // position in data array
 
@@ -6101,13 +6226,6 @@
         newInternal = this.cloneObjects || (!this.disableDeltaChangesApi &amp;&amp; this.disableFreeze) ? clone(doc, this.cloneMethod) : doc;
 
         this.emit('pre-update', doc);
-
-        if (this.schema) {
-          doc = validateSchema(doc, this.schema, key);
-          if (doc instanceof Error) {
-            throw doc;
-          }
-        }
 
         this.uniqueNames.forEach(function (key) {
           self.getUniqueIndex(key, true).update(oldInternal, newInternal);
@@ -6213,7 +6331,7 @@
         }
 
         if (this.schema) {
-          obj = validateSchema(obj, this.schema, key);
+          obj = validateSchema(obj, this.schema);
           if (obj instanceof Error) {
             throw obj;
           }
@@ -7053,7 +7171,7 @@
      * @memberof Collection
      */
     Collection.prototype.exists = function (query) {
-      return !!this.find(query)[0];
+      return !!this.findOne(query);
     };
 
     /**
@@ -7766,6 +7884,9 @@
             input = template.default;
           }
         }
+        if (input == null &amp;&amp; template.type === "Object") {
+          input = {};
+        }
         if (input != null &amp;&amp; template.minlength) {
           if (input.length &lt; template.minlength) {
             return new Error(`${key}: ${input} length is shorter than min length ${template.minlength}`);
@@ -7789,7 +7910,7 @@
         if (input != null &amp;&amp; template.validation) {
           const result = template.validation(input);
           if (result !== true) {
-            return new Error(`${key}: ${typeof result === 'string' ? result : 'validation failed' }`);
+            return new Error(`${key}: ${typeof result === 'string' ? result : 'validation failed'}`);
           }
         }
         if (input != null &amp;&amp; template.enum) {
@@ -7803,26 +7924,30 @@
               return new Error(`${key}: ${input} must be an array.`);
             }
             for (let i = 0; i &lt; input.length; i++) {
-              const res = validate(input[i], template.type[0], key);
+              const res = validate(input[i], { type: template.type[0], schema: template.schema }, key);
               if (res instanceof Error) {
                 return res;
               }
               input[i] = res;
             }
           }
-          else if (template.type.name === "Object") {
+          else if (template.type === "Object") {
             if (typeof input !== 'object') {
               return new Error(`${key}: ${input} must be an object.`);
             }
-            if (template.properties == null || typeof template.properties !== 'object') {
-              return new Error(`Object ${key} must have a properties object.`);
+            template.schema = template.schema || {};
+            if (template.schema == null || typeof template.schema !== 'object') {
+              return new Error(`Object ${key} must have a schema object.`);
             }
-            const objKeys = new Set([...Object.keys(input), ...Object.keys(template.properties)]);
+            if (Object.keys(template.schema).length === 0) {
+              return input;
+            }
+            const objKeys = new Set([...Object.keys(input), ...Object.keys(template.schema)]);
             for (const objKey of objKeys) {
-              if (template.properties.hasOwnProperty(objKey) === false) {
+              if (template.schema.hasOwnProperty(objKey) === false) {
                 return new Error(`${objKey} is not a valid property.`);
               }
-              let objTemplate = template.properties[objKey];
+              let objTemplate = template.schema[objKey];
               if (typeof objTemplate !== 'object') {
                 objTemplate = { type: objTemplate };
               }
@@ -7834,27 +7959,33 @@
             }
           }
           else if (input.constructor.name === "Number" || input.constructor.name === "String" || input.constructor.name === "Boolean") {
-            if (input.constructor.name !== template.type.name) {
-              return new Error(`${key}: input must be of type ${template.type.name}.`);
+            if (input.constructor.name !== template.type) {
+              return new Error(`${key}: input must be of type ${template.type}.`);
             }
           }
-          else{
+          else {
             return new Error(`${key}: input must be one of the following types: Object, Number, String, Boolean.`);
           }
         }
 
         return input;
       }
-      const keys = [...Object.keys(doc), ...Object.keys(schema)];
-      for (const key of keys) {
+
+      for (const key of Object.keys(doc)) {
         if (key === '$ctrl' || key === 'meta') {
           continue;
         }
         if (schema.hasOwnProperty(key) === false) {
-          return new Error(`${key} is not a valid property.`);
+          doc[key] = undefined;
+        }
+      }
+
+      for (const key of Object.keys(schema)) {
+        if (key === '$ctrl' || key === 'meta') {
+          continue;
         }
         let template = schema[key];
-        if (typeof template !== 'object') {
+        if (typeof template == 'string' || Array.isArray(template)) {
           template = { type: template };
         }
         let res = validate(doc[key], template, key);
@@ -8091,6 +8222,7 @@
     ControlDB.lt = ltHelper;
     ControlDB.gt = gtHelper;
     ControlDB.Comparators = Comparators;
+    ControlDB.validateSchema = validateSchema;
     return ControlDB;
   }());
 
@@ -8111,7 +8243,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Mon Feb 06 2023 00:25:12 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.0</a> on Fri Sep 05 2025 20:41:41 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

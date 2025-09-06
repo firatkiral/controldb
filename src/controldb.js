@@ -1307,9 +1307,10 @@
           return undefined;
         case 'controlConsoleWrapper':
           return null;
-        case 'validation':
-          return `return ${value.toString()}`;
         default:
+          if (typeof value === 'function') {
+            return value.toString();
+          }
           return value;
       }
     };
@@ -1320,9 +1321,10 @@
      */
     ControlDB.prototype.serializeReviver = function (key, value) {
       switch (key) {
-        case 'validation':
-          return new Function(value)();
         default:
+          if (typeof value === 'string' && value.startsWith('function')) {
+            return new Function('return ' + value)();
+          }
           return value;
       }
     };
@@ -4120,13 +4122,13 @@
      **/
     Resultset.prototype.select = function (selections, dataOptions) {
       let _selections = selections.split(' ');
-      var data = this.docs(dataOptions).map(item =>{
+      var data = this.docs(dataOptions).map(item => {
         var obj = {};
         _selections.forEach(selection => {
           obj[selection] = item[selection];
         });
         return obj;
-      })
+      });
       //return return a new resultset with no filters
       this.collection = new Collection('mappedData');
       this.collection.insert(data);
@@ -5495,7 +5497,7 @@
           this.uniqueNames.push(prop);
         });
       }
-      
+
       // initialize optional user-supplied indices array ['age', 'lname', 'zip']
       if (options.hasOwnProperty('indices')) {
         this.binaryIndices = {};
@@ -5522,8 +5524,39 @@
         }
       }
       if (options.hasOwnProperty('schema')) {
-        this.schema = options.schema;
-        this.dirty = true; // for autosave scenarios
+        var newSchema = options.schema;
+
+        var schemaChanged = false;
+        try {
+          // simple deep-equality check for schema objects
+          schemaChanged = JSON.stringify(this.schema || {}) !== JSON.stringify(newSchema || {}, (key, value) => typeof value === 'function' ? value.toString() : value);
+        } catch (e) {
+          schemaChanged = true; // fallback: assume changed if stringify fails
+        }
+
+        if (schemaChanged && this.data && this.data.length > 0) {
+          this.emit('warning', `Schema change detected, revalidating existing documents in collection ${this.name}`);
+          this.schema = newSchema;
+
+          for (var i = 0; i < this.data.length; i++) {
+            var internal = clone(this.data[i], this.cloneMethod);
+            try {
+              this.update(internal); // it automatically validates against current schema
+            } catch (err) {
+              this.emit('warning', err.message || err);
+            }
+          }
+
+          // after revalidation, flag binary indices appropriately
+          if (this.adaptiveBinaryIndices) {
+            // adaptive: try to update each index via a full ensureAllIndexes
+            this.ensureAllIndexes(true);
+          } else {
+            this.flagBinaryIndexesDirty();
+          }
+        }
+
+        this.dirty = true;
       }
     };
 
@@ -7878,7 +7911,7 @@
             if (template.schema == null || typeof template.schema !== 'object') {
               return new Error(`Object ${key} must have a schema object.`);
             }
-            if(Object.keys(template.schema).length === 0) {
+            if (Object.keys(template.schema).length === 0) {
               return input;
             }
             const objKeys = new Set([...Object.keys(input), ...Object.keys(template.schema)]);
@@ -7909,13 +7942,19 @@
 
         return input;
       }
-      const keys = new Set([...Object.keys(doc), ...Object.keys(schema)]);
-      for (const key of keys) {
+
+      for (const key of Object.keys(doc)) {
         if (key === '$ctrl' || key === 'meta') {
           continue;
         }
         if (schema.hasOwnProperty(key) === false) {
-          return new Error(`${key} is not a valid property.`);
+          doc[key] = undefined;
+        }
+      }
+
+      for (const key of Object.keys(schema)) {
+        if (key === '$ctrl' || key === 'meta') {
+          continue;
         }
         let template = schema[key];
         if (typeof template == 'string' || Array.isArray(template)) {
