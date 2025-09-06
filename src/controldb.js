@@ -5534,6 +5534,7 @@
           schemaChanged = true; // fallback: assume changed if stringify fails
         }
 
+        this.schema = newSchema;
         if (schemaChanged && this.data && this.data.length > 0) {
           this.emit('warning', `Schema change detected, revalidating existing documents in collection ${this.name}`);
 
@@ -5554,7 +5555,6 @@
             this.flagBinaryIndexesDirty();
           }
         }
-        this.schema = newSchema;
         this.dirty = true;
       }
     };
