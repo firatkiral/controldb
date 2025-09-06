@@ -5529,7 +5529,7 @@
         var schemaChanged = false;
         try {
           // simple deep-equality check for schema objects
-          schemaChanged = JJSON.stringify(this.schema || {}, (key, value) => typeof value === 'function' ? value.toString() : value) !== JSON.stringify(newSchema || {}, (key, value) => typeof value === 'function' ? value.toString() : value);
+          schemaChanged = JSON.stringify(this.schema || {}, (key, value) => typeof value === 'function' ? value.toString() : value) !== JSON.stringify(newSchema || {}, (key, value) => typeof value === 'function' ? value.toString() : value);
         } catch (e) {
           schemaChanged = true; // fallback: assume changed if stringify fails
         }
