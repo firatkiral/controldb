@@ -31,6 +31,15 @@
     const stream = require('stream');
     const crypto = require('crypto');
 
+    function serializeReviver(key, value) {
+      if (typeof value === 'string' && value.startsWith('function')) {
+        return new Function('return ' + value)();
+      }
+      else {
+        return value;
+      }
+    }
+
     /**
      * ControlDB structured (node) filesystem adapter class.
      *     This class fulfills the controldb 'reference' abstract adapter interface which can be applied to other storage methods. 
@@ -181,7 +190,7 @@
                 }
                 raw = self._decryptLine(raw);
               }
-              self.dbref = JSON.parse(raw);
+              self.dbref = JSON.parse(raw, serializeReviver);
             } catch (e) {
               jsonErr = e;
             }
@@ -227,7 +236,7 @@
               if (!self._key) {
                 throw new Error('Encrypted file encountered but no password supplied');
               }
-              raw = self._decryptLine(raw);
+              raw = self._decryptLine(raw, serializeReviver);
             }
             obj = JSON.parse(raw);
           } catch(e) {

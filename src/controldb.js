@@ -5529,14 +5529,13 @@
         var schemaChanged = false;
         try {
           // simple deep-equality check for schema objects
-          schemaChanged = JSON.stringify(this.schema || {}) !== JSON.stringify(newSchema || {}, (key, value) => typeof value === 'function' ? value.toString() : value);
+          schemaChanged = JJSON.stringify(this.schema || {}, (key, value) => typeof value === 'function' ? value.toString() : value) !== JSON.stringify(newSchema || {}, (key, value) => typeof value === 'function' ? value.toString() : value);
         } catch (e) {
           schemaChanged = true; // fallback: assume changed if stringify fails
         }
 
         if (schemaChanged && this.data && this.data.length > 0) {
           this.emit('warning', `Schema change detected, revalidating existing documents in collection ${this.name}`);
-          this.schema = newSchema;
 
           for (var i = 0; i < this.data.length; i++) {
             var internal = clone(this.data[i], this.cloneMethod);
@@ -5555,7 +5554,7 @@
             this.flagBinaryIndexesDirty();
           }
         }
-
+        this.schema = newSchema;
         this.dirty = true;
       }
     };
