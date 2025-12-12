@@ -7855,9 +7855,9 @@
             input = template.default;
           }
         }
-        if (input == null && template.type === "Object") {
-          input = {};
-        }
+        // if (input == null && template.type === "Object") {
+        //   input = {};
+        // }
         if (input != null && template.minlength) {
           if (input.length < template.minlength) {
             return new Error(`${key}: ${input} length is shorter than min length ${template.minlength}`);
